@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css"
+      integrity="sha512-kJlvECunwXftkPwyvHbclArO8wszgBGisiLeuDFwNM8ws+wKIw0sv1os3ClWZOcrEB2eRXULYUsm8OVRGJKwGA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="/style/home.css" />
+    <style></style>
+  </head>
+  <body>
+    <div class="help-card hidden">
+      <h3 style="margin-top: 0">Need help?</h3>
+      <span>
+        Welcome to <strong>BlogZone</strong>! Here you can read, write, and
+        share blogs with the community.<br /><br />
+        <ul style="padding-left: 18px; margin: 0">
+          <li>Use the <b>Write</b> button to create a new blog post.</li>
+          <li>
+            Click your profile image to manage your account or copy your profile
+            link.
+          </li>
+          <li>Bookmark your favorite blogs for quick access.</li>
+          <li>Check your stats to see your blog performance.</li>
+        </ul>
+        <br />
+        For more help, contact us via the links in the footer.
+      </span>
+    </div>
+    <div class="profile-card hidden">
+      <div class="userinfo">
+        <img src="./assets/my-av.jpeg" alt="" />
+        <div>
+          <div class="fullname">Manish Kumar</div>
+          <div class="email">manishkukran123@gmail.com</div>
+        </div>
+      </div>
+      <div class="btns">
+        <a href="" class="btn"
+          ><i class="ri-user-settings-fill"></i> Manage account</a
+        >
+        <a href="" class="btn"
+          ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
+        >
+      </div>
+      <div class="links">
+        <button
+          class="btn"
+          onclick="copyToClipboard(event, 'https://blogzone.com/@manishkumar07')"
+          style="
+            background: none;
+            border: none;
+            color: #cacfd9;
+            cursor: pointer;
+          "
+        >
+          https://blogzone.com/@manishkumar07 <i class="ri-clipboard-fill"></i>
+        </button>
+      </div>
+    </div>
+    <nav>
+      <a href="">
+        <div class="logo">
+          <i class="fa-solid fa-blog"></i>
+          <div class="name">BlogZone</div>
+        </div>
+      </a>
+      <div class="search">
+        <div class="icon">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <div class="searchbar">
+          <input type="search" placeholder="| Search your blog..." />
+        </div>
+      </div>
+      <div class="nav-list">
+        <div class="write-blog">
+          <div class="icon">
+            <i class="fa-regular fa-pen-to-square"></i>
+          </div>
+          <span>Write</span>
+        </div>
+        <div class="help" onclick="showHelpCard()">
+          <i class="fa-solid fa-circle-info"></i>
+        </div>
+        <div class="profile" onclick="showCard()">
+          <img src="./assets/my-av.jpeg" alt="" />
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="sidebar">
+        <ul class="topbar">
+          <li class="active"><i class="fa-solid fa-house"></i> Home</li>
+          <li><i class="fa-solid fa-bookmark"></i> Bookmark</li>
+          <li><i class="fa-solid fa-user"></i> Profile</li>
+          <li><i class="fa-solid fa-chart-simple"></i> Stats</li>
+        </ul>
+        <ul class="bottombar">
+          <li><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
+        </ul>
+      </div>
+
+      <div class="content">
+        <div class="cards" id="cards">
+          <!-- Card will be rendered here -->
+        </div>
+      </div>
+
+      <footer>
+        <div style="font-size: 20px; font-weight: bold">BlogZone</div>
+        <div style="margin: 10px 0">
+          <a href="#">About</a>
+          |
+          <a href="#">Contact</a>
+          |
+          <a href="#">Privacy Policy</a>
+        </div>
+        <div style="margin-top: 10px">
+          <a href="#" style="color: #cacfd9; margin: 0 8px"
+            ><i class="fa-brands fa-twitter"></i
+          ></a>
+          <a href="#" style="color: #cacfd9; margin: 0 8px"
+            ><i class="fa-brands fa-facebook"></i
+          ></a>
+          <a href="#" style="color: #cacfd9; margin: 0 8px"
+            ><i class="fa-brands fa-github"></i
+          ></a>
+        </div>
+        <div style="margin-top: 15px; font-size: 14px">
+          &copy; 2025 BlogZone. All rights reserved.
+        </div>
+      </footer>
+    </div>
+  </body>
+
+  <script>
+    let data = [
+      {
+        fullname: "Manish Kumar",
+        username: "@manishkumar07",
+        isVerified: true,
+        avatar: "./assets/my-av.jpeg",
+        title:
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, totam nesciunt, aspernatur tempora quidem iure et hic aliquam odit..",
+        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, totam nesciunt, aspernatur tempora quidem iure et hic aliquam odit, expedita eos incidunt!Lorem ipsum dolor",
+        banner: "./assets/blog-homepage-wireframe.png",
+        timestamp: "2 min ago",
+      },
+      {
+        fullname: "Manpreet",
+        username: "@manpreet02",
+        isVerified: false,
+        avatar: "./assets/my-av.jpeg",
+        title:
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, totam nesciunt, aspernatur tempora quidem iure et hic aliquam odit..",
+        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, totam nesciunt, aspernatur tempora quidem iure et hic aliquam odit, expedita eos incidunt!Lorem ipsum dolor",
+        banner: "./assets/blog-homepage-wireframe.png",
+        timestamp: "2 min ago",
+      },
+      {
+        fullname: "Guest",
+        username: "@guest07",
+        isVerified: false,
+        avatar: "./assets/my-av.jpeg",
+        title:
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, totam nesciunt, aspernatur tempora quidem iure et hic aliquam odit..",
+        desc: "Lorem ipsum dolor sit",
+        banner: "./assets/blog-homepage-wireframe.png",
+        timestamp: "2 min ago",
+      },
+    ];
+
+    function renderCard(data) {
+      return `
+      <div class="card">
+        <a href="">
+          <h2>
+            ${data.title}
+          </h2>
+        </a>
+        <div class="profile-section">
+          <img src="${data.avatar}" alt="" />
+          <div class="userinfo">
+            <div class="fullname">
+              ${data.fullname}
+              ${
+                data.isVerified
+                  ? '<i class="ri-verified-badge-fill" style="color: #0254f7"></i>'
+                  : ""
+              }
+            </div>
+            <div class="username">${data.username}</div>
+          </div>
+        </div>
+        <div class="desc-img">
+          <a href="">
+            <div class="desc">
+              ${data.desc}
+            </div>
+          </a>
+          <a href="">
+            <img src="${data.banner}" alt="" />
+          </a>
+        </div>
+        <div class="footer">
+          <div class="fcard ml-20">
+            <i class="fa-solid fa-thumbs-up"></i> Like
+          </div>
+          <div class="fcard">
+            <i class="fa-solid fa-bookmark"></i> Bookmark
+          </div>
+          <div class="fcard">
+            <i class="fa-solid fa-share-from-square"></i> Share
+          </div>
+          <div class="fcard mr-20">
+            <i class="fa-regular fa-clock"></i> ${data.timestamp}
+          </div>
+        </div>
+      </div>
+      `;
+    }
+
+    document.getElementById("cards").innerHTML = data.map(renderCard).join("");
+
+    // Show/hide profile card
+    function showCard() {
+      const card = document.querySelector(".profile-card");
+      card.classList.toggle("hidden");
+    }
+
+    // Show/hide profile card
+    function showHelpCard() {
+      const card = document.querySelector(".help-card");
+      card.classList.toggle("hidden");
+    }
+
+    // Copy to clipboard function
+    function copyToClipboard(event, text) {
+      event.preventDefault();
+      navigator.clipboard.writeText(text).then(() => {
+        // Optional: show feedback
+        alert("Copied to clipboard!");
+      });
+    }
+  </script>
+</html>
