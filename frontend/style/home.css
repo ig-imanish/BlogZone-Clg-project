@@ -122,7 +122,23 @@ a {
   list-style: none;
   padding: 0;
 }
-.sidebar .topbar li,
+.sidebar .topbar{
+     display: flex;
+        flex-direction: column;
+       gap: 20px;
+       margin-top: 20px;
+}
+.sidebar .topbar li{
+  padding: 12px 0px 12px 12px;
+  width: 210px;
+  border-radius: 8px;
+  color: #cacfd9;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .sidebar .bottombar li {
   margin: 20px 0px 25px 0px;
   padding: 12px 0px 12px 12px;

@@ -3,9 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlogZone</title>
+    <title>landingPage</title>
+      <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./style/home.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+    <style>
+        .nav-links{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .nav-links a {
+            color: #cacfd9;
+            text-decoration: none;
+            /* margin-right: 20px; */
+        } .nav-links a:hover {
+            color: #eeeef0;
+        }.auth-buttons{
+        margin-right: 24px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        }
+        .auth-buttons button {
+            background-color: transparent;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 6px;
+            font-size: medium;
+        }
+        .auth-buttons .login {
+            color: white;
+            border: 1px solid #cacfd9;  
+        }.auth-buttons .login:hover {
+            background-color: #252525;
+            color: 202020;
+        }
+        .auth-buttons .signUp {
+            background-color: rgb(26, 25, 25);
+            color: white;
+        }
+         .auth-buttons .signUp:hover {
+            background-color: rgb(0, 0, 0);
+         }
+         .hero{
+            margin-top: 70px;
+            background: linear-gradient(135deg, #252525, black);
+            color: white;
+            padding: 100px 0;
+         }
+        .hero .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .hero .getStartedBtn {
+            background-color: transparent;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: 2px solid #252525;
+            transition: background-color 0.3s ease;
+        }
+        .hero .getStartedBtn:hover {
+            background-color: #252525;
+        }
+    </style>
 </head>
 <body>
-    <h2>this is blogging platform!!</h2>
+     <nav>
+      <a href="">
+        <div class="logo">
+          <i class="fa-solid fa-blog"></i>
+          <div class="name">BlogZone</div>
+        </div>
+      </a>
+      <div class="nav-links">
+                <a href="#features" class="feature">Features</a>
+                <a href="#about" class="about">About</a>
+                <a href="#how-it-works" class="Works">How It Works</a>
+                <a href="#testimonials" class="testimonials">Testimonials</a>
+            </div>
+            <div class="auth-buttons">
+                <button class="login">Login</button>
+                <button class="signUp">Sign Up</button>
+            </div>
+    </nav>
+
+     <section class="hero">
+        <div class="container">
+            <h2  data-aos="fade-up">Join the Blogging Revolution Today</h2>
+            <p class="text" data-aos="fade-up" data-aos-delay="100">Start sharing your stories with the world and connect with readers who appreciate your unique perspective.</p>
+            <button class="getStartedBtn" data-aos="fade-up" data-aos-delay="200">
+                Get Started Now
+            </button>
+        </div>
+    </section>
 </body>
 </html>
