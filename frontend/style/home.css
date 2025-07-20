@@ -170,8 +170,9 @@ a {
 }
 
 .content {
-  margin-top: 90px;
-  margin-left: 190px;
+  /* margin-top: 90px;
+  margin-left: 190px; */
+      margin: 90px 0px 0px 280px;
 }
 .cards {
   height: 100%;
