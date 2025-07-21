@@ -2,10 +2,11 @@ import {data} from "../api/api.js"
 
 // Detect if we're on the profile page
 const isProfilePage = document.title === 'profile' || window.location.pathname.includes('profile');
+const isBookmarkPage = document.title === 'bookmark' || window.location.pathname.includes('bookmark');
 
 function renderCard(data) {
       // Different template for profile page
-      if (isProfilePage) {
+      if (isProfilePage || isBookmarkPage) {
         return `
         <div class="card" style="margin-top: 20px">
           <a class="heading" href="">
@@ -38,23 +39,24 @@ function renderCard(data) {
               <img src="${data.banner}" alt="" />
             </a>
           </div>
-          <div class="footer">
-            <div class="fcard ml-20">
+             <div class="footer">
+            <div class="fcard ml-20" onclick="likePost()">
               <i class="fa-solid fa-thumbs-up"></i> Like
             </div>
-            <div class="fcard">
+            <div class="fcard" onclick="bookmarkPost(this)">
               <i class="fa-solid fa-bookmark"></i> Bookmark
             </div>
-            <div class="fcard">
+            <div class="fcard" onclick="sharePost(this)">
               <i class="fa-solid fa-share-from-square"></i> Share
             </div>
-            <div class="fcard mr-20">
+            <div class="fcard mr-20"  >
               <i class="fa-regular fa-clock"></i> ${data.timestamp}
             </div>
           </div>
         </div>
         `;
       } else {
+        // console.log('Rendering default card template');
         // Default template for home page
         return `
         <div class="card">
@@ -88,16 +90,16 @@ function renderCard(data) {
             </a>
           </div>
           <div class="footer">
-            <div class="fcard ml-20">
+            <div class="fcard ml-20" onclick="likePost()">
               <i class="fa-solid fa-thumbs-up"></i> Like
             </div>
-            <div class="fcard">
+            <div class="fcard" onclick="bookmarkPost(this)">
               <i class="fa-solid fa-bookmark"></i> Bookmark
             </div>
-            <div class="fcard">
+            <div class="fcard" onclick="sharePost(this)">
               <i class="fa-solid fa-share-from-square"></i> Share
             </div>
-            <div class="fcard mr-20">
+            <div class="fcard mr-20"  >
               <i class="fa-regular fa-clock"></i> ${data.timestamp}
             </div>
           </div>
@@ -129,6 +131,70 @@ function renderCard(data) {
             </div>
             <div class="dropdown-item" onclick="deletePost(this)">
               <i class="ri-delete-bin-line"></i> Delete
+            </div>
+          `;
+          
+          // Position dropdown
+          dropdown.style.position = 'absolute';
+          dropdown.style.top = '100%';
+          dropdown.style.right = '0';
+          dropdown.style.background = '#2a2a2a';
+          dropdown.style.border = '1px solid #3d3838';
+          dropdown.style.borderRadius = '8px';
+          dropdown.style.zIndex = '1000';
+          dropdown.style.minWidth = '120px';
+          dropdown.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+          
+          // Style dropdown items
+          dropdown.querySelectorAll('.dropdown-item').forEach(item => {
+            item.style.padding = '10px 15px';
+            item.style.cursor = 'pointer';
+            item.style.color = '#cacfd9';
+            item.style.borderBottom = '1px solid #3d3838';
+            item.style.transition = 'background 0.2s';
+            
+            item.addEventListener('mouseenter', () => {
+              item.style.background = '#3d3838';
+            });
+            
+            item.addEventListener('mouseleave', () => {
+              item.style.background = 'transparent';
+            });
+          });
+          
+          // Remove border from last item
+          const lastItem = dropdown.querySelector('.dropdown-item:last-child');
+          if (lastItem) lastItem.style.borderBottom = 'none';
+          
+          // Position relative to more icon
+          moreIcon.style.position = 'relative';
+          moreIcon.appendChild(dropdown);
+        } else {
+          // Close dropdown if clicking outside
+          document.querySelectorAll('.more-dropdown').forEach(dropdown => dropdown.remove());
+        }
+      });
+    }
+
+    // bookmark page specific functionality
+    if (isBookmarkPage) {
+      // Add click handlers for more icons after cards are rendered
+      document.addEventListener('click', function(e) {
+        if (e.target.closest('.moreIcon')) {
+          e.preventDefault();
+          const moreIcon = e.target.closest('.moreIcon');
+          const card = moreIcon.closest('.card');
+          
+          // Remove any existing dropdown
+          document.querySelectorAll('.more-dropdown').forEach(dropdown => dropdown.remove());
+          
+          // Create dropdown menu
+          const dropdown = document.createElement('div');
+          dropdown.className = 'more-dropdown';
+          dropdown.innerHTML = `
+           
+            <div class="dropdown-item" onclick="deletePost(this)">
+              <i class="ri-delete-bin-line"></i> remove
             </div>
           `;
           
@@ -235,6 +301,8 @@ function renderCard(data) {
     window.showCard = showCard;
     window.showHelpCard = showHelpCard;
     window.copyToClipboard = copyToClipboard;
+    window.likePost = likePost;
+    window.bookmarkPost = bookmarkPost;
 
     // Hide cards when clicking outside
     document.addEventListener("click", function (e) {
@@ -261,3 +329,39 @@ function renderCard(data) {
       helpCard.classList.add("hidden");
       }
     });
+
+      function likePost(){
+        // Get the clicked like button element using event.target
+        const likeButton = event.target.closest('.fcard');
+        
+        // Check current background color
+        const currentBg = likeButton.style.backgroundColor;
+        
+        if(currentBg === "red" || currentBg === "rgb(255, 0, 0)") {
+          // If it's red (liked), make it normal (unlike)
+          likeButton.style.backgroundColor = "#191919";
+          console.log('Post unliked');
+        } else {
+          // If it's normal, make it red (like)
+          likeButton.style.backgroundColor = "red";
+          console.log('Post liked');
+        }
+      }
+
+      function bookmarkPost(element) {
+        // console.log('Post bookmarked/unbookmarked');
+        const bookmarkIcon = element.querySelector('i');
+        
+        // Toggle bookmark state
+        if (bookmarkIcon.classList.contains('fa-solid')) {
+          bookmarkIcon.classList.remove('fa-solid');
+          bookmarkIcon.classList.add('fa-regular');
+          console.log('Post removed from bookmarks');
+        } else {
+          bookmarkIcon.classList.remove('fa-regular');
+          bookmarkIcon.classList.add('fa-solid');
+          console.log('Post added to bookmarks');
+        }
+      }
+      
+
