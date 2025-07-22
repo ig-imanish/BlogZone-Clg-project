@@ -3,13 +3,14 @@ import {data} from "../api/api.js"
 // Detect if we're on the profile page
 const isProfilePage = document.title === 'profile' || window.location.pathname.includes('profile');
 const isBookmarkPage = document.title === 'bookmark' || window.location.pathname.includes('bookmark');
+const blogPage = document.title === 'blog' || window.location.pathname.includes('blog');
 
 function renderCard(data) {
       // Different template for profile page
       if (isProfilePage || isBookmarkPage) {
         return `
         <div class="card" style="margin-top: 20px">
-          <a class="heading" href="">
+          <a class="heading" href="blog.html?id=${data.id}">
             <h2>
               ${data.title}
             </h2>
@@ -30,12 +31,12 @@ function renderCard(data) {
             </div>
           </div>
           <div class="desc-img">
-            <a href="">
+            <a href="blog.html?id=${data.id}">
               <div class="desc">
                 ${data.desc}
               </div>
             </a>
-            <a href="">
+            <a href="blog.html?id=${data.id}">
               <img src="${data.banner}" alt="" />
             </a>
           </div>
@@ -55,12 +56,10 @@ function renderCard(data) {
           </div>
         </div>
         `;
-      } else {
-        // console.log('Rendering default card template');
-        // Default template for home page
+      }else if(blogPage) {
         return `
         <div class="card">
-          <a href="">
+          <a href="blog.html?id=${data.id}">
             <h2>
               ${data.title}
             </h2>
@@ -80,12 +79,47 @@ function renderCard(data) {
             </div>
           </div>
           <div class="desc-img">
-            <a href="">
+            <a href="blog.html?id=${data.id}">
               <div class="desc">
                 ${data.desc}
               </div>
             </a>
-            <a href="">
+            <a href="blog.html?id=${data.id}">
+              <img src="${data.banner}" alt="" />
+            </a>
+          </div>`
+      }
+       else {
+        // console.log('Rendering default card template');
+        // Default template for home page
+        return `
+        <div class="card">
+          <a href="blog.html?id=${data.id}">
+            <h2>
+              ${data.title}
+            </h2>
+          </a>
+          <div class="profile-section">
+            <img src="${data.avatar}" alt="" />
+            <div class="userinfo">
+              <div class="fullname">
+                ${data.fullname}
+                ${
+                  data.isVerified
+                    ? '<i class="ri-verified-badge-fill" style="color: #0254f7"></i>'
+                    : ""
+                }
+              </div>
+              <div class="username">${data.username}</div>
+            </div>
+          </div>
+          <div class="desc-img">
+            <a href="blog.html?id=${data.id}">
+              <div class="desc">
+                ${data.desc}
+              </div>
+            </a>
+            <a href="blog.html?id=${data.id}">
               <img src="${data.banner}" alt="" />
             </a>
           </div>

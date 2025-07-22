@@ -140,7 +140,7 @@ a {
   gap: 12px;
 }
 .sidebar .bottombar li {
-  margin: 20px 0px 25px 0px;
+  margin: 300px 0px 25px 0px;
   padding: 12px 0px 12px 12px;
   width: 210px;
   border-radius: 8px;
@@ -150,6 +150,7 @@ a {
   display: flex;
   align-items: center;
   gap: 12px;
+  background: #8f2424;
 }
 .sidebar .topbar li.active {
   background: #292929;
@@ -159,10 +160,10 @@ a {
   background: #292929;
   color: #fff;
 }
-.sidebar .bottombar li {
+/* .sidebar .bottombar li {
   margin: 180px 0px 0px 0px;
-  background: #8f2424;
-}
+  
+} */
 
 .sidebar .bottombar li:hover {
   background: #8f1818;

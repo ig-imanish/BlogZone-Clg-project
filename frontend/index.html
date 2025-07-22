@@ -20,10 +20,45 @@
     />
     <link rel="stylesheet" href="./style/home.css">
     <link rel="stylesheet" href="./style/landing.css">
+    <!-- <link rel="stylesheet" href="./style/landing-responsive.css"> -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-
 </head>
+<style>
+    
+        #menuBar {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+           
+            #menuBar {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background-color: #fff;
+                padding: 1rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .auth-buttons {
+                display: none;
+            }
+        }
+</style>
 <body>
      <nav>
       <a href="index.html">
@@ -32,13 +67,16 @@
           <div class="name">BlogZone</div>
         </div>
       </a>
-      <div class="nav-links">
+      <!-- <div id="menuBar">
+        <i class="ri-menu-3-line"></i>
+      </div> -->
+      <div class="nav-links hidden">
                 <a href="#features" class="feature">Features</a>
                 <a href="#about" class="about">About</a>
                 <a href="#how-it-works" class="Works">How It Works</a>
                 <a href="#testimonials" class="testimonials">Testimonials</a>
             </div>
-            <div class="auth-buttons">
+            <div class="auth-buttons hidden">
                 <button class="login" onclick="window.location.href='login.html'">Login</button>
                 <button class="signUp" onclick="window.location.href='register.html'">Sign Up</button>
             </div>
@@ -445,4 +483,10 @@
 
 </body>
 <script src="./src/js/landing.js"></script>
+<script>
+     document.getElementById('menuBar').addEventListener('click', () => {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('show');
+        });
+</script>
 </html>

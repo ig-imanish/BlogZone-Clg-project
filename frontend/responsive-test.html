@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Test - BlogZone</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        
+        h1 {
+            color: #6366f1;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+        
+        .test-section h2 {
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+        
+        .page-link {
+            display: inline-block;
+            background: #6366f1;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        
+        .page-link:hover {
+            background: #4f46e5;
+        }
+        
+        .responsive-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .feature-card {
+            background: #191919;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #6366f1;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status.completed {
+            background: #10b981;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .test-container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .responsive-features {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-link {
+                display: block;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>📱 BlogZone Mobile Responsive Test</h1>
+        
+        <div class="test-section">
+            <h2>🔗 Test All Pages</h2>
+            <p>Click on each page to test mobile responsiveness:</p>
+            <a href="index.html" class="page-link">🏠 Landing Page</a>
+            <a href="login.html" class="page-link">🔐 Login</a>
+            <a href="register.html" class="page-link">📝 Register</a>
+            <a href="home.html" class="page-link">🏠 Home</a>
+            <a href="profile.html" class="page-link">👤 Profile</a>
+            <a href="bookmark.html" class="page-link">🔖 Bookmarks</a>
+            <a href="stat.html" class="page-link">📊 Stats</a>
+            <a href="blog.html?id=1" class="page-link">📰 Blog Post</a>
+        </div>
+        
+        <div class="test-section">
+            <h2>✅ Responsive Features Implemented</h2>
+            <div class="responsive-features">
+                <div class="feature-card">
+                    <h3>Navigation Bar <span class="status completed">✓ Done</span></h3>
+                    <p>• Mobile-optimized navigation<br>• Hidden search on mobile<br>• Compact profile icons</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Sidebar Navigation <span class="status completed">✓ Done</span></h3>
+                    <p>• Bottom navigation on mobile<br>• Icon-based design<br>• Full-width layout</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Blog Cards <span class="status completed">✓ Done</span></h3>
+                    <p>• Single column layout<br>• Responsive images<br>• Mobile-friendly buttons</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Blog Reading Page <span class="status completed">✓ Done</span></h3>
+                    <p>• Readable typography<br>• Responsive content<br>• Mobile action buttons</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Stats Page <span class="status completed">✓ Done</span></h3>
+                    <p>• Responsive stats grid<br>• Mobile-optimized layout<br>• Touch-friendly design</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Landing Page <span class="status completed">✓ Done</span></h3>
+                    <p>• Hero section optimization<br>• Feature cards stack<br>• Mobile-first design</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Forms (Login/Register) <span class="status completed">✓ Done</span></h3>
+                    <p>• Touch-friendly inputs<br>• Responsive layouts<br>• Mobile keyboards</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔗 Navigation Links Added</h2>
+            <p><strong>Stats Page Integration:</strong></p>
+            <ul>
+                <li>✅ Home → Stats page navigation</li>
+                <li>✅ Profile → Stats page navigation</li>
+                <li>✅ Bookmarks → Stats page navigation</li>
+                <li>✅ Blog → Stats page navigation</li>
+                <li>✅ Stats → All other pages navigation</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h2>📐 How to Test</h2>
+            <p><strong>Method 1 - Browser DevTools:</strong></p>
+            <ol>
+                <li>Press F12 to open DevTools</li>
+                <li>Click the device icon (📱) to toggle device mode</li>
+                <li>Select different device sizes (iPhone, iPad, etc.)</li>
+                <li>Test each page and interaction</li>
+            </ol>
+            
+            <p><strong>Method 2 - Resize Browser:</strong></p>
+            <ol>
+                <li>Make your browser window very narrow (less than 768px)</li>
+                <li>Check if layout adapts properly</li>
+                <li>Test like buttons, navigation, etc.</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h2>🎯 Key Breakpoints</h2>
+            <p><strong>Tablet (768px and below):</strong> Main responsive layout changes</p>
+            <p><strong>Mobile (480px and below):</strong> Extra compact design optimizations</p>
+        </div>
+    </div>
+</body>
+</html>
