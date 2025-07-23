@@ -12,19 +12,13 @@ const signUp = async (req, res) => {
         }
 
         // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10,(req,res)=>{
-            if (err) {
-                return res.status(500).json({ message: 'Error hashing password' });
-            }
-        });
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create new user
         const newUser = new userModal({
             name,
             email,
-            password: hashedPassword,
-            phoneNumber,
-            age
+            password: hashedPassword
         });
         await newUser.save();
 

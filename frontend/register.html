@@ -6,6 +6,10 @@
     <title>Blog Zone - Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Toastify CSS and JS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -341,130 +345,6 @@
         <span id="toastMessage">Registration successful!</span>
     </div>
 
-    <script>
-        // Password toggle functionality
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
-            const icon = this.querySelector('i');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        });
-        
-        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
-            const confirmPasswordInput = document.getElementById('confirmPassword');
-            const icon = this.querySelector('i');
-            
-            if (confirmPasswordInput.type === 'password') {
-                confirmPasswordInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                confirmPasswordInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        });
-        
-        // Password strength indicator
-        document.getElementById('password').addEventListener('input', function() {
-            const password = this.value;
-            const strengthBar = document.getElementById('passwordStrength');
-            const strengthText = document.getElementById('passwordStrengthText');
-            
-            // Calculate password strength
-            let strength = 0;
-            if (password.length >= 8) strength += 25;
-            if (password.match(/[A-Z]/)) strength += 25;
-            if (password.match(/[0-9]/)) strength += 25;
-            if (password.match(/[^A-Za-z0-9]/)) strength += 25;
-            
-            // Update strength bar
-            strengthBar.style.width = strength + '%';
-            
-            // Update color and text based on strength
-            if (strength <= 25) {
-                strengthBar.style.backgroundColor = '#ef4444'; // red
-                strengthText.textContent = 'Weak password';
-            } else if (strength <= 50) {
-                strengthBar.style.backgroundColor = '#f59e0b'; // amber
-                strengthText.textContent = 'Moderate password';
-            } else if (strength <= 75) {
-                strengthBar.style.backgroundColor = '#10b981'; // green
-                strengthText.textContent = 'Strong password';
-            } else {
-                strengthBar.style.backgroundColor = '#3b82f6'; // blue
-                strengthText.textContent = 'Very strong password';
-            }
-        });
-        
-        // Password match validation
-        document.getElementById('confirmPassword').addEventListener('input', function() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = this.value;
-            const matchMessage = document.getElementById('passwordMatch');
-            
-            if (confirmPassword === '') {
-                matchMessage.textContent = '';
-            } else if (password === confirmPassword) {
-                matchMessage.textContent = 'Passwords match';
-                matchMessage.style.color = '#10b981'; // green
-            } else {
-                matchMessage.textContent = 'Passwords do not match';
-                matchMessage.style.color = '#ef4444'; // red
-            }
-        });
-        
-        // Form submission
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (password !== confirmPassword) {
-                document.getElementById('passwordMatch').textContent = 'Passwords do not match';
-                document.getElementById('passwordMatch').style.color = '#ef4444';
-                return;
-            }
-            
-            // Show success toast
-            const toast = document.getElementById('toast');
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            
-            // Hide toast after 3 seconds and redirect to profile
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-20', 'opacity-0');
-                // Redirect to profile page after successful registration
-                window.location.href = 'profile.html';
-            }, 3000);
-            
-            // Reset form
-            this.reset();
-            document.getElementById('passwordStrength').style.width = '0%';
-            document.getElementById('passwordStrengthText').textContent = 'Password strength';
-            document.getElementById('passwordMatch').textContent = '';
-        });
-        
-        // Add subtle animation to form inputs on focus
-        document.querySelectorAll('.form-input').forEach(input => {
-            input.addEventListener('focus', () => {
-                input.style.transform = 'translateY(-2px)';
-            });
-            
-            input.addEventListener('blur', () => {
-                input.style.transform = 'translateY(0)';
-            });
-        });
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96216027a7d34734',t:'MTc1MzAwMzE1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <script src="./src/js/auth/signup.js"></script>
+</body>
 </html>

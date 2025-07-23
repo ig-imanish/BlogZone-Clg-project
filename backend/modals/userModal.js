@@ -14,10 +14,6 @@ const userSchema=new Schema({
   password:{
     type:String,
     required:true
-  },
-  createdAt:{
-    type:Date,
-    default:Date.now
   }
 });
 
