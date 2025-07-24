@@ -125,6 +125,29 @@ function updateUserProfile() {
       }
     }
 
+    // Update main profile card on profile page
+    const profileUpperLayer = document.querySelector(".profileUpperLayer");
+    if (profileUpperLayer) {
+      const profileImage = profileUpperLayer.querySelector(".image img");
+      const usernameElement = profileUpperLayer.querySelector(".username");
+      const userIdElement = profileUpperLayer.querySelector(".userId");
+
+      if (profileImage && userData.avatar) {
+        profileImage.src = userData.avatar;
+        profileImage.onerror = function () {
+          this.src = "./assets/my-av.jpeg";
+        };
+      }
+
+      if (usernameElement && userData.name) {
+        usernameElement.textContent = userData.name;
+      }
+
+      if (userIdElement && userData.username) {
+        userIdElement.textContent = userData.username;
+      }
+    }
+
     // Update any welcome messages
     const welcomeMessages = document.querySelectorAll(
       ".welcome-message, .user-greeting"
