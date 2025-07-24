@@ -73,5 +73,6 @@ document
       alert("Login failed");
     }
 
+    localStorage.setItem("email", data.email);
     localStorage.setItem("token", data.token);
   });

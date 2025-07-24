@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { userModal } = require('../modals/userModal');
+const { userModel } = require('../models/userModel');
 
 const jwt = require('jsonwebtoken');
 
@@ -8,7 +8,7 @@ const signUp = async (req, res) => {
         const { name, email, password } = req.body;
     
         // Check if user already exists
-        const existingUser = await userModal.findOne({ email });
+        const existingUser = await userModel.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'User already exists' });
         }
@@ -17,7 +17,7 @@ const signUp = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create new user
-        const newUser = new userModal({
+        const newUser = new userModel({
             name,
             email,
             password: hashedPassword
@@ -35,7 +35,7 @@ const signUp = async (req, res) => {
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
 
-  const userExist = await userModal.findOne({ email });
+  const userExist = await userModel.findOne({ email });
   console.log(userExist);
   if (!userExist) {
     res.status(404).send({error: "User not found with this email"});
@@ -58,7 +58,7 @@ const userLogin = async (req, res) => {
         return;
       }
       if (result) {
-        res.status(200).send({token : token});
+        res.status(200).send({token : token, email : userExist.email});
       } else {
         res.status(401).send({error: "Invalid credentials"});
       }
