@@ -1,0 +1,2814 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Blog Editor</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous"
+    />
+    <style>
+      :root {
+        font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+        line-height: 1.5;
+        font-weight: 400;
+        color-scheme: light dark;
+        color: rgba(255, 255, 255, 0.87);
+        background-color: #242424;
+        --bg-color: #242424;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        color: white;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+      }
+
+      header h1 {
+        font-size: 36px;
+        font-weight: 800;
+        color: white;
+      }
+
+      header .powered-by {
+        font-size: 14px;
+        opacity: 0.7;
+      }
+
+      .editor {
+        background: var(--bg-color);
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 2px 10px 20px rgba(0, 0, 0, 0.3);
+        margin-bottom: 32px;
+      }
+
+      .editor-content {
+        display: flex;
+        flex-direction: row;
+        gap: 24px;
+      }
+
+      .content-area-section,
+      .elements-section {
+        flex: 1;
+      }
+
+      .content-area-section {
+        flex: 1.5;
+      }
+
+      .content-area-section h3,
+      .elements-section h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 16px;
+      }
+
+      .content-area {
+        min-height: 400px;
+        max-width: 100%;
+        background: var(--bg-color);
+        padding: 24px;
+        border: 2px dashed #718096;
+        border-radius: 12px;
+        overflow-y: auto;
+      }
+
+      .elements-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+      }
+
+      .element-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 16px;
+        border-radius: 12px;
+        cursor: move;
+        display: flex;
+        align-items: center;
+        transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        min-height: 60px;
+        width: 100%;
+      }
+
+      .element-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        border-color: rgba(66, 153, 225, 0.5);
+      }
+
+      .element-card i {
+        margin-right: 8px;
+        font-size: 18px;
+        color: white;
+      }
+
+      .element-card span {
+        font-weight: 500;
+        color: #ffffff;
+        font-size: 14px;
+      }
+
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      input[type="checkbox"] {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid #718096;
+        border-radius: 6px;
+        position: relative;
+        cursor: pointer;
+        margin-right: 12px;
+        transition: background 0.2s, border-color 0.2s;
+        flex-shrink: 0;
+      }
+
+      input[type="checkbox"]:checked {
+        background: #4299e1;
+        border-color: #4299e1;
+      }
+
+      input[type="checkbox"]:checked::after {
+        content: "✓";
+        color: white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .title-input {
+        width: 100%;
+        padding: 12px;
+        background: var(--bg-color);
+        border: 1px solid rgb(31, 31, 31);
+        border-radius: 8px;
+        color: #e2e8f0;
+        font-size: 16px;
+        margin-bottom: 24px;
+      }
+
+      .title-input:focus {
+        outline: none;
+        border: 1px solid #4299e1;
+        box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.3);
+      }
+
+      .title-input::placeholder {
+        color: gray;
+      }
+
+      .publish-btn {
+        width: 100%;
+        margin-top: 20px;
+        padding: 12px;
+        background: #4299e1;
+        border: none;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .publish-btn:hover {
+        background: #2b6cb0;
+      }
+
+      .publish-btn i {
+        margin-right: 8px;
+      }
+
+      .element-container {
+        padding: 16px;
+        padding-left: 48px;
+        background: #1b1b1b;
+        border: 1px solid #1b1b1b;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        position: relative;
+      }
+
+      .drag-handle {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        cursor: move;
+        color: white;
+        transition: color 0.2s;
+        z-index: 5;
+      }
+
+      .drag-handle:hover {
+        color: #4299e1;
+      }
+
+      .element-input,
+      .element-textarea {
+        width: 100%;
+        padding: 12px;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #e2e8f0;
+        font-size: 16px;
+        resize: none;
+        min-height: auto;
+      }
+
+      .element-input::placeholder,
+      .element-textarea::placeholder {
+        color: gray;
+        font-style: italic;
+      }
+
+      .element-input:focus,
+      .element-textarea:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+      }
+
+      .customization-toolbar {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 8px;
+        background: #1b1b1b;
+        border-radius: 6px;
+        border: 1px solid #4a5568;
+      }
+
+      .toolbar-group {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        border-right: 1px solid #4a5568;
+        padding-right: 8px;
+        margin-right: 4px;
+      }
+
+      .toolbar-group:last-child {
+        border-right: none;
+        padding-right: 0;
+        margin-right: 0;
+      }
+
+      .toolbar-select,
+      .toolbar-input {
+        background: #1b1b1b;
+        border: 1px solid #4a5568;
+        border-radius: 4px;
+        color: #e2e8f0;
+        padding: 4px 8px;
+        font-size: 12px;
+        min-width: 80px;
+      }
+
+      .toolbar-select:focus,
+      .toolbar-input:focus {
+        outline: none;
+        border-color: #4299e1;
+      }
+
+      .toolbar-button {
+        background: var(--bg-color);
+        border: 1px solid #4a5568;
+        border-radius: 4px;
+        color: #e2e8f0;
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .toolbar-button:hover {
+        background: #4299e1;
+      }
+
+      .toolbar-button.active {
+        background: #4299e1;
+        color: white;
+      }
+
+      .color-picker {
+        width: 30px;
+        height: 24px;
+        border: 1px solid #4a5568;
+        border-radius: 4px;
+        cursor: pointer;
+        background: var(--bg-color);
+      }
+
+      .toolbar-label {
+        font-size: 11px;
+        color: #a0aec0;
+        margin-right: 4px;
+      }
+
+      .remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        background: #e53e3e;
+        color: #ffffff;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+        transition: background 0.2s, transform 0.2s;
+        z-index: 10;
+      }
+
+      .remove-btn:hover {
+        background: #c53030;
+        transform: scale(1.1);
+      }
+
+      /* Tags Section Styles */
+      .tags-section {
+        margin-bottom: 24px;
+      }
+
+      .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        color: #e2e8f0;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        user-select: none;
+      }
+
+      .tag:hover {
+        background: rgba(66, 153, 225, 0.3);
+        border-color: rgba(66, 153, 225, 0.5);
+        transform: translateY(-2px);
+      }
+
+      .tag.selected {
+        background: linear-gradient(135deg, #4299e1, #9f7aea);
+        border-color: #4299e1;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+      }
+
+      .tag.selected:hover {
+        background: linear-gradient(135deg, #2b6cb0, #805ad5);
+        transform: translateY(-2px);
+      }
+
+      @media (max-width: 768px) {
+        .editor-content {
+          flex-direction: column;
+        }
+        .elements-grid {
+          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        }
+        .content-area {
+          min-height: 300px;
+        }
+        .element-card {
+          padding: 12px;
+          min-height: 50px;
+        }
+        .tags-container {
+          gap: 6px;
+        }
+        .tag {
+          padding: 6px 12px;
+          font-size: 13px;
+        }
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, */
+        /* sans-serif; */
+      }
+      body {
+        /* background: #1a202c; */
+        color: white;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+      }
+      header h1 {
+        font-size: 36px;
+        font-weight: 800;
+        color: white;
+        /* background: linear-gradient(to right, #4299e1, #9f7aea); */
+        -webkit-background-clip: text;
+        background-clip: text;
+        /* color: transparent; */
+      }
+      header .powered-by {
+        font-size: 14px;
+        opacity: 0.7;
+      }
+      .editor {
+        background: var(--bg-color);
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 2px 10px 20px rgba(0, 0, 0, 0.3);
+        margin-bottom: 32px;
+      }
+      .editor-content {
+        display: flex;
+        flex-direction: row;
+        gap: 24px;
+      }
+      .content-area-section,
+      .elements-section {
+        flex: 1;
+      }
+      .content-area-section {
+        flex: 1.5;
+      }
+      .elements-section {
+        flex: 1;
+      }
+      .content-area-section h3,
+      .elements-section h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 16px;
+      }
+      .content-area {
+        min-height: 400px;
+        max-width: 100%;
+        background: var(--bg-color);
+        padding: 24px;
+        border: 2px dashed #718096;
+        border-radius: 12px;
+        overflow-y: auto;
+      }
+      .elements-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+      }
+      .element-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 16px;
+        border-radius: 12px;
+        cursor: move;
+        display: flex;
+        align-items: center;
+        transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        min-height: 60px;
+        width: 100%;
+      }
+      .element-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        border-color: rgba(66, 153, 225, 0.5);
+      }
+      .element-card i {
+        margin-right: 8px;
+        font-size: 18px;
+        background: white;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .element-card span {
+        font-weight: 500;
+        color: #ffffff;
+        font-size: 14px;
+      }
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      input[type="checkbox"] {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid #718096;
+        border-radius: 6px;
+        position: relative;
+        cursor: pointer;
+        margin-right: 12px;
+        transition: background 0.2s, border-color 0.2s;
+        flex-shrink: 0;
+      }
+      input[type="checkbox"]:checked {
+        border-color: transparent;
+      }
+      input[type="checkbox"]:checked::after {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        color: #ffffff;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        font-size: 14px;
+        transition: transform 0.2s ease-in-out;
+      }
+      input[type="checkbox"]:checked::after {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      .title-input {
+        width: 100%;
+        padding: 12px;
+        background: var(--bg-color);
+        border: 1px solid rgb(31, 31, 31);
+        border-radius: 8px;
+        color: #e2e8f0;
+        font-size: 16px;
+        margin-bottom: 24px;
+      }
+      .title-input:focus {
+        outline: none;
+        border: 1px solid rgb(31, 31, 31);
+        box-shadow: 0 0 0 2px var(--bg-color);
+      }
+      .title-input::placeholder {
+        color: gray;
+      }
+      .publish-btn {
+        width: 100%;
+        margin-top: 20px;
+        padding: 12px;
+        background: var(--bg-color);
+        border: 1px solid #718096;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .publish-btn:hover {
+        background: #1b1b1b;
+      }
+      .publish-btn i {
+        margin-right: 8px;
+      }
+      .element-container {
+        padding: 16px;
+        padding-left: 48px;
+        background: #1b1b1b;
+        border: 1px solid #1b1b1b;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        position: relative;
+      }
+      .drag-handle {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        cursor: move;
+        color: white;
+        transition: color 0.2s;
+        z-index: 5;
+      }
+
+      .element-input,
+      .element-textarea {
+        width: 100%;
+        padding: 12px;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #e2e8f0;
+        font-size: 16px;
+        resize: none;
+        min-height: auto;
+      }
+      .element-input::placeholder,
+      .element-textarea::placeholder {
+        color: gray;
+        font-style: italic;
+      }
+      .element-input:focus,
+      .element-textarea:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+      }
+      .customization-toolbar {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 8px;
+        background: #1b1b1b;
+        border-radius: 6px;
+        border: 1px solid #4a5568;
+      }
+      .toolbar-group {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        border-right: 1px solid #4a5568;
+        padding-right: 8px;
+        margin-right: 4px;
+      }
+      .toolbar-group:last-child {
+        border-right: none;
+        padding-right: 0;
+        margin-right: 0;
+      }
+      .toolbar-select,
+      .toolbar-input {
+        background: #1b1b1b;
+        border: 1px solid #1b1b1b;
+        border-radius: 4px;
+        color: #e2e8f0;
+        padding: 4px 8px;
+        font-size: 12px;
+        min-width: 80px;
+      }
+      .toolbar-select:focus,
+      .toolbar-input:focus {
+        outline: none;
+        border-color: #1b1b1b;
+      }
+      .toolbar-button {
+        background: var(--bg-color);
+        border: 1px solid #1b1b1b;
+        border-radius: 4px;
+        color: #e2e8f0;
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .toolbar-button:hover {
+        background: #1b1b1b;
+      }
+      .toolbar-button.active {
+        background: #1b1b1b;
+      }
+      .color-picker {
+        width: 30px;
+        height: 24px;
+        border: 1px solid #4a5568;
+        border-radius: 4px;
+        cursor: pointer;
+        background: var(--bg-color);
+      }
+      .toolbar-label {
+        font-size: 11px;
+        color: #a0aec0;
+        margin-right: 4px;
+      }
+      .preview {
+        display: none;
+      }
+      .preview h3 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #ffffff;
+      }
+      .preview p {
+        color: #cbd5e0;
+      }
+      .preview a {
+        color: #63b3ed;
+        text-decoration: underline;
+      }
+      .preview a button {
+        background: #4299e1;
+        color: #ffffff;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .preview a button:hover {
+        background: #2b6cb0;
+      }
+      .preview img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+      }
+      .preview blockquote {
+        border-left: 4px solid #4299e1;
+        padding-left: 16px;
+        color: #cbd5e0;
+        font-style: italic;
+      }
+      .preview ul {
+        list-style: disc;
+        padding-left: 24px;
+        color: #cbd5e0;
+      }
+      .preview pre {
+        background: #1a202c;
+        color: #68d391;
+        padding: 12px;
+        border-radius: 6px;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+      }
+      .remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        background: #e53e3e;
+        color: #ffffff;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+        transition: background 0.2s, transform 0.2s;
+        z-index: 10;
+      }
+      .remove-btn:hover {
+        background: #c53030;
+        transform: scale(1.1);
+      }
+      .post {
+        background: #2d3748;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .post:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      }
+      .post h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 16px;
+      }
+      /* Tags Section Styles */
+      .tags-section {
+        margin-bottom: 24px;
+      }
+
+      .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .tag {
+        display: inline-block;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        color: #e2e8f0;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        user-select: none;
+      }
+
+      .tag:hover {
+        background: rgba(66, 153, 225, 0.3);
+        border-color: rgba(66, 153, 225, 0.5);
+        transform: translateY(-2px);
+      }
+
+      .tag.selected {
+        background: linear-gradient(135deg, #4299e1, #9f7aea);
+        border-color: #4299e1;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+      }
+
+      .tag.selected:hover {
+        background: linear-gradient(135deg, #2b6cb0, #805ad5);
+        transform: translateY(-2px);
+      }
+
+      @media (max-width: 768px) {
+        .editor-content {
+          flex-direction: column;
+        }
+        .elements-grid {
+          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        }
+        .content-area {
+          min-height: 300px;
+        }
+        .element-card {
+          padding: 12px;
+          min-height: 50px;
+        }
+        .tags-container {
+          gap: 6px;
+        }
+        .tag {
+          padding: 6px 12px;
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Create Blog</h1>
+        <div class="powered-by">Powered by BristoHQ</div>
+      </header>
+
+      <!-- Drag-and-Drop Editor -->
+      <div class="editor">
+        <div class="title-section">
+          <label for="title" class="block text-sm font-medium text-gray-300"
+            >Blog Title</label
+          >
+          <input
+            type="text"
+            id="title"
+            class="title-input"
+            placeholder="Enter a catchy title..."
+          />
+        </div>
+        <div class="tags-section">
+          <label for="tags" class="block text-sm font-medium text-gray-300"
+            >Select Tags</label
+          >
+          <div class="tags-container">
+            <span class="tag" data-tag="programming">#programming</span>
+            <span class="tag" data-tag="tech">#tech</span>
+            <span class="tag" data-tag="gaming">#gaming</span>
+            <span class="tag" data-tag="movies">#movies</span>
+            <span class="tag" data-tag="music">#music</span>
+            <span class="tag" data-tag="travel">#travel</span>
+            <span class="tag" data-tag="food">#food</span>
+            <span class="tag" data-tag="sports">#sports</span>
+            <span class="tag" data-tag="photography">#photography</span>
+            <span class="tag" data-tag="business">#business</span>
+            <span class="tag" data-tag="lifestyle">#lifestyle</span>
+            <span class="tag" data-tag="health">#health</span>
+          </div>
+        </div>
+        <div class="editor-content">
+          <div class="content-area-section">
+            <h3>Content Editor</h3>
+            <div id="content-area" class="content-area"></div>
+          </div>
+          <div class="elements-section">
+            <h3>Add Content Elements</h3>
+            <div class="elements-grid">
+              <div class="checkbox-container">
+                <input type="checkbox" data-type="heading" name="heading" />
+                <div draggable="true" data-type="heading" class="element-card">
+                  <i class="fas fa-heading"></i>
+                  <span>Heading</span>
+                </div>
+              </div>
+              <div class="checkbox-container">
+                <input type="checkbox" data-type="paragraph" name="paragraph" />
+                <div
+                  draggable="true"
+                  data-type="paragraph"
+                  class="element-card"
+                >
+                  <i class="fas fa-paragraph"></i>
+                  <span>Paragraph</span>
+                </div>
+              </div>
+              <div class="checkbox-container">
+                <input type="checkbox" data-type="link" name="link" />
+                <div draggable="true" data-type="link" class="element-card">
+                  <i class="fas fa-link"></i>
+                  <span>Link</span>
+                </div>
+              </div>
+              <div class="checkbox-container">
+                <input type="checkbox" data-type="button" name="button" />
+                <div draggable="true" data-type="button" class="element-card">
+                  <i class="fas fa-square"></i>
+                  <span>Button</span>
+                </div>
+              </div>
+              <div class="checkbox-container">
+                <input type="checkbox" data-type="image" name="image" />
+                <div draggable="true" data-type="image" class="element-card">
+                  <i class="fas fa-image"></i>
+                  <span>Image</span>
+                </div>
+              </div>
+              <div class="checkbox-container">
+                <input
+                  type="checkbox"
+                  data-type="blockquote"
+                  name="blockquote"
+                />
+                <div
+                  draggable="true"
+                  data-type="blockquote"
+                  class="element-card"
+                >
+                  <i class="fas fa-quote-left"></i>
+                  <span>Blockquote</span>
+                </div>
+              </div>
+              <div class="checkbox-container">
+                <input type="checkbox" data-type="list" name="list" />
+                <div draggable="true" data-type="list" class="element-card">
+                  <i class="fas fa-list-ul"></i>
+                  <span>List</span>
+                </div>
+              </div>
+              <div class="checkbox-container">
+                <input type="checkbox" data-type="code" name="code" />
+                <div draggable="true" data-type="code" class="element-card">
+                  <i class="fas fa-code"></i>
+                  <span>Code</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button onclick="createPost()" class="publish-btn">
+          <i class="fas fa-paper-plane"></i> Publish Post
+        </button>
+      </div>
+
+      <!-- Posts Display -->
+      <div id="posts" class="posts"></div>
+    </div>
+
+    <script>
+      let contentElements = [];
+      let selectedTypes = [];
+      let selectedTags = [];
+
+      // Handle tag selection
+      document.addEventListener("DOMContentLoaded", function () {
+        const tags = document.querySelectorAll(".tag");
+        tags.forEach((tag) => {
+          tag.addEventListener("click", function () {
+            const tagValue = this.dataset.tag;
+
+            if (this.classList.contains("selected")) {
+              // Deselect tag
+              this.classList.remove("selected");
+              selectedTags = selectedTags.filter((t) => t !== tagValue);
+            } else {
+              // Select tag
+              this.classList.add("selected");
+              selectedTags.push(tagValue);
+            }
+
+            console.log("Selected tags:", selectedTags);
+          });
+        });
+      });
+
+      // Handle checkbox selection
+      document
+        .querySelectorAll('input[type="checkbox"]')
+        .forEach((checkbox) => {
+          checkbox.addEventListener("change", (e) => {
+            const type = e.target.dataset.type;
+            if (e.target.checked) {
+              selectedTypes.push(type);
+            } else {
+              selectedTypes = selectedTypes.filter((t) => t !== type);
+            }
+          });
+        });
+
+      // Handle drag start
+      const draggables = document.querySelectorAll('[draggable="true"]');
+      draggables.forEach((draggable) => {
+        draggable.addEventListener("dragstart", (e) => {
+          const type = e.target.dataset.type;
+          const types =
+            selectedTypes.length > 0 && selectedTypes.includes(type)
+              ? selectedTypes
+              : [type];
+          e.dataTransfer.setData("text/plain", JSON.stringify(types));
+        });
+      });
+
+      // Allow dropping in content area
+      const contentArea = document.getElementById("content-area");
+      contentArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+      });
+
+      // Handle drop in content area
+      contentArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        try {
+          const types = JSON.parse(e.dataTransfer.getData("text/plain"));
+          types.forEach((type) => addElement(type));
+          selectedTypes = [];
+          document
+            .querySelectorAll('input[type="checkbox"]')
+            .forEach((checkbox) => (checkbox.checked = false));
+        } catch (error) {
+          console.error("Error parsing dropped data:", error);
+        }
+      });
+
+      // Parse [Text](URL) syntax and fix URL format
+      function parseLinkOrButton(input) {
+        const regex = /\[(.+?)\]\((.+?)\)/;
+        const match = input.match(regex);
+        if (match) {
+          let url = match[2].trim();
+          // Add protocol if missing
+          if (
+            url &&
+            !url.startsWith("http://") &&
+            !url.startsWith("https://") &&
+            !url.startsWith("#")
+          ) {
+            url = "https://" + url;
+          }
+          return { text: match[1], url: url };
+        }
+        return { text: input || "Link", url: "#" };
+      }
+
+      // Add element to content area with real-time editing and customization
+      function addElement(
+        type,
+        text = "",
+        url = "",
+        id = Date.now(),
+        customization = {}
+      ) {
+        const elementDiv = document.createElement("div");
+        elementDiv.className = "element-container draggable-element";
+        elementDiv.draggable = true;
+        elementDiv.dataset.id = id;
+        elementDiv.dataset.type = type; // Add data-type attribute
+
+        // Default customization values
+        const defaultCustomization = {
+          fontFamily: customization.fontFamily || "inherit",
+          fontSize: customization.fontSize || "16px",
+          fontColor: customization.fontColor || "#e2e8f0",
+          backgroundColor: customization.backgroundColor || "transparent",
+          textAlign: customization.textAlign || "left",
+          fontWeight: customization.fontWeight || "normal",
+          fontStyle: customization.fontStyle || "normal",
+          imageSize: customization.imageSize || "medium",
+          textDecoration: customization.textDecoration || "underline",
+          buttonSize: customization.buttonSize || "medium",
+          borderRadius: customization.borderRadius || "4px",
+          listStyle: customization.listStyle || "disc",
+        };
+
+        // Function to apply customization to existing elements
+        function applyCustomizationToElement(elementDiv, customization) {
+          const elementType = elementDiv.getAttribute("data-type");
+
+          if (
+            elementType === "heading" ||
+            elementType === "paragraph" ||
+            elementType === "blockquote"
+          ) {
+            const editableElement = elementDiv.querySelector(
+              '[contenteditable="true"]'
+            );
+            if (editableElement) {
+              editableElement.style.fontFamily =
+                customization.fontFamily || "inherit";
+              editableElement.style.color =
+                customization.fontColor || "#e2e8f0";
+              editableElement.style.fontSize = customization.fontSize || "16px";
+              editableElement.style.fontWeight =
+                customization.fontWeight || "normal";
+              editableElement.style.fontStyle =
+                customization.fontStyle || "normal";
+              editableElement.style.textAlign =
+                customization.textAlign || "left";
+              editableElement.style.margin = "0";
+              editableElement.style.outline = "none";
+              editableElement.style.lineHeight = "1.6";
+            }
+          } else if (elementType === "image") {
+            const img = elementDiv.querySelector("img");
+            if (img) {
+              let maxWidth = "100%";
+              switch (customization.imageSize) {
+                case "small":
+                  maxWidth = "200px";
+                  break;
+                case "medium":
+                  maxWidth = "400px";
+                  break;
+                case "large":
+                  maxWidth = "600px";
+                  break;
+                case "full":
+                  maxWidth = "100%";
+                  break;
+              }
+              img.style.maxWidth = maxWidth;
+              img.style.height = "auto";
+              img.style.display = "block";
+              img.style.margin =
+                customization.textAlign === "center"
+                  ? "0 auto"
+                  : customization.textAlign === "right"
+                  ? "0 0 0 auto"
+                  : "0 auto 0 0";
+            }
+            const imgContainer = elementDiv.querySelector(
+              "div[style*='text-align']"
+            );
+            if (imgContainer) {
+              imgContainer.style.textAlign = customization.textAlign || "left";
+            }
+          } else if (elementType === "link") {
+            const linkPreview = elementDiv.querySelector("a");
+            if (linkPreview) {
+              linkPreview.style.color = customization.fontColor || "#63b3ed";
+              linkPreview.style.fontSize = customization.fontSize || "16px";
+              linkPreview.style.textDecoration =
+                customization.textDecoration || "underline";
+            }
+            const linkContainer = elementDiv.querySelector("div");
+            if (linkContainer) {
+              linkContainer.style.textAlign = customization.textAlign || "left";
+            }
+          } else if (elementType === "button") {
+            const buttonElement = elementDiv.querySelector("button");
+            if (buttonElement) {
+              buttonElement.style.backgroundColor =
+                customization.backgroundColor || "#4299e1";
+              buttonElement.style.color = customization.fontColor || "#ffffff";
+              buttonElement.style.borderRadius =
+                customization.borderRadius || "4px";
+
+              let padding = "8px 16px";
+              let fontSize = "14px";
+              switch (customization.buttonSize) {
+                case "small":
+                  padding = "6px 12px";
+                  fontSize = "12px";
+                  break;
+                case "medium":
+                  padding = "8px 16px";
+                  fontSize = "14px";
+                  break;
+                case "large":
+                  padding = "12px 24px";
+                  fontSize = "16px";
+                  break;
+              }
+              buttonElement.style.padding = padding;
+              buttonElement.style.fontSize = fontSize;
+            }
+            const buttonContainer = elementDiv.querySelector("div");
+            if (buttonContainer) {
+              buttonContainer.style.textAlign =
+                customization.textAlign || "left";
+            }
+          } else if (elementType === "list") {
+            const listElement = elementDiv.querySelector("ol, ul");
+            if (listElement) {
+              listElement.style.listStyleType =
+                customization.listStyle || "disc";
+              listElement.style.fontFamily =
+                customization.fontFamily || "inherit";
+              listElement.style.color = customization.fontColor || "#cbd5e0";
+              listElement.style.fontSize = customization.fontSize || "14px";
+              listElement.style.textAlign = customization.textAlign || "left";
+            }
+          }
+        }
+
+        // Create customization toolbar
+        function createCustomizationToolbar(elementType, customization) {
+          const toolbar = document.createElement("div");
+          toolbar.className = "customization-toolbar";
+
+          if (
+            elementType === "heading" ||
+            elementType === "paragraph" ||
+            elementType === "blockquote"
+          ) {
+            // Font family group
+            const fontGroup = document.createElement("div");
+            fontGroup.className = "toolbar-group";
+
+            const fontLabel = document.createElement("span");
+            fontLabel.className = "toolbar-label";
+            fontLabel.textContent = "Font:";
+
+            const fontSelect = document.createElement("select");
+            fontSelect.className = "toolbar-select";
+            fontSelect.innerHTML = `
+              <option value="inherit">Default</option>
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="'Times New Roman', serif">Times</option>
+              <option value="'Courier New', monospace">Courier</option>
+              <option value="Helvetica, sans-serif">Helvetica</option>
+              <option value="Verdana, sans-serif">Verdana</option>
+            `;
+            fontSelect.value = customization.fontFamily;
+
+            fontGroup.appendChild(fontLabel);
+            fontGroup.appendChild(fontSelect);
+
+            // Font size group
+            const sizeGroup = document.createElement("div");
+            sizeGroup.className = "toolbar-group";
+
+            const sizeLabel = document.createElement("span");
+            sizeLabel.className = "toolbar-label";
+            sizeLabel.textContent = "Size:";
+
+            const sizeSelect = document.createElement("select");
+            sizeSelect.className = "toolbar-select";
+            if (elementType === "heading") {
+              sizeSelect.innerHTML = `
+                <option value="20px">Small</option>
+                <option value="24px">Medium</option>
+                <option value="28px">Large</option>
+                <option value="32px">X-Large</option>
+              `;
+              sizeSelect.value = customization.fontSize || "24px";
+            } else {
+              sizeSelect.innerHTML = `
+                <option value="12px">Small</option>
+                <option value="14px">Medium</option>
+                <option value="16px">Large</option>
+                <option value="18px">X-Large</option>
+              `;
+              sizeSelect.value = customization.fontSize || "16px";
+            }
+
+            sizeGroup.appendChild(sizeLabel);
+            sizeGroup.appendChild(sizeSelect);
+
+            // Color group
+            const colorGroup = document.createElement("div");
+            colorGroup.className = "toolbar-group";
+
+            const colorLabel = document.createElement("span");
+            colorLabel.className = "toolbar-label";
+            colorLabel.textContent = "Color:";
+
+            const colorPicker = document.createElement("input");
+            colorPicker.type = "color";
+            colorPicker.className = "color-picker";
+            colorPicker.value =
+              customization.fontColor === "#e2e8f0"
+                ? "#ffffff"
+                : customization.fontColor;
+
+            colorGroup.appendChild(colorLabel);
+            colorGroup.appendChild(colorPicker);
+
+            // Style group
+            const styleGroup = document.createElement("div");
+            styleGroup.className = "toolbar-group";
+
+            const boldBtn = document.createElement("button");
+            boldBtn.className = `toolbar-button ${
+              customization.fontWeight === "bold" ? "active" : ""
+            }`;
+            boldBtn.innerHTML = "<b>B</b>";
+            boldBtn.title = "Bold";
+
+            const italicBtn = document.createElement("button");
+            italicBtn.className = `toolbar-button ${
+              customization.fontStyle === "italic" ? "active" : ""
+            }`;
+            italicBtn.innerHTML = "<i>I</i>";
+            italicBtn.title = "Italic";
+
+            styleGroup.appendChild(boldBtn);
+            styleGroup.appendChild(italicBtn);
+
+            // Alignment group
+            const alignGroup = document.createElement("div");
+            alignGroup.className = "toolbar-group";
+
+            const alignLabel = document.createElement("span");
+            alignLabel.className = "toolbar-label";
+            alignLabel.textContent = "Align:";
+
+            const alignSelect = document.createElement("select");
+            alignSelect.className = "toolbar-select";
+            alignSelect.innerHTML = `
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+              <option value="justify">Justify</option>
+            `;
+            alignSelect.value = customization.textAlign;
+
+            alignGroup.appendChild(alignLabel);
+            alignGroup.appendChild(alignSelect);
+
+            toolbar.appendChild(fontGroup);
+            toolbar.appendChild(sizeGroup);
+            toolbar.appendChild(colorGroup);
+            toolbar.appendChild(styleGroup);
+            toolbar.appendChild(alignGroup);
+
+            // Event listeners
+            fontSelect.addEventListener("change", () => updateElementStyle());
+            sizeSelect.addEventListener("change", () => updateElementStyle());
+            colorPicker.addEventListener("change", () => updateElementStyle());
+            alignSelect.addEventListener("change", () => updateElementStyle());
+
+            boldBtn.addEventListener("click", () => {
+              boldBtn.classList.toggle("active");
+              updateElementStyle();
+            });
+
+            italicBtn.addEventListener("click", () => {
+              italicBtn.classList.toggle("active");
+              updateElementStyle();
+            });
+
+            function updateElementStyle() {
+              const newCustomization = {
+                fontFamily: fontSelect.value,
+                fontSize: sizeSelect.value,
+                fontColor: colorPicker.value,
+                textAlign: alignSelect.value,
+                fontWeight: boldBtn.classList.contains("active")
+                  ? "bold"
+                  : "normal",
+                fontStyle: italicBtn.classList.contains("active")
+                  ? "italic"
+                  : "normal",
+              };
+
+              // Update element data
+              const element = contentElements.find(
+                (el) => el.id === elementDiv.dataset.id
+              );
+              if (element) {
+                element.customization = {
+                  ...element.customization,
+                  ...newCustomization,
+                };
+              }
+
+              // Apply styles directly to the contentEditable element
+              const contentEditableElement = elementDiv.querySelector(
+                '[contenteditable="true"]'
+              );
+              if (contentEditableElement) {
+                contentEditableElement.style.fontFamily =
+                  newCustomization.fontFamily;
+                contentEditableElement.style.fontSize =
+                  newCustomization.fontSize;
+                contentEditableElement.style.color = newCustomization.fontColor;
+                contentEditableElement.style.textAlign =
+                  newCustomization.textAlign;
+                contentEditableElement.style.fontWeight =
+                  newCustomization.fontWeight;
+                contentEditableElement.style.fontStyle =
+                  newCustomization.fontStyle;
+                contentEditableElement.style.margin = "0";
+                contentEditableElement.style.outline = "none";
+                contentEditableElement.style.lineHeight = "1.6";
+              }
+            }
+          } else if (elementType === "link") {
+            // Link text style group
+            const textStyleGroup = document.createElement("div");
+            textStyleGroup.className = "toolbar-group";
+
+            const sizeLabel = document.createElement("span");
+            sizeLabel.className = "toolbar-label";
+            sizeLabel.textContent = "Size:";
+
+            const sizeSelect = document.createElement("select");
+            sizeSelect.className = "toolbar-select";
+            sizeSelect.innerHTML = `
+              <option value="12px">Small</option>
+              <option value="14px">Medium</option>
+              <option value="16px">Large</option>
+              <option value="18px">X-Large</option>
+            `;
+            sizeSelect.value = customization.fontSize || "16px";
+
+            const colorLabel = document.createElement("span");
+            colorLabel.className = "toolbar-label";
+            colorLabel.textContent = "Color:";
+
+            const colorPicker = document.createElement("input");
+            colorPicker.type = "color";
+            colorPicker.className = "color-picker";
+            colorPicker.value = customization.fontColor || "#63b3ed";
+
+            textStyleGroup.appendChild(sizeLabel);
+            textStyleGroup.appendChild(sizeSelect);
+            textStyleGroup.appendChild(colorLabel);
+            textStyleGroup.appendChild(colorPicker);
+
+            // Link decoration group
+            const decorationGroup = document.createElement("div");
+            decorationGroup.className = "toolbar-group";
+
+            const decorationLabel = document.createElement("span");
+            decorationLabel.className = "toolbar-label";
+            decorationLabel.textContent = "Style:";
+
+            const decorationSelect = document.createElement("select");
+            decorationSelect.className = "toolbar-select";
+            decorationSelect.innerHTML = `
+              <option value="underline">Underline</option>
+              <option value="none">No underline</option>
+              <option value="overline">Overline</option>
+            `;
+            decorationSelect.value =
+              customization.textDecoration || "underline";
+
+            decorationGroup.appendChild(decorationLabel);
+            decorationGroup.appendChild(decorationSelect);
+
+            // Alignment group
+            const alignGroup = document.createElement("div");
+            alignGroup.className = "toolbar-group";
+
+            const alignLabel = document.createElement("span");
+            alignLabel.className = "toolbar-label";
+            alignLabel.textContent = "Align:";
+
+            const alignSelect = document.createElement("select");
+            alignSelect.className = "toolbar-select";
+            alignSelect.innerHTML = `
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+            `;
+            alignSelect.value = customization.textAlign || "left";
+
+            alignGroup.appendChild(alignLabel);
+            alignGroup.appendChild(alignSelect);
+
+            toolbar.appendChild(textStyleGroup);
+            toolbar.appendChild(decorationGroup);
+            toolbar.appendChild(alignGroup);
+
+            // Event listeners
+            sizeSelect.addEventListener("change", () => updateLinkStyle());
+            colorPicker.addEventListener("change", () => updateLinkStyle());
+            decorationSelect.addEventListener("change", () =>
+              updateLinkStyle()
+            );
+            alignSelect.addEventListener("change", () => updateLinkStyle());
+
+            function updateLinkStyle() {
+              const newCustomization = {
+                fontSize: sizeSelect.value,
+                fontColor: colorPicker.value,
+                textDecoration: decorationSelect.value,
+                textAlign: alignSelect.value,
+              };
+
+              // Update element data
+              const element = contentElements.find(
+                (el) => el.id === elementDiv.dataset.id
+              );
+              element.customization = {
+                ...element.customization,
+                ...newCustomization,
+              };
+
+              // Apply styles to link preview
+              const linkPreview = editableElement.querySelector("a");
+              if (linkPreview) {
+                linkPreview.style.cssText = `
+                  color: ${newCustomization.fontColor};
+                  font-size: ${newCustomization.fontSize};
+                  text-decoration: ${newCustomization.textDecoration};
+                  cursor: pointer;
+                `;
+              }
+              editableElement.style.textAlign = newCustomization.textAlign;
+            }
+          } else if (elementType === "button") {
+            // Button style group
+            const styleGroup = document.createElement("div");
+            styleGroup.className = "toolbar-group";
+
+            const sizeLabel = document.createElement("span");
+            sizeLabel.className = "toolbar-label";
+            sizeLabel.textContent = "Size:";
+
+            const sizeSelect = document.createElement("select");
+            sizeSelect.className = "toolbar-select";
+            sizeSelect.innerHTML = `
+              <option value="small">Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
+            `;
+            sizeSelect.value = customization.buttonSize || "medium";
+
+            const bgColorLabel = document.createElement("span");
+            bgColorLabel.className = "toolbar-label";
+            bgColorLabel.textContent = "BG:";
+
+            const bgColorPicker = document.createElement("input");
+            bgColorPicker.type = "color";
+            bgColorPicker.className = "color-picker";
+            bgColorPicker.value = customization.backgroundColor || "#4299e1";
+
+            const textColorLabel = document.createElement("span");
+            textColorLabel.className = "toolbar-label";
+            textColorLabel.textContent = "Text:";
+
+            const textColorPicker = document.createElement("input");
+            textColorPicker.type = "color";
+            textColorPicker.className = "color-picker";
+            textColorPicker.value = customization.fontColor || "#ffffff";
+
+            styleGroup.appendChild(sizeLabel);
+            styleGroup.appendChild(sizeSelect);
+            styleGroup.appendChild(bgColorLabel);
+            styleGroup.appendChild(bgColorPicker);
+            styleGroup.appendChild(textColorLabel);
+            styleGroup.appendChild(textColorPicker);
+
+            // Button shape group
+            const shapeGroup = document.createElement("div");
+            shapeGroup.className = "toolbar-group";
+
+            const radiusLabel = document.createElement("span");
+            radiusLabel.className = "toolbar-label";
+            radiusLabel.textContent = "Shape:";
+
+            const radiusSelect = document.createElement("select");
+            radiusSelect.className = "toolbar-select";
+            radiusSelect.innerHTML = `
+              <option value="4px">Rounded</option>
+              <option value="0px">Square</option>
+              <option value="20px">Pill</option>
+            `;
+            radiusSelect.value = customization.borderRadius || "4px";
+
+            shapeGroup.appendChild(radiusLabel);
+            shapeGroup.appendChild(radiusSelect);
+
+            // Alignment group
+            const alignGroup = document.createElement("div");
+            alignGroup.className = "toolbar-group";
+
+            const alignLabel = document.createElement("span");
+            alignLabel.className = "toolbar-label";
+            alignLabel.textContent = "Align:";
+
+            const alignSelect = document.createElement("select");
+            alignSelect.className = "toolbar-select";
+            alignSelect.innerHTML = `
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+            `;
+            alignSelect.value = customization.textAlign || "left";
+
+            alignGroup.appendChild(alignLabel);
+            alignGroup.appendChild(alignSelect);
+
+            toolbar.appendChild(styleGroup);
+            toolbar.appendChild(shapeGroup);
+            toolbar.appendChild(alignGroup);
+
+            // Event listeners
+            sizeSelect.addEventListener("change", () => updateButtonStyle());
+            bgColorPicker.addEventListener("change", () => updateButtonStyle());
+            textColorPicker.addEventListener("change", () =>
+              updateButtonStyle()
+            );
+            radiusSelect.addEventListener("change", () => updateButtonStyle());
+            alignSelect.addEventListener("change", () => updateButtonStyle());
+
+            function updateButtonStyle() {
+              const newCustomization = {
+                buttonSize: sizeSelect.value,
+                backgroundColor: bgColorPicker.value,
+                fontColor: textColorPicker.value,
+                borderRadius: radiusSelect.value,
+                textAlign: alignSelect.value,
+              };
+
+              // Update element data
+              const element = contentElements.find(
+                (el) => el.id === elementDiv.dataset.id
+              );
+              element.customization = {
+                ...element.customization,
+                ...newCustomization,
+              };
+
+              // Apply styles to button preview
+              const buttonElement = editableElement.querySelector("button");
+              if (buttonElement) {
+                let padding = "8px 16px";
+                let fontSize = "14px";
+                switch (newCustomization.buttonSize) {
+                  case "small":
+                    padding = "6px 12px";
+                    fontSize = "12px";
+                    break;
+                  case "medium":
+                    padding = "8px 16px";
+                    fontSize = "14px";
+                    break;
+                  case "large":
+                    padding = "12px 24px";
+                    fontSize = "16px";
+                    break;
+                }
+
+                buttonElement.style.cssText = `
+                  background: ${newCustomization.backgroundColor};
+                  color: ${newCustomization.fontColor};
+                  padding: ${padding};
+                  font-size: ${fontSize};
+                  border: none;
+                  border-radius: ${newCustomization.borderRadius};
+                  cursor: pointer;
+                `;
+              }
+              editableElement.style.textAlign = newCustomization.textAlign;
+            }
+          } else if (elementType === "list") {
+            // List style group
+            const styleGroup = document.createElement("div");
+            styleGroup.className = "toolbar-group";
+
+            const typeLabel = document.createElement("span");
+            typeLabel.className = "toolbar-label";
+            typeLabel.textContent = "Type:";
+
+            const typeSelect = document.createElement("select");
+            typeSelect.className = "toolbar-select";
+            typeSelect.innerHTML = `
+              <option value="disc">• Bullet</option>
+              <option value="circle">○ Circle</option>
+              <option value="square">■ Square</option>
+              <option value="decimal">1. Numbers</option>
+              <option value="decimal-leading-zero">01. Zero Numbers</option>
+              <option value="lower-alpha">a. Lower Alpha</option>
+              <option value="upper-alpha">A. Upper Alpha</option>
+              <option value="lower-roman">i. Lower Roman</option>
+              <option value="upper-roman">I. Upper Roman</option>
+              <option value="none">None</option>
+            `;
+            typeSelect.value = customization.listStyle || "disc";
+
+            const sizeLabel = document.createElement("span");
+            sizeLabel.className = "toolbar-label";
+            sizeLabel.textContent = "Size:";
+
+            const sizeSelect = document.createElement("select");
+            sizeSelect.className = "toolbar-select";
+            sizeSelect.innerHTML = `
+              <option value="12px">Small</option>
+              <option value="14px">Medium</option>
+              <option value="16px">Large</option>
+              <option value="18px">X-Large</option>
+            `;
+            sizeSelect.value = customization.fontSize || "14px";
+
+            const colorLabel = document.createElement("span");
+            colorLabel.className = "toolbar-label";
+            colorLabel.textContent = "Color:";
+
+            const colorPicker = document.createElement("input");
+            colorPicker.type = "color";
+            colorPicker.className = "color-picker";
+            colorPicker.value = customization.fontColor || "#cbd5e0";
+
+            styleGroup.appendChild(typeLabel);
+            styleGroup.appendChild(typeSelect);
+            styleGroup.appendChild(sizeLabel);
+            styleGroup.appendChild(sizeSelect);
+            styleGroup.appendChild(colorLabel);
+            styleGroup.appendChild(colorPicker);
+
+            // Alignment group
+            const alignGroup = document.createElement("div");
+            alignGroup.className = "toolbar-group";
+
+            const alignLabel = document.createElement("span");
+            alignLabel.className = "toolbar-label";
+            alignLabel.textContent = "Align:";
+
+            const alignSelect = document.createElement("select");
+            alignSelect.className = "toolbar-select";
+            alignSelect.innerHTML = `
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+            `;
+            alignSelect.value = customization.textAlign || "left";
+
+            alignGroup.appendChild(alignLabel);
+            alignGroup.appendChild(alignSelect);
+
+            toolbar.appendChild(styleGroup);
+            toolbar.appendChild(alignGroup);
+
+            // Event listeners
+            typeSelect.addEventListener("change", () => updateListStyle());
+            sizeSelect.addEventListener("change", () => updateListStyle());
+            colorPicker.addEventListener("change", () => updateListStyle());
+            alignSelect.addEventListener("change", () => updateListStyle());
+
+            function updateListStyle() {
+              const newCustomization = {
+                listStyle: typeSelect.value,
+                fontSize: sizeSelect.value,
+                fontColor: colorPicker.value,
+                textAlign: alignSelect.value,
+              };
+
+              // Update element data
+              const element = contentElements.find(
+                (el) => el.id === elementDiv.dataset.id
+              );
+              element.customization = {
+                ...element.customization,
+                ...newCustomization,
+              };
+
+              // Determine if it should be ul or ol
+              const isOrdered = [
+                "decimal",
+                "decimal-leading-zero",
+                "lower-alpha",
+                "upper-alpha",
+                "lower-roman",
+                "upper-roman",
+              ].includes(newCustomization.listStyle);
+
+              // Apply styles to list element
+              const currentItems = Array.from(
+                editableElement.querySelectorAll("li")
+              ).map((li) => li.textContent);
+
+              // Replace the element if type changed from ul to ol or vice versa
+              if (
+                (isOrdered && editableElement.tagName === "UL") ||
+                (!isOrdered && editableElement.tagName === "OL")
+              ) {
+                const newList = document.createElement(isOrdered ? "ol" : "ul");
+                newList.contentEditable = true;
+                currentItems.forEach((itemText) => {
+                  const li = document.createElement("li");
+                  li.textContent = itemText;
+                  newList.appendChild(li);
+                });
+
+                newList.style.cssText = `
+                  list-style-type: ${newCustomization.listStyle};
+                  padding-left: 24px;
+                  color: ${newCustomization.fontColor};
+                  font-size: ${newCustomization.fontSize};
+                  text-align: ${newCustomization.textAlign};
+                  margin: 0;
+                  outline: none;
+                `;
+
+                editableElement.parentNode.replaceChild(
+                  newList,
+                  editableElement
+                );
+                editableElement = newList;
+
+                // Re-attach the input event listener
+                editableElement.addEventListener("input", () => {
+                  const element = contentElements.find(
+                    (el) => el.id === elementDiv.dataset.id
+                  );
+                  const listItems = Array.from(
+                    editableElement.querySelectorAll("li")
+                  )
+                    .map((li) => li.textContent.trim())
+                    .filter((text) => text);
+                  element.text = listItems.join("\n");
+                });
+              } else {
+                editableElement.style.cssText = `
+                  list-style-type: ${newCustomization.listStyle};
+                  padding-left: 24px;
+                  color: ${newCustomization.fontColor};
+                  font-size: ${newCustomization.fontSize};
+                  text-align: ${newCustomization.textAlign};
+                  margin: 0;
+                  outline: none;
+                `;
+              }
+            }
+          } else if (elementType === "image") {
+            // Image size group
+            const sizeGroup = document.createElement("div");
+            sizeGroup.className = "toolbar-group";
+
+            const sizeLabel = document.createElement("span");
+            sizeLabel.className = "toolbar-label";
+            sizeLabel.textContent = "Size:";
+
+            const sizeSelect = document.createElement("select");
+            sizeSelect.className = "toolbar-select";
+            sizeSelect.innerHTML = `
+              <option value="small">Small (200px)</option>
+              <option value="medium">Medium (400px)</option>
+              <option value="large">Large (600px)</option>
+              <option value="full">Full Width</option>
+            `;
+            sizeSelect.value = customization.imageSize || "medium";
+
+            sizeGroup.appendChild(sizeLabel);
+            sizeGroup.appendChild(sizeSelect);
+
+            // Alignment group
+            const alignGroup = document.createElement("div");
+            alignGroup.className = "toolbar-group";
+
+            const alignLabel = document.createElement("span");
+            alignLabel.className = "toolbar-label";
+            alignLabel.textContent = "Align:";
+
+            const alignSelect = document.createElement("select");
+            alignSelect.className = "toolbar-select";
+            alignSelect.innerHTML = `
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+            `;
+            alignSelect.value = customization.textAlign || "left";
+
+            alignGroup.appendChild(alignLabel);
+            alignGroup.appendChild(alignSelect);
+
+            toolbar.appendChild(sizeGroup);
+            toolbar.appendChild(alignGroup);
+
+            // Event listeners
+            sizeSelect.addEventListener("change", () => updateImageStyle());
+            alignSelect.addEventListener("change", () => updateImageStyle());
+
+            function updateImageStyle() {
+              const newCustomization = {
+                imageSize: sizeSelect.value,
+                textAlign: alignSelect.value,
+              };
+
+              // Update element data
+              const element = contentElements.find(
+                (el) => el.id === elementDiv.dataset.id
+              );
+              element.customization = {
+                ...element.customization,
+                ...newCustomization,
+              };
+
+              // Apply styles to image preview
+              const img = editableElement.querySelector("img");
+              if (img) {
+                let maxWidth = "100%";
+                switch (newCustomization.imageSize) {
+                  case "small":
+                    maxWidth = "200px";
+                    break;
+                  case "medium":
+                    maxWidth = "400px";
+                    break;
+                  case "large":
+                    maxWidth = "600px";
+                    break;
+                  case "full":
+                    maxWidth = "100%";
+                    break;
+                }
+
+                img.style.cssText = `
+                  max-width: ${maxWidth}; 
+                  height: auto; 
+                  border-radius: 6px; 
+                  max-height: 300px;
+                  display: block;
+                  margin: ${
+                    newCustomization.textAlign === "center"
+                      ? "0 auto"
+                      : newCustomization.textAlign === "right"
+                      ? "0 0 0 auto"
+                      : "0 auto 0 0"
+                  };
+                `;
+
+                editableElement.style.textAlign = newCustomization.textAlign;
+              }
+            }
+          }
+
+          return toolbar;
+        }
+
+        // Create editable element based on type
+        let editableElement;
+        if (type === "heading") {
+          editableElement = document.createElement("h3");
+          editableElement.contentEditable = true;
+          editableElement.style.cssText = `
+            font-family: ${defaultCustomization.fontFamily};
+            font-size: 24px;
+            color: ${defaultCustomization.fontColor};
+            text-align: ${defaultCustomization.textAlign};
+            font-weight: 600;
+            font-style: ${defaultCustomization.fontStyle};
+            margin: 0; outline: none; line-height: 1.6;
+          `;
+          editableElement.textContent = text || "Click to edit heading";
+        } else if (type === "paragraph") {
+          editableElement = document.createElement("p");
+          editableElement.contentEditable = true;
+          editableElement.style.cssText = `
+            font-family: ${defaultCustomization.fontFamily};
+            font-size: ${defaultCustomization.fontSize};
+            color: ${defaultCustomization.fontColor};
+            text-align: ${defaultCustomization.textAlign};
+            font-weight: ${defaultCustomization.fontWeight};
+            font-style: ${defaultCustomization.fontStyle};
+            margin: 0; outline: none; line-height: 1.6;
+          `;
+          editableElement.textContent = text || "Click to edit paragraph";
+        } else if (type === "blockquote") {
+          editableElement = document.createElement("blockquote");
+          editableElement.contentEditable = true;
+          editableElement.style.cssText = `
+            border-left: 4px solid #4299e1; 
+            padding-left: 16px; 
+            color: ${defaultCustomization.fontColor || "#cbd5e0"}; 
+            font-style: italic; 
+            font-family: ${defaultCustomization.fontFamily};
+            font-size: ${defaultCustomization.fontSize};
+            text-align: ${defaultCustomization.textAlign};
+            font-weight: ${defaultCustomization.fontWeight};
+            margin: 0; outline: none; line-height: 1.6;
+          `;
+          editableElement.textContent = text || "Click to edit quote";
+        } else if (type === "link") {
+          editableElement = document.createElement("div");
+          editableElement.style.cssText = `margin: 0; outline: none; text-align: ${defaultCustomization.textAlign};`;
+
+          // Create input for editing
+          const linkInput = document.createElement("input");
+          linkInput.type = "text";
+          linkInput.className = "element-input";
+          linkInput.placeholder =
+            "Enter [Text](URL), e.g., [Click Me](https://example.com)";
+          linkInput.value = text && url ? `[${text}](${url})` : "";
+          linkInput.style.cssText = "margin-bottom: 8px;";
+
+          // Create preview link
+          const linkPreview = document.createElement("a");
+          linkPreview.href = url || "#";
+          linkPreview.textContent = text || "Link";
+          linkPreview.style.cssText = `
+            color: ${defaultCustomization.fontColor || "#63b3ed"};
+            font-size: ${defaultCustomization.fontSize || "16px"};
+            text-decoration: ${
+              defaultCustomization.textDecoration || "underline"
+            };
+            cursor: pointer;
+          `;
+          linkPreview.target = "_blank";
+          linkPreview.rel = "noopener noreferrer";
+
+          editableElement.appendChild(linkInput);
+          editableElement.appendChild(linkPreview);
+
+          // Update preview on input
+          linkInput.addEventListener("input", () => {
+            const { text: newText, url: newUrl } = parseLinkOrButton(
+              linkInput.value
+            );
+            linkPreview.textContent = newText || "Link";
+            linkPreview.href = newUrl || "#";
+          });
+        } else if (type === "button") {
+          editableElement = document.createElement("div");
+          editableElement.style.cssText = `margin: 0; outline: none; text-align: ${defaultCustomization.textAlign};`;
+
+          // Create input for editing
+          const buttonInput = document.createElement("input");
+          buttonInput.type = "text";
+          buttonInput.className = "element-input";
+          buttonInput.placeholder = "Enter [Button Text](URL)";
+          buttonInput.value = text && url ? `[${text}](${url})` : "";
+          buttonInput.style.cssText = "margin-bottom: 8px;";
+
+          // Create preview button
+          const buttonPreview = document.createElement("a");
+          buttonPreview.href = url || "#";
+          buttonPreview.target = "_blank";
+          buttonPreview.rel = "noopener noreferrer";
+          buttonPreview.style.cssText = "text-decoration: none;";
+
+          const buttonElement = document.createElement("button");
+          buttonElement.textContent = text || "Button";
+
+          // Apply button customization
+          let padding = "8px 16px";
+          let fontSize = "14px";
+          switch (defaultCustomization.buttonSize) {
+            case "small":
+              padding = "6px 12px";
+              fontSize = "12px";
+              break;
+            case "medium":
+              padding = "8px 16px";
+              fontSize = "14px";
+              break;
+            case "large":
+              padding = "12px 24px";
+              fontSize = "16px";
+              break;
+          }
+
+          buttonElement.style.cssText = `
+            background: ${defaultCustomization.backgroundColor || "#4299e1"};
+            color: ${defaultCustomization.fontColor || "#ffffff"};
+            padding: ${padding};
+            font-size: ${fontSize};
+            border: none;
+            border-radius: ${defaultCustomization.borderRadius || "4px"};
+            cursor: pointer;
+          `;
+
+          buttonPreview.appendChild(buttonElement);
+
+          editableElement.appendChild(buttonInput);
+          editableElement.appendChild(buttonPreview);
+
+          // Update preview on input
+          buttonInput.addEventListener("input", () => {
+            const { text: newText, url: newUrl } = parseLinkOrButton(
+              buttonInput.value
+            );
+            buttonElement.textContent = newText || "Button";
+            buttonPreview.href = newUrl || "#";
+          });
+        } else if (type === "image") {
+          editableElement = document.createElement("div");
+          editableElement.style.cssText = `margin: 0; outline: none; text-align: ${defaultCustomization.textAlign};`;
+
+          // Create input for image URL
+          const imageInput = document.createElement("input");
+          imageInput.type = "text";
+          imageInput.className = "element-input";
+          imageInput.placeholder =
+            "Enter image URL (e.g., https://example.com/image.jpg)";
+          imageInput.value = text || "";
+          imageInput.style.cssText = "margin-bottom: 8px;";
+
+          // Create preview image
+          const imagePreview = document.createElement("div");
+          imagePreview.style.cssText = "min-height: 40px;";
+
+          if (text && text.trim()) {
+            const img = document.createElement("img");
+            img.src = text;
+
+            let maxWidth = "100%";
+            switch (defaultCustomization.imageSize) {
+              case "small":
+                maxWidth = "200px";
+                break;
+              case "medium":
+                maxWidth = "400px";
+                break;
+              case "large":
+                maxWidth = "600px";
+                break;
+              case "full":
+                maxWidth = "100%";
+                break;
+            }
+
+            img.style.cssText = `
+              max-width: ${maxWidth}; 
+              height: auto; 
+              border-radius: 6px; 
+              max-height: 300px;
+              display: block;
+              margin: ${
+                defaultCustomization.textAlign === "center"
+                  ? "0 auto"
+                  : defaultCustomization.textAlign === "right"
+                  ? "0 0 0 auto"
+                  : "0 auto 0 0"
+              };
+            `;
+            img.alt = "Image preview";
+            img.onerror = function () {
+              imagePreview.innerHTML =
+                '<p style="color: #e53e3e; font-style: italic;">Invalid image URL</p>';
+            };
+            imagePreview.appendChild(img);
+          } else {
+            imagePreview.innerHTML =
+              '<p style="color: #718096; font-style: italic;">Enter an image URL to see preview</p>';
+          }
+
+          editableElement.appendChild(imageInput);
+          editableElement.appendChild(imagePreview);
+
+          // Update preview on input
+          imageInput.addEventListener("input", () => {
+            const url = imageInput.value.trim();
+            if (url) {
+              const img = document.createElement("img");
+              img.src = url;
+
+              const element = contentElements.find(
+                (el) => el.id === elementDiv.dataset.id
+              );
+              const customization = element
+                ? element.customization || defaultCustomization
+                : defaultCustomization;
+
+              let maxWidth = "100%";
+              switch (customization.imageSize) {
+                case "small":
+                  maxWidth = "200px";
+                  break;
+                case "medium":
+                  maxWidth = "400px";
+                  break;
+                case "large":
+                  maxWidth = "600px";
+                  break;
+                case "full":
+                  maxWidth = "100%";
+                  break;
+              }
+
+              img.style.cssText = `
+                max-width: ${maxWidth}; 
+                height: auto; 
+                border-radius: 6px; 
+                max-height: 300px;
+                display: block;
+                margin: ${
+                  customization.textAlign === "center"
+                    ? "0 auto"
+                    : customization.textAlign === "right"
+                    ? "0 0 0 auto"
+                    : "0 auto 0 0"
+                };
+              `;
+              img.alt = "Image preview";
+              img.onload = function () {
+                imagePreview.innerHTML = "";
+                imagePreview.appendChild(img);
+              };
+              img.onerror = function () {
+                imagePreview.innerHTML =
+                  '<p style="color: #e53e3e; font-style: italic;">Invalid image URL</p>';
+              };
+            } else {
+              imagePreview.innerHTML =
+                '<p style="color: #718096; font-style: italic;">Enter an image URL to see preview</p>';
+            }
+          });
+        } else if (type === "blockquote") {
+          editableElement = document.createElement("blockquote");
+          editableElement.contentEditable = true;
+          const quoteStyle = `
+            font-family: ${defaultCustomization.fontFamily};
+            font-size: ${defaultCustomization.fontSize};
+            color: ${defaultCustomization.fontColor};
+            text-align: ${defaultCustomization.textAlign};
+            font-weight: ${defaultCustomization.fontWeight};
+            font-style: ${defaultCustomization.fontStyle || "italic"};
+            border-left: 4px solid #4299e1; 
+            padding-left: 16px; 
+            margin: 0; outline: none; line-height: 1.6;
+          `;
+          editableElement.style.cssText = quoteStyle;
+          editableElement.textContent = text || "Click to edit quote";
+        } else if (type === "list") {
+          const isOrdered = [
+            "decimal",
+            "decimal-leading-zero",
+            "lower-alpha",
+            "upper-alpha",
+            "lower-roman",
+            "upper-roman",
+          ].includes(defaultCustomization.listStyle);
+          editableElement = document.createElement(isOrdered ? "ol" : "ul");
+          editableElement.contentEditable = true;
+          editableElement.style.cssText = `
+            list-style-type: ${defaultCustomization.listStyle};
+            padding-left: 24px;
+            color: ${defaultCustomization.fontColor || "#cbd5e0"};
+            font-size: ${defaultCustomization.fontSize || "14px"};
+            text-align: ${defaultCustomization.textAlign};
+            margin: 0;
+            outline: none;
+          `;
+          if (text) {
+            const items = text.split("\n").filter((item) => item.trim());
+            editableElement.innerHTML = items
+              .map((item) => `<li>${item}</li>`)
+              .join("");
+          } else {
+            editableElement.innerHTML = "<li>Click to edit list item</li>";
+          }
+        } else if (type === "code") {
+          editableElement = document.createElement("pre");
+          editableElement.contentEditable = true;
+          editableElement.style.cssText =
+            "background: #1a202c; color: #68d391; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 14px; margin: 0; outline: none;";
+          editableElement.textContent = text || "Click to edit code";
+        }
+
+        // Remove button
+        const removeBtn = document.createElement("button");
+        removeBtn.innerHTML = "−";
+        removeBtn.className = "remove-btn";
+        removeBtn.onclick = () => {
+          contentArea.removeChild(elementDiv);
+          contentElements = contentElements.filter(
+            (el) => el.id !== elementDiv.dataset.id
+          );
+        };
+
+        // Drag handle
+        const dragHandle = document.createElement("div");
+        dragHandle.className = "drag-handle";
+        dragHandle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 7C9.32843 7 10 6.32843 10 5.5C10 4.67157 9.32843 4 8.5 4C7.67157 4 7 4.67157 7 5.5C7 6.32843 7.67157 7 8.5 7ZM8.5 13.5C9.32843 13.5 10 12.8284 10 12C10 11.1716 9.32843 10.5 8.5 10.5C7.67157 10.5 7 11.1716 7 12C7 12.8284 7.67157 13.5 8.5 13.5ZM10 18.5C10 19.3284 9.32843 20 8.5 20C7.67157 20 7 19.3284 7 18.5C7 17.6716 7.67157 17 8.5 17C9.32843 17 10 17.6716 10 18.5ZM15.5 7C16.3284 7 17 6.32843 17 5.5C17 4.67157 16.3284 4 15.5 4C14.6716 4 14 4.67157 14 5.5C14 6.32843 14.6716 7 15.5 7ZM17 12C17 12.8284 16.3284 13.5 15.5 13.5C14.6716 13.5 14 12.8284 14 12C14 11.1716 14.6716 10.5 15.5 10.5C16.3284 10.5 17 11.1716 17 12ZM15.5 20C16.3284 20 17 19.3284 17 18.5C17 17.6716 16.3284 17 15.5 17C14.6716 17 14 17.6716 14 18.5C14 19.3284 14.6716 20 15.5 20Z"></path></svg>`;
+
+        // Create and append customization toolbar for applicable elements
+        let toolbar = null;
+        if (
+          type === "heading" ||
+          type === "paragraph" ||
+          type === "blockquote" ||
+          type === "image" ||
+          type === "link" ||
+          type === "button" ||
+          type === "list"
+        ) {
+          toolbar = createCustomizationToolbar(type, defaultCustomization);
+        }
+
+        // Append elements
+        elementDiv.appendChild(dragHandle);
+        if (toolbar) {
+          elementDiv.appendChild(toolbar);
+        }
+        elementDiv.appendChild(editableElement);
+        elementDiv.appendChild(removeBtn);
+        contentArea.appendChild(elementDiv);
+
+        // Add to contentElements
+        const elementData = {
+          id: elementDiv.dataset.id,
+          type,
+          customization: defaultCustomization,
+        };
+        if (type === "link" || type === "button") {
+          elementData.text = text;
+          elementData.url = url;
+        } else {
+          elementData.text = text;
+        }
+        contentElements.push(elementData);
+
+        // Focus the new element
+        if (type === "link" || type === "button" || type === "image") {
+          const inputElement = editableElement.querySelector("input");
+          inputElement.focus();
+        } else if (editableElement.contentEditable) {
+          editableElement.focus();
+        } else {
+          editableElement.focus();
+        }
+
+        // Update contentElements on input (real-time)
+        if (type === "link" || type === "button") {
+          const inputElement = editableElement.querySelector("input");
+          inputElement.addEventListener("input", () => {
+            const element = contentElements.find(
+              (el) => el.id === elementDiv.dataset.id
+            );
+            const { text, url } = parseLinkOrButton(inputElement.value);
+            element.text = text;
+            element.url = url;
+          });
+        } else if (type === "image") {
+          const inputElement = editableElement.querySelector("input");
+          inputElement.addEventListener("input", () => {
+            const element = contentElements.find(
+              (el) => el.id === elementDiv.dataset.id
+            );
+            element.text = inputElement.value;
+          });
+        } else if (editableElement.contentEditable) {
+          editableElement.addEventListener("input", () => {
+            const element = contentElements.find(
+              (el) => el.id === elementDiv.dataset.id
+            );
+            if (type === "list") {
+              // Convert HTML list back to text format
+              const listItems = Array.from(
+                editableElement.querySelectorAll("li")
+              )
+                .map((li) => li.textContent.trim())
+                .filter((text) => text);
+              element.text = listItems.join("\n");
+            } else {
+              element.text = editableElement.textContent;
+            }
+          });
+        } else if (
+          !editableElement.contentEditable &&
+          type !== "link" &&
+          type !== "button" &&
+          type !== "image"
+        ) {
+          editableElement.addEventListener("input", () => {
+            const element = contentElements.find(
+              (el) => el.id === elementDiv.dataset.id
+            );
+            element.text = editableElement.value;
+          });
+        }
+
+        // Drag-and-drop for reordering
+        elementDiv.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", elementDiv.dataset.id);
+        });
+
+        elementDiv.addEventListener("dragover", (e) => {
+          e.preventDefault();
+        });
+
+        elementDiv.addEventListener("drop", (e) => {
+          e.preventDefault();
+          const draggedId = e.dataTransfer.getData("text/plain");
+          const targetId = elementDiv.dataset.id;
+
+          if (draggedId === targetId) return; // Don't drop on itself
+
+          const draggedIndex = contentElements.findIndex(
+            (el) => el.id === draggedId
+          );
+          const targetIndex = contentElements.findIndex(
+            (el) => el.id === targetId
+          );
+
+          if (draggedIndex !== -1 && targetIndex !== -1) {
+            // Remove dragged element and insert at target position
+            const [draggedElement] = contentElements.splice(draggedIndex, 1);
+            contentElements.splice(targetIndex, 0, draggedElement);
+            renderContentArea();
+          }
+        });
+      }
+
+      // Re-render content area for reordering
+      function renderContentArea() {
+        // Clear the content area
+        contentArea.innerHTML = "";
+
+        // Re-create elements from the contentElements array
+        contentElements.forEach((el) => {
+          addElement(el.type, el.text, el.url, el.id, el.customization);
+        });
+      }
+
+      // Create a new post
+      async function createPost() {
+        const title = document.getElementById("title").value;
+        if (!title || contentElements.length === 0) {
+          alert("Please enter a title and add at least one content element.");
+          return;
+        }
+
+        // Clean up the content data before sending
+        const cleanContent = contentElements.map((el) => ({
+          id: el.id,
+          type: el.type,
+          text: el.text || "",
+          ...(el.url && { url: el.url }),
+          ...(el.customization && { customization: el.customization }),
+        }));
+
+        const post = {
+          title: title.trim(),
+          content: JSON.stringify(cleanContent),
+          tags: selectedTags, // Include selected tags
+        };
+
+        console.log("Post data:", post);
+        console.log("Clean content array:", cleanContent);
+        console.log("Selected tags:", selectedTags);
+
+        try {
+          await fetch("http://localhost:8080/api/posts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(post),
+          });
+
+          // Clear the form
+          document.getElementById("title").value = "";
+          contentArea.innerHTML = "";
+          contentElements = [];
+
+          // Clear selected tags
+          selectedTags = [];
+          document.querySelectorAll(".tag.selected").forEach((tag) => {
+            tag.classList.remove("selected");
+          });
+
+          alert("Post created successfully!");
+          // Refresh the posts display
+          loadPosts();
+        } catch (error) {
+          console.error("Error creating post:", error);
+          alert("Failed to create post. Check console for details.");
+        }
+      }
+
+      // Load and display all posts
+      async function loadPosts() {
+        try {
+          const response = await fetch("http://localhost:8080/api/posts");
+          if (response.ok) {
+            const posts = await response.json();
+            displayPosts(posts);
+          }
+        } catch (error) {
+          console.error("Error loading posts:", error);
+        }
+      }
+
+      // Display posts in the posts section
+      function displayPosts(posts) {
+        const postsContainer = document.getElementById("posts");
+        postsContainer.innerHTML = "";
+
+        if (posts.length === 0) {
+          postsContainer.innerHTML =
+            "<p>No posts yet. Create your first post!</p>";
+          return;
+        }
+
+        posts.forEach((post) => {
+          const postDiv = document.createElement("div");
+          postDiv.className = "post";
+
+          const postHeader = document.createElement("div");
+          postHeader.style.cssText =
+            "display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;";
+
+          const title = document.createElement("h2");
+          title.textContent = post.title;
+
+          const date = document.createElement("small");
+          date.style.cssText = "color: #718096; font-size: 14px;";
+          date.textContent = new Date(post.createdAt).toLocaleDateString();
+
+          postHeader.appendChild(title);
+          postHeader.appendChild(date);
+
+          const contentDiv = document.createElement("div");
+
+          try {
+            const contentElements = JSON.parse(post.content);
+            contentElements.forEach((element) => {
+              const elementDiv = document.createElement("div");
+              elementDiv.style.cssText = "margin-bottom: 12px;";
+
+              if (element.type === "heading") {
+                const heading = document.createElement("h3");
+                heading.textContent = element.text;
+                const customization = element.customization || {};
+                heading.style.cssText = `
+                  font-family: ${customization.fontFamily || "inherit"};
+                  font-size: ${customization.fontSize || "20px"};
+                  color: ${customization.fontColor || "#ffffff"};
+                  text-align: ${customization.textAlign || "left"};
+                  font-weight: ${customization.fontWeight || "600"};
+                  font-style: ${customization.fontStyle || "normal"};
+                  margin: 0;
+                `;
+                elementDiv.appendChild(heading);
+              } else if (element.type === "paragraph") {
+                const paragraph = document.createElement("p");
+                paragraph.textContent = element.text;
+                const customization = element.customization || {};
+                paragraph.style.cssText = `
+                  font-family: ${customization.fontFamily || "inherit"};
+                  font-size: ${customization.fontSize || "16px"};
+                  color: ${customization.fontColor || "#cbd5e0"};
+                  text-align: ${customization.textAlign || "left"};
+                  font-weight: ${customization.fontWeight || "normal"};
+                  font-style: ${customization.fontStyle || "normal"};
+                  margin: 0; line-height: 1.6;
+                `;
+                elementDiv.appendChild(paragraph);
+              } else if (element.type === "link") {
+                const linkContainer = document.createElement("div");
+                const customization = element.customization || {};
+                linkContainer.style.textAlign =
+                  customization.textAlign || "left";
+
+                const link = document.createElement("a");
+                link.href = element.url || "#";
+                link.textContent = element.text || "Link";
+                link.style.cssText = `
+                  color: ${customization.fontColor || "#63b3ed"};
+                  font-size: ${customization.fontSize || "16px"};
+                  text-decoration: ${
+                    customization.textDecoration || "underline"
+                  };
+                `;
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+
+                linkContainer.appendChild(link);
+                elementDiv.appendChild(linkContainer);
+              } else if (element.type === "button") {
+                const buttonContainer = document.createElement("div");
+                const customization = element.customization || {};
+                buttonContainer.style.textAlign =
+                  customization.textAlign || "left";
+
+                const buttonLink = document.createElement("a");
+                buttonLink.href = element.url || "#";
+                buttonLink.target = "_blank";
+                buttonLink.rel = "noopener noreferrer";
+                buttonLink.style.cssText = "text-decoration: none;";
+
+                const button = document.createElement("button");
+                button.textContent = element.text || "Button";
+
+                let padding = "8px 16px";
+                let fontSize = "14px";
+                switch (customization.buttonSize) {
+                  case "small":
+                    padding = "6px 12px";
+                    fontSize = "12px";
+                    break;
+                  case "medium":
+                    padding = "8px 16px";
+                    fontSize = "14px";
+                    break;
+                  case "large":
+                    padding = "12px 24px";
+                    fontSize = "16px";
+                    break;
+                  default:
+                    padding = "8px 16px";
+                    fontSize = "14px";
+                }
+
+                button.style.cssText = `
+                  background: ${customization.backgroundColor || "#4299e1"};
+                  color: ${customization.fontColor || "#ffffff"};
+                  padding: ${padding};
+                  font-size: ${fontSize};
+                  border: none;
+                  border-radius: ${customization.borderRadius || "4px"};
+                  cursor: pointer;
+                `;
+
+                buttonLink.appendChild(button);
+                buttonContainer.appendChild(buttonLink);
+                elementDiv.appendChild(buttonContainer);
+              } else if (element.type === "image") {
+                if (element.text && element.text.trim()) {
+                  const img = document.createElement("img");
+                  img.src = element.text;
+                  const customization = element.customization || {};
+
+                  let maxWidth = "100%";
+                  switch (customization.imageSize) {
+                    case "small":
+                      maxWidth = "200px";
+                      break;
+                    case "medium":
+                      maxWidth = "400px";
+                      break;
+                    case "large":
+                      maxWidth = "600px";
+                      break;
+                    case "full":
+                      maxWidth = "100%";
+                      break;
+                    default:
+                      maxWidth = "400px";
+                  }
+
+                  img.style.cssText = `
+                    max-width: ${maxWidth}; 
+                    height: auto; 
+                    border-radius: 6px;
+                    display: block;
+                    margin: ${
+                      customization.textAlign === "center"
+                        ? "0 auto"
+                        : customization.textAlign === "right"
+                        ? "0 0 0 auto"
+                        : "0 auto 0 0"
+                    };
+                  `;
+                  img.alt = "Blog image";
+                  img.onerror = function () {
+                    this.style.display = "none";
+                    const errorMsg = document.createElement("p");
+                    errorMsg.textContent =
+                      "Image failed to load: " + element.text;
+                    errorMsg.style.cssText =
+                      "color: #e53e3e; font-style: italic;";
+                    elementDiv.appendChild(errorMsg);
+                  };
+                  elementDiv.appendChild(img);
+                } else {
+                  const placeholder = document.createElement("p");
+                  placeholder.textContent = "No image URL provided";
+                  placeholder.style.cssText =
+                    "color: #718096; font-style: italic;";
+                  elementDiv.appendChild(placeholder);
+                }
+              } else if (element.type === "blockquote") {
+                const quote = document.createElement("blockquote");
+                quote.textContent = element.text;
+                const customization = element.customization || {};
+                quote.style.cssText = `
+                  font-family: ${customization.fontFamily || "inherit"};
+                  font-size: ${customization.fontSize || "16px"};
+                  color: ${customization.fontColor || "#cbd5e0"};
+                  text-align: ${customization.textAlign || "left"};
+                  font-weight: ${customization.fontWeight || "normal"};
+                  font-style: ${customization.fontStyle || "italic"};
+                  border-left: 4px solid #4299e1; 
+                  padding-left: 16px; 
+                  margin: 0;
+                `;
+                elementDiv.appendChild(quote);
+              } else if (element.type === "list") {
+                const customization = element.customization || {};
+                const listStyle = customization.listStyle || "disc";
+
+                // Determine if it should be ordered or unordered
+                const isOrdered = [
+                  "decimal",
+                  "decimal-leading-zero",
+                  "lower-alpha",
+                  "upper-alpha",
+                  "lower-roman",
+                  "upper-roman",
+                ].includes(listStyle);
+
+                const list = document.createElement(isOrdered ? "ol" : "ul");
+                list.style.cssText = `
+                  list-style-type: ${listStyle};
+                  padding-left: 24px;
+                  color: ${customization.fontColor || "#cbd5e0"};
+                  font-size: ${customization.fontSize || "14px"};
+                  font-family: ${customization.fontFamily || "inherit"};
+                  text-align: ${customization.textAlign || "left"};
+                  margin: 0;
+                `;
+
+                const items = element.text
+                  ? element.text.split("\n").filter((item) => item.trim())
+                  : [];
+                items.forEach((item) => {
+                  const li = document.createElement("li");
+                  li.textContent = item;
+                  list.appendChild(li);
+                });
+                elementDiv.appendChild(list);
+              } else if (element.type === "code") {
+                const code = document.createElement("pre");
+                code.textContent = element.text;
+                code.style.cssText =
+                  "background: #1a202c; color: #68d391; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 14px; margin: 0;";
+                elementDiv.appendChild(code);
+              }
+
+              contentDiv.appendChild(elementDiv);
+            });
+          } catch (error) {
+            console.error("Error parsing post content:", error);
+            const errorP = document.createElement("p");
+            errorP.textContent = "Error displaying post content.";
+            errorP.style.cssText = "color: #e53e3e;";
+            contentDiv.appendChild(errorP);
+          }
+
+          postDiv.appendChild(postHeader);
+          postDiv.appendChild(contentDiv);
+          postsContainer.appendChild(postDiv);
+        });
+      }
+
+      // Load posts when the page loads
+      document.addEventListener("DOMContentLoaded", () => {
+        loadPosts();
+      });
+    </script>
+  </body>
+</html>
