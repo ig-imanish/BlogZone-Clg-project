@@ -29,4 +29,42 @@ const signUp = async (req, res) => {
     }
 }
 
-module.exports={signUp}
+
+const userLogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  const userExist = await userModel.findOne({ email });
+  console.log(userExist);
+  if (!userExist) {
+    res.status(404).send({error: "User not found with this email"});
+    return;
+  }
+
+  try {
+    bcrypt.compare(password, userExist.password, (err, result) => {
+      const token = jwt.sign(
+        {
+          userId: userExist._id,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "5h" }
+      );
+
+      if (err) {
+        console.error("Error during bcrypt comparison:", err);
+        res.status(500).json({ error: "Error during bcrypt comparison" });
+        return;
+      }
+      if (result) {
+        res.status(200).send({token : token});
+      } else {
+        res.status(401).send({error: "Invalid credentials"});
+      }
+    });
+  } catch (error) {
+    console.error("Error during user signup:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports={signUp,userLogin}
