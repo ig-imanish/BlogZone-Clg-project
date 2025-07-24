@@ -1,3 +1,57 @@
+// Logout Functionality
+function logout() {
+    // Clear all user data from localStorage
+    const keysToRemove = [
+        'userData',
+        'userEmail', 
+        'userName',
+        'userUsername',
+        'userAvatar',
+        'token',
+        'authToken',
+        'userSession',
+        'loginTime',
+        'isLoggedIn'
+    ];
+    
+    // Remove all known user-related localStorage items
+    keysToRemove.forEach(key => {
+        localStorage.removeItem(key);
+    });
+    
+    // Clear sessionStorage as well (if any data is stored there)
+    sessionStorage.clear();
+    
+    // Optional: Show logout confirmation
+    if (typeof Toastify !== 'undefined') {
+        Toastify({
+            text: "Successfully logged out. Redirecting to homepage...",
+            duration: 2000,
+            gravity: 'top',
+            position: 'right',
+            backgroundColor: '#4CAF50',
+            style: {
+                background: 'linear-gradient(135deg, #4CAF50, #45a049)',
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(76, 175, 80, 0.3)'
+            }
+        }).showToast();
+    }
+    
+    // Clear any cookies if they exist
+    document.cookie.split(";").forEach(function(c) { 
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+    });
+    
+    // Redirect to index page after a short delay
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 1500);
+}
+
+// Make logout function globally available
+window.logout = logout;
+
 // Detect page type
 const isProfilePage =
   document.title === "profile" || window.location.pathname.includes("profile");
@@ -159,7 +213,7 @@ function renderCard(data) {
                   ? `<i class="ri-delete-bin-line" onclick="deletePost(event, '${data.id}')" style="color: #ef4444; cursor: pointer; margin-left: 10px;" title="Delete Blog"></i>`
                   : ""
               }
-              <i class="ri-more-line"></i>
+              
             </span>
           </a>
           <div class="profile-section">
@@ -985,3 +1039,14 @@ async function deletePost(event, blogId) {
 }
 
 window.deletePost = deletePost;
+
+document.getElementById("logout").addEventListener("click", () => {
+  localStorage.removeItem("userEmail");
+  localStorage.removeItem("userUsername");
+  localStorage.removeItem("userData");
+   localStorage.removeItem("token");
+   localStorage.removeItem("userName");
+  localStorage.removeItem("userAvatar");
+
+  window.location.href = "login.html";
+});

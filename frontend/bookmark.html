@@ -19,7 +19,7 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="./style/home.css" />
-    <link rel="stylesheet" href="./style/profile.css" />
+    <link rel="stylesheet" href="./style/profile.css">
   </head>
   <body>
     <div class="help-card hidden">
@@ -42,10 +42,10 @@
     </div>
     <div class="profile-card hidden">
       <div class="userinfo">
-        <img src="./assets/my-av.jpeg" alt="User Avatar" />
+        <img src="./assets/my-av.jpeg" alt="" />
         <div>
-          <div class="fullname">Loading...</div>
-          <div class="email">Loading...</div>
+          <div class="fullname">Manish Kumar</div>
+          <div class="email">manishkukran123@gmail.com</div>
         </div>
       </div>
       <div class="btns">
@@ -59,7 +59,7 @@
       <div class="links">
         <button
           class="btn"
-          onclick="copyToClipboard(event, 'https://blogzone.com/@loading')"
+          onclick="copyToClipboard(event, 'https://blogzone.com/@manishkumar07')"
           style="
             background: none;
             border: none;
@@ -67,7 +67,7 @@
             cursor: pointer;
           "
         >
-          https://blogzone.com/@loading <i class="ri-clipboard-fill"></i>
+          https://blogzone.com/@manishkumar07 <i class="ri-clipboard-fill"></i>
         </button>
       </div>
     </div>
@@ -105,36 +105,28 @@
     <div class="container">
       <div class="sidebar">
         <ul class="topbar">
-          <li onclick="window.location.href='home.html'">
-            <i class="fa-solid fa-house"></i> Home
-          </li>
+          <li onclick="window.location.href='home.html'"><i class="fa-solid fa-house"></i> Home</li>
           <li class="active"><i class="fa-solid fa-bookmark"></i> Bookmark</li>
-          <li onclick="window.location.href='profile.html'">
-            <i class="fa-solid fa-user"></i> Profile
-          </li>
-          <li onclick="window.location.href='stat.html'">
-            <i class="fa-solid fa-chart-simple"></i> Stats
-          </li>
+          <li onclick="window.location.href='profile.html'"><i class="fa-solid fa-user"></i> Profile</li>
+          <li onclick="window.location.href='stat.html'"><i class="fa-solid fa-chart-simple"></i> Stats</li>
         </ul>
         <ul class="bottombar">
-          <li onclick="window.location.href='index.html'">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-          </li>
+          <li onclick="window.location.href='index.html'"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
         </ul>
       </div>
 
       <div class="content">
         <!-- <h2 class="page-heading" style="text-align: center; padding:10px ;"><i class="fa-solid fa-bookmark"></i> Bookmarks</h2> -->
-
+        
         <div id="OwnBlogs">
-          <div class="cards" id="cards">
-            <!-- Card will be rendered here -->
-          </div>
+             <div class="cards" id="cards">
+          <!-- Card will be rendered here -->
+        </div>
         </div>
       </div>
+
     </div>
   </body>
-
   <script type="module" src="./src/js/home.js"></script>
   <script src="./src/js/user-profile.js"></script>
 </html>
