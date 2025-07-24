@@ -56,14 +56,22 @@ document
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.token);
-        localStorage.setItem("email", data.email);
-        // console.log('Login successful:', data);
-        // console.log('User data:', data.user);
+        localStorage.setItem("userEmail", data.email);
+
+        // Store user information for display
+        if (data.user) {
+          localStorage.setItem("userData", JSON.stringify(data.user));
+          localStorage.setItem("userName", data.user.name);
+          localStorage.setItem("userUsername", data.user.username);
+          localStorage.setItem("userAvatar", data.user.avatar);
+        }
 
         // Show success notification
         if (typeof Toastify !== "undefined") {
           Toastify({
-            text: `Welcome back, ${data.email}! Redirecting to home page...`,
+            text: `Welcome back, ${
+              data.user?.name || data.email
+            }! Redirecting to home page...`,
             duration: 2500,
             gravity: "top",
             position: "right",
@@ -78,7 +86,9 @@ document
         } else {
           // Fallback notification
           showFallbackNotification(
-            `Welcome back, ${data.email}! Redirecting to home page...`,
+            `Welcome back, ${
+              data.user?.name || data.email
+            }! Redirecting to home page...`,
             "success"
           );
         }

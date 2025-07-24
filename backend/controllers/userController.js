@@ -1,36 +1,78 @@
-const bcrypt = require('bcrypt');
-const { userModel } = require('../models/userModel');
+const bcrypt = require("bcrypt");
+const { userModel } = require("../models/userModel");
 
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const signUp = async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
-    
-        // Check if user already exists
-        const existingUser = await userModel.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
+  try {
+    const { name, username, email, password, avatar } = req.body;
 
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create new user
-        const newUser = new userModel({
-            name,
-            email,
-            password: hashedPassword
-        });
-        await newUser.save();
-
-        res.status(201).json({ message: 'User created successfully' });
-    } catch (error) {
-        console.error(error);
-        res.status(400).json({ message: 'Internal server error' });
+    // Validation
+    if (!name || !username || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Name, username, email, and password are required" });
     }
-}
 
+    // Check if user already exists by email
+    const existingUserByEmail = await userModel.findOne({ email });
+    if (existingUserByEmail) {
+      return res
+        .status(400)
+        .json({ message: "User with this email already exists" });
+    }
+
+    // Check if username already exists
+    const existingUserByUsername = await userModel.findOne({
+      username: username.toLowerCase(),
+    });
+    if (existingUserByUsername) {
+      return res.status(400).json({ message: "Username already taken" });
+    }
+
+    // Validate username format
+    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+    if (!usernameRegex.test(username)) {
+      return res.status(400).json({
+        message:
+          "Username must be 3-20 characters long and contain only letters, numbers, and underscores",
+      });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const newUser = new userModel({
+      name: name.trim(),
+      username: username.toLowerCase().trim(),
+      email: email.toLowerCase().trim(),
+      password: hashedPassword,
+      avatar: avatar || undefined, // Use default if not provided
+    });
+    await newUser.save();
+
+    res.status(201).json({
+      message: "User created successfully",
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        username: newUser.username,
+        email: newUser.email,
+        avatar: newUser.avatar,
+        isVerified: newUser.isVerified,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    if (error.code === 11000) {
+      // Handle duplicate key error
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({ message: `${field} already exists` });
+    }
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -38,7 +80,7 @@ const userLogin = async (req, res) => {
   const userExist = await userModel.findOne({ email });
   console.log(userExist);
   if (!userExist) {
-    res.status(404).send({error: "User not found with this email"});
+    res.status(404).send({ error: "User not found with this email" });
     return;
   }
 
@@ -58,10 +100,20 @@ const userLogin = async (req, res) => {
         return;
       }
       if (result) {
-        res.status(200).send({token : token, email : userExist.email});
-     
+        res.status(200).send({
+          token: token,
+          email: userExist.email,
+          user: {
+            id: userExist._id,
+            name: userExist.name,
+            username: userExist.username,
+            email: userExist.email,
+            avatar: userExist.avatar,
+            isVerified: userExist.isVerified,
+          },
+        });
       } else {
-        res.status(401).send({error: "Invalid credentials"});
+        res.status(401).send({ error: "Invalid credentials" });
       }
     });
   } catch (error) {
@@ -70,4 +122,4 @@ const userLogin = async (req, res) => {
   }
 };
 
-module.exports={signUp,userLogin}
+module.exports = { signUp, userLogin };
