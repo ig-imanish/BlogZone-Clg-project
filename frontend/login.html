@@ -1,247 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blog Zone - Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./style/home.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="./style/home.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <style>
-        :root {
-            --bg-black: #121212;
-            --bg-dark: #1e1e1e;
-            --text-primary: #e0e0e0;
-            --text-white: #ffffff;
-            --button-bg: #6366f1;
-            --text-login-hover: #4f46e5;
-            --border-light: #3a3a3a;
-        }
+      :root {
+        --bg-black: #121212;
+        --bg-dark: #1e1e1e;
+        --text-primary: #e0e0e0;
+        --text-white: #ffffff;
+        --button-bg: #6366f1;
+        --text-login-hover: #4f46e5;
+        --border-light: #3a3a3a;
+      }
 
-        body {
-            background-color: var(--bg-black);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-        }
+      body {
+        background-color: var(--bg-black);
+        color: var(--text-primary);
+        font-family: "Inter", sans-serif;
+      }
 
-        .nav-container {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0px;
-            background-color: rgba(30, 30, 30, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-light);
-        }
-               
-          .logo {
+      .nav-container {
+        width: 100%;
         display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-/* 
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0px;
+        background-color: rgba(30, 30, 30, 0.8);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.5rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+      /* 
         .logo i {
             color: var(--button-bg);
         } */
-       
 
-        .signup-link {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border-light);
-            margin-right: 40px;
+      .signup-link {
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-light);
+        margin-right: 40px;
+      }
+
+      .signup-link:hover {
+        background-color: rgba(99, 102, 241, 0.1);
+        color: var(--text-white);
+        border-color: var(--button-bg);
+      }
+
+      .login-container {
+        background-color: var(--bg-dark);
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-primary);
+      }
+
+      .form-input {
+        background-color: var(--bg-black);
+        border: 1px solid var(--border-light);
+        color: var(--text-white);
+        padding-left: 2.75rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-input:focus {
+        border-color: var(--button-bg);
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+      }
+
+      .login-btn {
+        background-color: var(--button-bg);
+        transition: all 0.3s ease;
+      }
+
+      .login-btn:hover {
+        background-color: var(--text-login-hover);
+        transform: translateY(-1px);
+      }
+
+      .illustration {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
         }
-
-        .signup-link:hover {
-            background-color: rgba(99, 102, 241, 0.1);
-            color: var(--text-white);
-            border-color: var(--button-bg);
+        50% {
+          transform: translateY(-10px);
         }
+        100% {
+          transform: translateY(0px);
+        }
+      }
 
+      @media (max-width: 768px) {
         .login-container {
-            background-color: var(--bg-dark);
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+          flex-direction: column;
         }
 
-        .input-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-primary);
+        .nav-container {
+          padding: 1rem;
         }
 
-        .form-input {
-            background-color: var(--bg-black);
-            border: 1px solid var(--border-light);
-            color: var(--text-white);
-            padding-left: 2.75rem;
-            transition: all 0.3s ease;
+        .logo span {
+          font-size: 1.2rem;
         }
-
-        .form-input:focus {
-            border-color: var(--button-bg);
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-        }
-
-        .login-btn {
-            background-color: var(--button-bg);
-            transition: all 0.3s ease;
-        }
-
-        .login-btn:hover {
-            background-color: var(--text-login-hover);
-            transform: translateY(-1px);
-        }
-
-        .illustration {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        @media (max-width: 768px) {
-            .login-container {
-                flex-direction: column;
-            }
-            
-            .nav-container {
-                padding: 1rem;
-            }
-            
-            .logo span {
-                font-size: 1.2rem;
-            }
-        }
+      }
     </style>
-</head>
-<body class="min-h-screen flex flex-col">
+  </head>
+  <body class="min-h-screen flex flex-col">
     <!-- Navigation Bar -->
     <nav>
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <i class="fa-solid fa-blog"></i>
-                <span>BlogZone</span>
-            </a>
-            <div class="flex items-center gap-4">
-                <!-- <a href="home.html" class="text-gray-400 hover:text-white">Home</a> -->
-                <a href="register.html" class="signup-link">Don't have an account?</a>
-            </div>
+      <div class="nav-container">
+        <a href="index.html" class="logo">
+          <i class="fa-solid fa-blog"></i>
+          <span>BlogZone</span>
+        </a>
+        <div class="flex items-center gap-4">
+          <!-- <a href="home.html" class="text-gray-400 hover:text-white">Home</a> -->
+          <a href="register.html" class="signup-link">Don't have an account?</a>
         </div>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <div class="flex-grow flex items-center justify-center p-4">
-        <div class="login-container w-full max-w-5xl flex overflow-hidden">
-            <!-- Left Side - Illustration -->
-            <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-indigo-900 to-purple-900 p-8 items-center justify-center">
-                <div class="illustration w-full max-w-md">
-                    <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" class="w-full">
-                        <defs>
-                            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#a5b4fc;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#818cf8;stop-opacity:1" />
-                            </linearGradient>
-                            <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#c4b5fd;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <!-- Blog/Document Icon -->
-                        <rect x="100" y="100" width="300" height="350" rx="20" fill="url(#grad1)" />
-                        <rect x="130" y="150" width="240" height="20" rx="5" fill="white" opacity="0.7" />
-                        <rect x="130" y="190" width="180" height="20" rx="5" fill="white" opacity="0.7" />
-                        <rect x="130" y="230" width="240" height="20" rx="5" fill="white" opacity="0.7" />
-                        <rect x="130" y="270" width="200" height="20" rx="5" fill="white" opacity="0.7" />
-                        <rect x="130" y="310" width="240" height="20" rx="5" fill="white" opacity="0.7" />
-                        <rect x="130" y="350" width="160" height="20" rx="5" fill="white" opacity="0.7" />
-                        
-                        <!-- Pencil -->
-                        <rect x="320" y="80" width="15" height="120" rx="2" transform="rotate(45, 320, 80)" fill="url(#grad2)" />
-                        <polygon points="310,50 330,70 300,100" fill="#f9a8d4" />
-                        
-                        <!-- Decorative Circles -->
-                        <circle cx="400" cy="400" r="20" fill="#c4b5fd" opacity="0.6" />
-                        <circle cx="80" cy="320" r="30" fill="#818cf8" opacity="0.4" />
-                        <circle cx="450" cy="150" r="25" fill="#a78bfa" opacity="0.5" />
-                    </svg>
-                </div>
-            </div>
-            
-            <!-- Right Side - Login Form -->
-            <div class="w-full md:w-1/2 p-8 flex items-center justify-center" >
-                <div class="w-full max-w-md space-y-8">
-                    <div class="text-center">
-                        <h1 class="text-3xl font-bold text-white mb-2">Welcome Back to Blog Zone</h1>
-                        <p class="text-gray-400">Login to explore, read, and write amazing blogs.</p>
-                    </div>
-                    
-                    <form class="mt-8 space-y-6" id="loginForm" >
-                        <div class="space-y-4">
-                            <div class="relative">
+      <div class="login-container w-full max-w-5xl flex overflow-hidden">
+        <!-- Left Side - Illustration -->
+        <div
+          class="hidden md:flex md:w-1/2 bg-gradient-to-br from-indigo-900 to-purple-900 p-8 items-center justify-center"
+        >
+          <div class="illustration w-full max-w-md">
+            <svg
+              viewBox="0 0 500 500"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-full"
+            >
+              <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop
+                    offset="0%"
+                    style="stop-color: #a5b4fc; stop-opacity: 1"
+                  />
+                  <stop
+                    offset="100%"
+                    style="stop-color: #818cf8; stop-opacity: 1"
+                  />
+                </linearGradient>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop
+                    offset="0%"
+                    style="stop-color: #c4b5fd; stop-opacity: 1"
+                  />
+                  <stop
+                    offset="100%"
+                    style="stop-color: #a78bfa; stop-opacity: 1"
+                  />
+                </linearGradient>
+              </defs>
+              <!-- Blog/Document Icon -->
+              <rect
+                x="100"
+                y="100"
+                width="300"
+                height="350"
+                rx="20"
+                fill="url(#grad1)"
+              />
+              <rect
+                x="130"
+                y="150"
+                width="240"
+                height="20"
+                rx="5"
+                fill="white"
+                opacity="0.7"
+              />
+              <rect
+                x="130"
+                y="190"
+                width="180"
+                height="20"
+                rx="5"
+                fill="white"
+                opacity="0.7"
+              />
+              <rect
+                x="130"
+                y="230"
+                width="240"
+                height="20"
+                rx="5"
+                fill="white"
+                opacity="0.7"
+              />
+              <rect
+                x="130"
+                y="270"
+                width="200"
+                height="20"
+                rx="5"
+                fill="white"
+                opacity="0.7"
+              />
+              <rect
+                x="130"
+                y="310"
+                width="240"
+                height="20"
+                rx="5"
+                fill="white"
+                opacity="0.7"
+              />
+              <rect
+                x="130"
+                y="350"
+                width="160"
+                height="20"
+                rx="5"
+                fill="white"
+                opacity="0.7"
+              />
 
-                                <input type="email" id="email" placeholder="Email address" class="form-input w-full py-3 px-4 rounded-lg focus:outline-none" required>
-                            </div>
-                            
-                            <div class="relative">
+              <!-- Pencil -->
+              <rect
+                x="320"
+                y="80"
+                width="15"
+                height="120"
+                rx="2"
+                transform="rotate(45, 320, 80)"
+                fill="url(#grad2)"
+              />
+              <polygon points="310,50 330,70 300,100" fill="#f9a8d4" />
 
-                                <input type="password" id="password" placeholder="Password" class="form-input w-full py-3 px-4 rounded-lg focus:outline-none" required>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded border-gray-600 bg-gray-700 text-indigo-600 focus:ring-indigo-500">
-                                <label for="remember-me" class="ml-2 block text-sm text-gray-400">Remember me</label>
-                            </div>
-                            
-                            <div class="text-sm">
-                                <a href="#" class="font-medium text-indigo-400 hover:text-indigo-300">Forgot Password?</a>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <button type="submit" class="login-btn w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white font-medium focus:outline-none" onclick="window.location.href='home.html'">
-                                Login
-                            </button>
-                        </div>
-                        
-                        <div class="text-center text-sm">
-                            <p class="text-gray-400">
-                                Don't have an account? 
-                                <a href="register.html" class="font-medium text-indigo-400 hover:text-indigo-300">Register</a>
-                            </p>
-                        </div>
-                    </form>
-                </div>
-            </div>
+              <!-- Decorative Circles -->
+              <circle cx="400" cy="400" r="20" fill="#c4b5fd" opacity="0.6" />
+              <circle cx="80" cy="320" r="30" fill="#818cf8" opacity="0.4" />
+              <circle cx="450" cy="150" r="25" fill="#a78bfa" opacity="0.5" />
+            </svg>
+          </div>
         </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="w-full md:w-1/2 p-8 flex items-center justify-center">
+          <div class="w-full max-w-md space-y-8">
+            <div class="text-center">
+              <h1 class="text-3xl font-bold text-white mb-2">
+                Welcome Back to Blog Zone
+              </h1>
+              <p class="text-gray-400">
+                Login to explore, read, and write amazing blogs.
+              </p>
+            </div>
+
+            <form class="mt-8 space-y-6" id="loginForm">
+              <div class="space-y-4">
+                <div class="relative">
+                  <input
+                    type="email"
+                    id="email"
+                    placeholder="Email address"
+                    class="form-input w-full py-3 px-4 rounded-lg focus:outline-none"
+                    required
+                  />
+                </div>
+
+                <div class="relative">
+                  <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    class="form-input w-full py-3 px-4 rounded-lg focus:outline-none"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-gray-600 bg-gray-700 text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <label
+                    for="remember-me"
+                    class="ml-2 block text-sm text-gray-400"
+                    >Remember me</label
+                  >
+                </div>
+
+                <div class="text-sm">
+                  <a
+                    href="#"
+                    class="font-medium text-indigo-400 hover:text-indigo-300"
+                    >Forgot Password?</a
+                  >
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  class="login-btn w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white font-medium focus:outline-none"
+                  
+                >
+                  Login
+                </button>
+              </div>
+
+              <div class="text-center text-sm">
+                <p class="text-gray-400">
+                  Don't have an account?
+                  <a
+                    href="register.html"
+                    class="font-medium text-indigo-400 hover:text-indigo-300"
+                    >Register</a
+                  >
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <script>
-        // Add subtle animation to form inputs on focus
-        document.querySelectorAll('.form-input').forEach(input => {
-            input.addEventListener('focus', () => {
-                input.style.transform = 'translateY(-2px)';
-            });
-            
-            input.addEventListener('blur', () => {
-                input.style.transform = 'translateY(0)';
-            });
+    <!-- <script>
+      // Add subtle animation to form inputs on focus
+      document.querySelectorAll(".form-input").forEach((input) => {
+        input.addEventListener("focus", () => {
+          input.style.transform = "translateY(-2px)";
         });
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96214459a2252e29',t:'MTc1MzAwMjAxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+        input.addEventListener("blur", () => {
+          input.style.transform = "translateY(0)";
+        });
+      });
+    </script> -->
+
+    <script src="./src//js/auth/login.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </body>
 </html>
