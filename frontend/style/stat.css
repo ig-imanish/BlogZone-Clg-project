@@ -63,7 +63,8 @@
         margin-bottom: 5px;
       }
       .stat .label {
-        font-size:small;
+        text-align: center;
+        font-size:smaller;
         color: #cacfd9;
       }
 

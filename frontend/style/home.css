@@ -140,7 +140,7 @@ a {
   gap: 12px;
 }
 .sidebar .bottombar li {
-  margin: 300px 0px 25px 0px;
+  margin: 225px  0px 25px 0px;
   padding: 12px 0px 12px 12px;
   width: 210px;
   border-radius: 8px;
@@ -181,7 +181,7 @@ a {
   grid-template-columns: repeat(1, 1fr);
   gap: 30px;
   align-items: center;
-  margin-left: 200px;
+  margin-left: 100px;
 }
 .cards .card {
   height: 295px;
