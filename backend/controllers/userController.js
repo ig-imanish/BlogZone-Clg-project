@@ -58,7 +58,7 @@ const userLogin = async (req, res) => {
         return;
       }
       if (result) {
-        res.status(200).send({token : token});
+        res.status(200).send({token : token,user:userExist});
       } else {
         res.status(401).send({error: "Invalid credentials"});
       }
