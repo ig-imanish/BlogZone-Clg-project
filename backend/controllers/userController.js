@@ -58,7 +58,11 @@ const userLogin = async (req, res) => {
         return;
       }
       if (result) {
+<<<<<<< HEAD
         res.status(200).send({token : token, email : userExist.email});
+=======
+        res.status(200).send({token : token,user:userExist});
+>>>>>>> 713ee1236409d80ac9e438423958bd84eb3e201a
       } else {
         res.status(401).send({error: "Invalid credentials"});
       }
