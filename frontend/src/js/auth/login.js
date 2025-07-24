@@ -55,36 +55,15 @@ document
 
       if (response.ok) {
         const data = await response.json();
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("email", data.email);
         // console.log('Login successful:', data);
         // console.log('User data:', data.user);
-
-        // Store user data using AuthManager if available, otherwise use localStorage
-        if (typeof authManager !== "undefined") {
-          authManager.saveUserData({
-            id: data.user._id,
-            name: data.user.name,
-            email: data.user.email,
-            token: data.token,
-          });
-        } else {
-          // Fallback to direct localStorage
-          localStorage.setItem(
-            "userData",
-            JSON.stringify({
-              id: data.user._id || data.user.id,
-              name: data.user.name,
-              email: data.user.email,
-              token: data.token,
-              isLoggedIn: true,
-              loginTime: new Date().toISOString(),
-            })
-          );
-        }
 
         // Show success notification
         if (typeof Toastify !== "undefined") {
           Toastify({
-            text: `Welcome back, ${data.user.name}! Redirecting to home page...`,
+            text: `Welcome back, ${data.email}! Redirecting to home page...`,
             duration: 2500,
             gravity: "top",
             position: "right",
@@ -99,7 +78,7 @@ document
         } else {
           // Fallback notification
           showFallbackNotification(
-            `Welcome back, ${data.user.name}! Redirecting to home page...`,
+            `Welcome back, ${data.email}! Redirecting to home page...`,
             "success"
           );
         }
@@ -192,6 +171,4 @@ function showFallbackNotification(message, type) {
     // Fallback to alert if no toast element exists
     alert(message);
   }
-
-  localStorage.setItem("token", data.token);
 }

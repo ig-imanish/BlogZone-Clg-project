@@ -1,27 +1,169 @@
-import { data } from "../api/api.js";
-
-// Detect if we're on the profile page
+// Detect page type
 const isProfilePage =
   document.title === "profile" || window.location.pathname.includes("profile");
 const isBookmarkPage =
   document.title === "bookmark" ||
   window.location.pathname.includes("bookmark");
-const blogPage =
+const isBlogPage =
   document.title === "blog" || window.location.pathname.includes("blog");
 
+// Load posts from API on page load for home and profile pages
+window.addEventListener("DOMContentLoaded", () => {
+  if (isBlogPage) {
+    loadBlogContent();
+  } else {
+    loadPosts();
+  }
+});
+
+// Load and display posts based on page type
+async function loadPosts() {
+  try {
+    let response;
+
+    if (isBookmarkPage) {
+      // Get user email from localStorage or session
+      const userEmail = localStorage.getItem("userEmail") || "manish@gmail.com"; // fallback
+      response = await fetch(
+        `http://localhost:8080/api/product/bookmarks/${userEmail}`
+      );
+    } else if (isProfilePage) {
+      // Get all posts and filter by user (we can improve this with a dedicated endpoint later)
+      response = await fetch("http://localhost:8080/api/product/get");
+    } else {
+      response = await fetch("http://localhost:8080/api/product/get");
+    }
+
+    if (response.ok) {
+      let posts = await response.json();
+
+      // Filter posts for profile page
+      if (isProfilePage) {
+        const userEmail =
+          localStorage.getItem("userEmail") || "manish@gmail.com";
+        console.log("Profile page filtering - User email:", userEmail);
+        console.log("Total posts before filtering:", posts.length);
+        console.log(
+          "Sample post authors:",
+          posts.slice(0, 3).map((p) => ({
+            title: p.title,
+            authorEmail: p.author?.email,
+            authorName: p.author?.name,
+          }))
+        );
+
+        posts = posts.filter((post) => {
+          const matches = post.author?.email === userEmail;
+          if (matches) {
+            console.log(
+              "Found matching post:",
+              post.title,
+              "by",
+              post.author?.email
+            );
+          }
+          return matches;
+        });
+
+        console.log("Posts after filtering:", posts.length);
+      }
+
+      displayPosts(posts);
+    } else {
+      console.error("Failed to load posts:", response.status);
+      showErrorMessage("Failed to load posts. Please try again later.");
+    }
+  } catch (error) {
+    console.error("Error loading posts:", error);
+    showErrorMessage("Network error. Please check your connection.");
+  }
+}
+
+// Display posts in the cards format
+function displayPosts(posts) {
+  const cardsContainer = document.getElementById("cards");
+  if (!cardsContainer) {
+    console.error("Cards container not found");
+    return;
+  }
+
+  cardsContainer.innerHTML = "";
+
+  if (posts.length === 0) {
+    let emptyMessage = "";
+    if (isBookmarkPage) {
+      emptyMessage = `
+        <div style="text-align: center; padding: 40px; color: #999;">
+          <i class="fa-solid fa-bookmark" style="font-size: 3rem; margin-bottom: 20px; color: #444;"></i>
+          <h3>No bookmarks yet</h3>
+          <p>Start bookmarking blogs you love to see them here!</p>
+        </div>
+      `;
+    } else if (isProfilePage) {
+      emptyMessage = `
+        <div style="text-align: center; padding: 40px; color: #999;">
+          <i class="fa-solid fa-user-edit" style="font-size: 3rem; margin-bottom: 20px; color: #444;"></i>
+          <h3>No blogs yet</h3>
+          <p>Create your first blog post to see it here!</p>
+        </div>
+      `;
+    } else {
+      emptyMessage = `
+        <div style="text-align: center; padding: 40px; color: #999;">
+          <h3>No posts yet</h3>
+          <p>Be the first to create a blog post!</p>
+        </div>
+      `;
+    }
+    cardsContainer.innerHTML = emptyMessage;
+    return;
+  }
+
+  // Convert backend data to frontend format
+  const formattedPosts = posts.map((post) => ({
+    id: post._id,
+    title: post.title,
+    desc: post.desc,
+    banner: post.banner,
+    avatar: post.author?.avatar || "./assets/my-av.jpeg",
+    fullname: post.author?.name || "Anonymous",
+    username: `@${post.author?.email?.split("@")[0] || "anonymous"}`,
+    isVerified: post.author?.isVerified || false,
+    timestamp: getTimeAgo(post.createdAt),
+    publishDate: new Date(post.createdAt).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }),
+    readTime: post.readTime || "5 min read",
+    views: post.views || 0,
+    likes: post.likes || 0,
+    comments: post.comments || 0,
+    bookmarked: false, // This should come from user's bookmarks
+    tags: post.tags || [],
+    content: post.content,
+  }));
+
+  cardsContainer.innerHTML = formattedPosts.map(renderCard).join("");
+}
+
 function renderCard(data) {
-  // Different template for profile page
   if (isProfilePage || isBookmarkPage) {
     return `
-        <div class="card" style="margin-top: 20px">
+        <div class="card" style="margin-top: 20px" data-blog-id="${data.id}">
           <a class="heading" href="blog.html?id=${data.id}">
-            <h2>
-              ${data.title}
-            </h2>
-            <span class="moreIcon"><i class="ri-more-line"></i></span>
+            <h2>${data.title}</h2>
+            <span class="moreIcon">
+              ${
+                isProfilePage
+                  ? `<i class="ri-delete-bin-line" onclick="deletePost(event, '${data.id}')" style="color: #ef4444; cursor: pointer; margin-left: 10px;" title="Delete Blog"></i>`
+                  : ""
+              }
+              <i class="ri-more-line"></i>
+            </span>
           </a>
           <div class="profile-section">
-            <img src="${data.avatar}" alt="" />
+            <img src="${data.avatar}" alt="Author avatar" />
             <div class="userinfo">
               <div class="fullname">
                 ${data.fullname}
@@ -36,117 +178,126 @@ function renderCard(data) {
           </div>
           <div class="desc-img">
             <a href="blog.html?id=${data.id}">
-              <div class="desc">
-                ${data.desc}
-              </div>
+              <div class="desc">${data.desc}</div>
             </a>
             <a href="blog.html?id=${data.id}">
-              <img src="${data.banner}" alt="" />
+              <img src="${data.banner}" alt="Blog banner" />
             </a>
           </div>
-             <div class="footer">
-            <div class="fcard ml-20" onclick="likePost()">
-              <i class="fa-solid fa-thumbs-up"></i> Like
+          <div class="footer">
+            <div class="fcard ml-20" onclick="likePost(event)">
+              <i class="fa-solid fa-thumbs-up"></i> Like (${data.likes})
             </div>
             <div class="fcard" onclick="bookmarkPost(this)">
-              <i class="fa-solid fa-bookmark"></i> Bookmark
+              <i class="fa-solid fa-bookmark" ${
+                data.bookmarked ? 'style="color: #f59e0b;"' : ""
+              }></i> 
+              ${data.bookmarked ? "Bookmarked" : "Bookmark"}
             </div>
             <div class="fcard" onclick="sharePost(this)">
               <i class="fa-solid fa-share-from-square"></i> Share
             </div>
-            <div class="fcard mr-20"  >
+            <div class="fcard mr-20">
               <i class="fa-regular fa-clock"></i> ${data.timestamp}
             </div>
           </div>
         </div>
         `;
-  } else if (blogPage) {
-    loadPosts();
-    //   return `
-    //       <div class="card">
-    //         <a href="blog.html?id=${data.id}">
-    //           <h2>
-    //             ${data.title}
-    //           </h2>
-    //         </a>
-    //         <div class="profile-section">
-    //           <img src="${data.avatar}" alt="" />
-    //           <div class="userinfo">
-    //             <div class="fullname">
-    //               ${data.fullname}
-    //               ${
-    //                 data.isVerified
-    //                   ? '<i class="ri-verified-badge-fill" style="color: #0254f7"></i>'
-    //                   : ""
-    //               }
-    //             </div>
-    //             <div class="username">${data.username}</div>
-    //           </div>
-    //         </div>
-    //         <div class="desc-img">
-    //           <a href="blog.html?id=${data.id}">
-    //             <div class="desc">
-    //               ${data.desc}
-    //             </div>
-    //           </a>
-    //           <a href="blog.html?id=${data.id}">
-    //             <img src="${data.banner}" alt="" />
-    //           </a>
-    //         </div>`;
-    // } else {
-    //   // console.log('Rendering default card template');
-    //   // Default template for home page
-    //   return `
-    //       <div class="card">
-    //         <a href="blog.html?id=${data.id}">
-    //           <h2>
-    //             ${data.title}
-    //           </h2>
-    //         </a>
-    //         <div class="profile-section">
-    //           <img src="${data.avatar}" alt="" />
-    //           <div class="userinfo">
-    //             <div class="fullname">
-    //               ${data.fullname}
-    //               ${
-    //                 data.isVerified
-    //                   ? '<i class="ri-verified-badge-fill" style="color: #0254f7"></i>'
-    //                   : ""
-    //               }
-    //             </div>
-    //             <div class="username">${data.username}</div>
-    //           </div>
-    //         </div>
-    //         <div class="desc-img">
-    //           <a href="blog.html?id=${data.id}">
-    //             <div class="desc">
-    //               ${data.desc}
-    //             </div>
-    //           </a>
-    //           <a href="blog.html?id=${data.id}">
-    //             <img src="${data.banner}" alt="" />
-    //           </a>
-    //         </div>
-    //         <div class="footer">
-    //           <div class="fcard ml-20" onclick="likePost()">
-    //             <i class="fa-solid fa-thumbs-up"></i> Like
-    //           </div>
-    //           <div class="fcard" onclick="bookmarkPost(this)">
-    //             <i class="fa-solid fa-bookmark"></i> Bookmark
-    //           </div>
-    //           <div class="fcard" onclick="sharePost(this)">
-    //             <i class="fa-solid fa-share-from-square"></i> Share
-    //           </div>
-    //           <div class="fcard mr-20"  >
-    //             <i class="fa-regular fa-clock"></i> ${data.timestamp}
-    //           </div>
-    //         </div>
-    //       </div>
-    //       `;
+  } else {
+    // Default template for home page
+    return `
+        <div class="card" data-blog-id="${data.id}">
+          <a href="blog.html?id=${data.id}">
+            <h2>${data.title}</h2>
+          </a>
+          <div class="profile-section">
+            <img src="${data.avatar}" alt="Author avatar" />
+            <div class="userinfo">
+              <div class="fullname">
+                ${data.fullname}
+                ${
+                  data.isVerified
+                    ? '<i class="ri-verified-badge-fill" style="color: #0254f7"></i>'
+                    : ""
+                }
+              </div>
+              <div class="username">${data.username}</div>
+            </div>
+          </div>
+          <div class="desc-img">
+            <a href="blog.html?id=${data.id}">
+              <div class="desc">${data.desc}</div>
+            </a>
+            <a href="blog.html?id=${data.id}">
+              <img src="${data.banner}" alt="Blog banner" />
+            </a>
+          </div>
+          <div class="footer">
+            <div class="fcard ml-20" onclick="likePost(event)">
+              <i class="fa-solid fa-thumbs-up"></i> Like (${data.likes})
+            </div>
+            <div class="fcard" onclick="bookmarkPost(this)">
+              <i class="fa-solid fa-bookmark" ${
+                data.bookmarked ? 'style="color: #f59e0b;"' : ""
+              }></i> 
+              ${data.bookmarked ? "Bookmarked" : "Bookmark"}
+            </div>
+            <div class="fcard" onclick="sharePost(this)">
+              <i class="fa-solid fa-share-from-square"></i> Share
+            </div>
+            <div class="fcard mr-20">
+              <i class="fa-regular fa-clock"></i> ${data.timestamp}
+            </div>
+          </div>
+        </div>
+        `;
   }
 }
 
-document.getElementById("cards").innerHTML = data.map(renderCard).join("");
+// Utility function to show error messages
+function showErrorMessage(message) {
+  const cardsContainer = document.getElementById("cards");
+  const blogContentContainer = document.getElementById("blogContent");
+  const targetContainer = cardsContainer || blogContentContainer;
+
+  if (targetContainer) {
+    targetContainer.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: #e53e3e;">
+        <h3>Error</h3>
+        <p>${message}</p>
+        <button onclick="location.reload()" style="
+          background: #6366f1;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 6px;
+          cursor: pointer;
+          margin-top: 10px;
+        ">Retry</button>
+      </div>
+    `;
+  }
+}
+
+// Helper function to calculate time ago
+function getTimeAgo(dateString) {
+  const now = new Date();
+  const postDate = new Date(dateString);
+  const diffInMs = now - postDate;
+  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  if (diffInMinutes < 1) {
+    return "Just now";
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} min ago`;
+  } else if (diffInHours < 24) {
+    return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
+  } else {
+    return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
+  }
+}
 
 // Add more-icon functionality for profile page
 if (isProfilePage) {
@@ -295,39 +446,8 @@ function editPost(element) {
     .forEach((dropdown) => dropdown.remove());
 }
 
-function deletePost(element) {
-  const card = element.closest(".card");
-  if (confirm("Are you sure you want to delete this post?")) {
-    card.remove();
-    alert("Post deleted!");
-  }
-  document
-    .querySelectorAll(".more-dropdown")
-    .forEach((dropdown) => dropdown.remove());
-}
-
-function sharePost(element) {
-  const card = element.closest(".card");
-  const title = card.querySelector("h2").textContent;
-  if (navigator.share) {
-    navigator.share({
-      title: title,
-      url: window.location.href,
-    });
-  } else {
-    // Fallback for browsers without Web Share API
-    navigator.clipboard.writeText(window.location.href);
-    alert("Post link copied to clipboard!");
-  }
-  document
-    .querySelectorAll(".more-dropdown")
-    .forEach((dropdown) => dropdown.remove());
-}
-
 // Make more-icon functions globally available
 window.editPost = editPost;
-window.deletePost = deletePost;
-window.sharePost = sharePost;
 
 // Show/hide profile card
 function showCard() {
@@ -353,8 +473,6 @@ function copyToClipboard(event, text) {
 window.showCard = showCard;
 window.showHelpCard = showHelpCard;
 window.copyToClipboard = copyToClipboard;
-window.likePost = likePost;
-window.bookmarkPost = bookmarkPost;
 
 // Hide cards when clicking outside
 document.addEventListener("click", function (e) {
@@ -384,308 +502,486 @@ document.addEventListener("click", function (e) {
   }
 });
 
-function likePost() {
-  // Get the clicked like button element using event.target
-  const likeButton = event.target.closest(".fcard");
-
-  // Check current background color
-  const currentBg = likeButton.style.backgroundColor;
-
-  if (currentBg === "red" || currentBg === "rgb(255, 0, 0)") {
-    // If it's red (liked), make it normal (unlike)
-    likeButton.style.backgroundColor = "#191919";
-    console.log("Post unliked");
-  } else {
-    // If it's normal, make it red (like)
-    likeButton.style.backgroundColor = "red";
-    console.log("Post liked");
-  }
+// Blog page specific loading
+if (isBlogPage) {
+  window.addEventListener("DOMContentLoaded", () => {
+    loadBlogContent();
+  });
 }
 
-function bookmarkPost(element) {
-  // console.log('Post bookmarked/unbookmarked');
-  const bookmarkIcon = element.querySelector("i");
+// Function to load individual blog content (for blog.html page)
+async function loadBlogContent() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const blogId = urlParams.get("id");
 
-  // Toggle bookmark state
-  if (bookmarkIcon.classList.contains("fa-solid")) {
-    bookmarkIcon.classList.remove("fa-solid");
-    bookmarkIcon.classList.add("fa-regular");
-    console.log("Post removed from bookmarks");
-  } else {
-    bookmarkIcon.classList.remove("fa-regular");
-    bookmarkIcon.classList.add("fa-solid");
-    console.log("Post added to bookmarks");
-  }
-}
-
-// here is my code
-
-// Load and display all posts
-async function loadPosts() {
-  try {
-    const response = await fetch("http://localhost:8080/api/product/get");
-    if (response.ok) {
-      const posts = await response.json();
-      displayPosts(posts);
-    }
-  } catch (error) {
-    console.error("Error loading posts:", error);
-  }
-}
-
-// Display posts in the posts section
-function displayPosts(posts) {
-  const postsContainer = document.getElementById("posts");
-  postsContainer.innerHTML = "";
-
-  if (posts.length === 0) {
-    postsContainer.innerHTML = "<p>No posts yet. Create your first post!</p>";
+  if (!blogId) {
+    console.error("No blog ID provided");
+    showErrorMessage("No blog ID provided in URL.");
     return;
   }
 
-  posts.forEach((post) => {
-    const postDiv = document.createElement("div");
-    postDiv.className = "post";
+  try {
+    const response = await fetch(
+      `http://localhost:8080/api/product/get/${blogId}`
+    );
+    if (response.ok) {
+      const blog = await response.json();
+      displayBlogContent(blog);
+    } else {
+      console.error("Failed to load blog:", response.status);
+      showErrorMessage("Blog not found or failed to load.");
+    }
+  } catch (error) {
+    console.error("Error loading blog:", error);
+    showErrorMessage("Network error while loading blog.");
+  }
+}
 
-    const postHeader = document.createElement("div");
-    postHeader.style.cssText =
-      "display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;";
+// Function to display individual blog content
+function displayBlogContent(blog) {
+  // Store current blog globally for blog page functions
+  if (window.setCurrentBlog) {
+    window.setCurrentBlog(blog);
+  }
 
-    const title = document.createElement("h2");
-    title.textContent = post.title;
+  // Update page title
+  document.title = `${blog.title} - BlogZone`;
 
-    const date = document.createElement("small");
-    date.style.cssText = "color: #718096; font-size: 14px;";
-    date.textContent = new Date(post.createdAt).toLocaleDateString();
+  // Update blog header elements
+  const titleElement = document.getElementById("blogTitle");
+  const authorAvatar = document.getElementById("authorAvatar");
+  const authorName = document.getElementById("authorName");
+  const authorUsername = document.getElementById("authorUsername");
+  const publishDate = document.getElementById("publishDate");
+  const readTime = document.getElementById("readTime");
+  const viewCount = document.getElementById("viewCount");
+  const blogImage = document.getElementById("blogImage");
+  const blogContent = document.getElementById("blogContent");
+  const blogTags = document.getElementById("blogTags");
 
-    postHeader.appendChild(title);
-    postHeader.appendChild(date);
+  if (titleElement) titleElement.textContent = blog.title;
+  if (authorAvatar)
+    authorAvatar.src = blog.author?.avatar || "./assets/my-av.jpeg";
+  if (authorName) authorName.textContent = blog.author?.name || "Anonymous";
+  if (authorUsername)
+    authorUsername.textContent = `@${
+      blog.author?.email?.split("@")[0] || "anonymous"
+    }`;
+  if (publishDate)
+    publishDate.textContent = `Published on ${new Date(
+      blog.createdAt
+    ).toLocaleDateString()}`;
+  if (readTime) readTime.textContent = blog.readTime || "5 min read";
+  if (viewCount) viewCount.textContent = `${blog.views || 0} views`;
+  if (blogImage) {
+    blogImage.src = blog.banner;
+    blogImage.alt = blog.title;
+  }
 
-    const contentDiv = document.createElement("div");
+  // Display blog content
+  if (blogContent) {
+    if (typeof blog.content === "string") {
+      // If content is HTML string, display directly
+      blogContent.innerHTML = blog.content;
+    } else {
+      // If content is JSON array, convert to HTML
+      try {
+        const contentElements =
+          typeof blog.content === "string"
+            ? JSON.parse(blog.content)
+            : blog.content;
+        blogContent.innerHTML = convertJsonToHtml(contentElements);
+      } catch (error) {
+        console.error("Error parsing blog content:", error);
+        blogContent.innerHTML = "<p>Error displaying blog content.</p>";
+      }
+    }
+  }
 
-    try {
-      const contentElements = JSON.parse(post.content);
-      contentElements.forEach((element) => {
-        const elementDiv = document.createElement("div");
-        elementDiv.style.cssText = "margin-bottom: 12px;";
+  // Display tags
+  if (blogTags && blog.tags) {
+    blogTags.innerHTML = "";
+    blog.tags.forEach((tag) => {
+      const tagElement = document.createElement("a");
+      tagElement.href = "#";
+      tagElement.className = "tag";
+      tagElement.textContent = tag;
+      blogTags.appendChild(tagElement);
+    });
+  }
 
-        if (element.type === "heading") {
-          const heading = document.createElement("h3");
-          heading.textContent = element.text;
-          const customization = element.customization || {};
-          heading.style.cssText = `
-                  font-family: ${customization.fontFamily || "inherit"};
-                  font-size: ${customization.fontSize || "20px"};
-                  color: ${customization.fontColor || "#ffffff"};
-                  text-align: ${customization.textAlign || "left"};
-                  font-weight: ${customization.fontWeight || "600"};
-                  font-style: ${customization.fontStyle || "normal"};
-                  margin: 0;
-                `;
-          elementDiv.appendChild(heading);
-        } else if (element.type === "paragraph") {
-          const paragraph = document.createElement("p");
-          paragraph.textContent = element.text;
-          const customization = element.customization || {};
-          paragraph.style.cssText = `
-                  font-family: ${customization.fontFamily || "inherit"};
-                  font-size: ${customization.fontSize || "16px"};
-                  color: ${customization.fontColor || "#cbd5e0"};
-                  text-align: ${customization.textAlign || "left"};
-                  font-weight: ${customization.fontWeight || "normal"};
-                  font-style: ${customization.fontStyle || "normal"};
-                  margin: 0; line-height: 1.6;
-                `;
-          elementDiv.appendChild(paragraph);
-        } else if (element.type === "link") {
-          const linkContainer = document.createElement("div");
-          const customization = element.customization || {};
-          linkContainer.style.textAlign = customization.textAlign || "left";
+  // Update stats
+  updateBlogStats(blog);
+}
 
-          const link = document.createElement("a");
-          link.href = element.url || "#";
-          link.textContent = element.text || "Link";
-          link.style.cssText = `
-                  color: ${customization.fontColor || "#63b3ed"};
-                  font-size: ${customization.fontSize || "16px"};
-                  text-decoration: ${
-                    customization.textDecoration || "underline"
-                  };
-                `;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
+// Convert JSON content to HTML
+function convertJsonToHtml(contentElements) {
+  if (!Array.isArray(contentElements)) {
+    return "<p>Invalid content format.</p>";
+  }
 
-          linkContainer.appendChild(link);
-          elementDiv.appendChild(linkContainer);
-        } else if (element.type === "button") {
-          const buttonContainer = document.createElement("div");
-          const customization = element.customization || {};
-          buttonContainer.style.textAlign = customization.textAlign || "left";
+  return contentElements
+    .map((element) => {
+      const customization = element.customization || {};
 
-          const buttonLink = document.createElement("a");
-          buttonLink.href = element.url || "#";
-          buttonLink.target = "_blank";
-          buttonLink.rel = "noopener noreferrer";
-          buttonLink.style.cssText = "text-decoration: none;";
+      switch (element.type) {
+        case "heading":
+          return `<h3 style="
+          font-family: ${customization.fontFamily || "inherit"};
+          font-size: ${customization.fontSize || "24px"};
+          color: ${customization.fontColor || "#ffffff"};
+          text-align: ${customization.textAlign || "left"};
+          font-weight: ${customization.fontWeight || "600"};
+          margin: 20px 0 10px 0;
+        ">${element.text}</h3>`;
 
-          const button = document.createElement("button");
-          button.textContent = element.text || "Button";
+        case "paragraph":
+          return `<p style="
+          font-family: ${customization.fontFamily || "inherit"};
+          font-size: ${customization.fontSize || "16px"};
+          color: ${customization.fontColor || "#e0e0e0"};
+          text-align: ${customization.textAlign || "left"};
+          line-height: 1.8;
+          margin: 15px 0;
+        ">${element.text}</p>`;
 
-          let padding = "8px 16px";
-          let fontSize = "14px";
-          switch (customization.buttonSize) {
-            case "small":
-              padding = "6px 12px";
-              fontSize = "12px";
-              break;
-            case "medium":
-              padding = "8px 16px";
-              fontSize = "14px";
-              break;
-            case "large":
-              padding = "12px 24px";
-              fontSize = "16px";
-              break;
-            default:
-              padding = "8px 16px";
-              fontSize = "14px";
-          }
-
-          button.style.cssText = `
-                  background: ${customization.backgroundColor || "#4299e1"};
-                  color: ${customization.fontColor || "#ffffff"};
-                  padding: ${padding};
-                  font-size: ${fontSize};
-                  border: none;
-                  border-radius: ${customization.borderRadius || "4px"};
-                  cursor: pointer;
-                `;
-
-          buttonLink.appendChild(button);
-          buttonContainer.appendChild(buttonLink);
-          elementDiv.appendChild(buttonContainer);
-        } else if (element.type === "image") {
-          if (element.text && element.text.trim()) {
-            const img = document.createElement("img");
-            img.src = element.text;
-            const customization = element.customization || {};
-
-            let maxWidth = "100%";
-            switch (customization.imageSize) {
-              case "small":
-                maxWidth = "200px";
-                break;
-              case "medium":
-                maxWidth = "400px";
-                break;
-              case "large":
-                maxWidth = "600px";
-                break;
-              case "full":
-                maxWidth = "100%";
-                break;
-              default:
-                maxWidth = "400px";
-            }
-
-            img.style.cssText = `
-                    max-width: ${maxWidth}; 
-                    height: auto; 
-                    border-radius: 6px;
-                    display: block;
-                    margin: ${
-                      customization.textAlign === "center"
-                        ? "0 auto"
-                        : customization.textAlign === "right"
-                        ? "0 0 0 auto"
-                        : "0 auto 0 0"
-                    };
-                  `;
-            img.alt = "Blog image";
-            img.onerror = function () {
-              this.style.display = "none";
-              const errorMsg = document.createElement("p");
-              errorMsg.textContent = "Image failed to load: " + element.text;
-              errorMsg.style.cssText = "color: #e53e3e; font-style: italic;";
-              elementDiv.appendChild(errorMsg);
+        case "image":
+          if (!element.text?.trim()) return "";
+          return `<div style="text-align: ${
+            customization.textAlign || "center"
+          }; margin: 20px 0;">
+          <img src="${element.text}" alt="Blog image" style="
+            max-width: ${
+              customization.imageSize === "small"
+                ? "300px"
+                : customization.imageSize === "large"
+                ? "800px"
+                : "500px"
             };
-            elementDiv.appendChild(img);
-          } else {
-            const placeholder = document.createElement("p");
-            placeholder.textContent = "No image URL provided";
-            placeholder.style.cssText = "color: #718096; font-style: italic;";
-            elementDiv.appendChild(placeholder);
-          }
-        } else if (element.type === "blockquote") {
-          const quote = document.createElement("blockquote");
-          quote.textContent = element.text;
-          const customization = element.customization || {};
-          quote.style.cssText = `
-                  font-family: ${customization.fontFamily || "inherit"};
-                  font-size: ${customization.fontSize || "16px"};
-                  color: ${customization.fontColor || "#cbd5e0"};
-                  text-align: ${customization.textAlign || "left"};
-                  font-weight: ${customization.fontWeight || "normal"};
-                  font-style: ${customization.fontStyle || "italic"};
-                  border-left: 4px solid #4299e1; 
-                  padding-left: 16px; 
-                  margin: 0;
-                `;
-          elementDiv.appendChild(quote);
-        } else if (element.type === "list") {
-          const customization = element.customization || {};
-          const listStyle = customization.listStyle || "disc";
+            height: auto;
+            border-radius: 8px;
+          " />
+        </div>`;
 
-          // Determine if it should be ordered or unordered
-          const isOrdered = [
-            "decimal",
-            "decimal-leading-zero",
-            "lower-alpha",
-            "upper-alpha",
-            "lower-roman",
-            "upper-roman",
-          ].includes(listStyle);
+        case "blockquote":
+          return `<blockquote style="
+          border-left: 4px solid #6366f1;
+          padding-left: 20px;
+          margin: 20px 0;
+          font-style: italic;
+          color: ${customization.fontColor || "#cbd5e0"};
+          font-size: ${customization.fontSize || "16px"};
+        ">${element.text}</blockquote>`;
 
-          const list = document.createElement(isOrdered ? "ol" : "ul");
-          list.style.cssText = `
-                  list-style-type: ${listStyle};
-                  padding-left: 24px;
-                  color: ${customization.fontColor || "#cbd5e0"};
-                  font-size: ${customization.fontSize || "14px"};
-                  font-family: ${customization.fontFamily || "inherit"};
-                  text-align: ${customization.textAlign || "left"};
-                  margin: 0;
-                `;
-
+        case "list":
           const items = element.text
             ? element.text.split("\n").filter((item) => item.trim())
             : [];
-          items.forEach((item) => {
-            const li = document.createElement("li");
-            li.textContent = item;
-            list.appendChild(li);
-          });
-          elementDiv.appendChild(list);
-        } else if (element.type === "code") {
-          const code = document.createElement("pre");
-          code.textContent = element.text;
-          code.style.cssText =
-            "background: #1a202c; color: #68d391; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 14px; margin: 0;";
-          elementDiv.appendChild(code);
-        }
+          const listItems = items.map((item) => `<li>${item}</li>`).join("");
+          return `<ul style="
+          color: ${customization.fontColor || "#e0e0e0"};
+          font-size: ${customization.fontSize || "16px"};
+          margin: 15px 0;
+          padding-left: 20px;
+        ">${listItems}</ul>`;
 
-        contentDiv.appendChild(elementDiv);
-      });
-    } catch (error) {
-      console.error("Error parsing post content:", error);
-      const errorP = document.createElement("p");
-      errorP.textContent = "Error displaying post content.";
-      errorP.style.cssText = "color: #e53e3e;";
-      contentDiv.appendChild(errorP);
-    }
+        case "code":
+          return `<pre style="
+          background: #1a1a1a;
+          color: #68d391;
+          padding: 15px;
+          border-radius: 8px;
+          font-family: 'Courier New', monospace;
+          font-size: 14px;
+          margin: 20px 0;
+          overflow-x: auto;
+        "><code>${element.text}</code></pre>`;
 
-    postDiv.appendChild(postHeader);
-    postDiv.appendChild(contentDiv);
-    postsContainer.appendChild(postDiv);
-  });
+        case "link":
+          return `<p><a href="${element.url || "#"}" target="_blank" style="
+          color: ${customization.fontColor || "#6366f1"};
+          text-decoration: underline;
+        ">${element.text || "Link"}</a></p>`;
+
+        default:
+          return `<p>${element.text || ""}</p>`;
+      }
+    })
+    .join("");
 }
+
+// Update blog statistics
+function updateBlogStats(blog) {
+  const likeText = document.getElementById("likeText");
+  const commentCount = document.getElementById("commentCount");
+  const blogStats = document.getElementById("blogStats");
+
+  if (likeText) likeText.textContent = `Like (${blog.likes || 0})`;
+  if (commentCount)
+    commentCount.textContent = `Comments (${blog.comments || 0})`;
+  if (blogStats)
+    blogStats.textContent = `Views: ${blog.views || 0} • Likes: ${
+      blog.likes || 0
+    } • Comments: ${blog.comments || 0}`;
+}
+
+// Like post functionality
+async function likePost(event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  try {
+    const userEmail = localStorage.getItem("userEmail") || "manish@gmail.com";
+    const card = event.target.closest(".card");
+    if (!card) return;
+
+    // Extract blog ID from the card's link
+    const blogLink = card.querySelector('a[href*="blog.html?id="]');
+    if (!blogLink) return;
+
+    const blogId = new URL(blogLink.href).searchParams.get("id");
+    if (!blogId) return;
+
+    const response = await fetch("http://localhost:8080/api/product/like", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        blogId: blogId,
+        email: userEmail,
+      }),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      // Update the like button
+      const likeButton = event.target.closest(".fcard");
+      likeButton.innerHTML = `<i class="fa-solid fa-thumbs-up" style="color: #6366f1;"></i> Like (${result.likes})`;
+
+      // Show success message
+      showSuccessMessage("Blog liked!");
+    } else {
+      showErrorMessage("Failed to like blog");
+    }
+  } catch (error) {
+    console.error("Error liking post:", error);
+    showErrorMessage("Error liking blog");
+  }
+}
+
+// Bookmark post functionality
+async function bookmarkPost(element) {
+  try {
+    const userEmail = localStorage.getItem("userEmail") || "manish@gmail.com";
+    const card = element.closest(".card");
+    if (!card) return;
+
+    // Extract blog ID from the card's link
+    const blogLink = card.querySelector('a[href*="blog.html?id="]');
+    if (!blogLink) return;
+
+    const blogId = new URL(blogLink.href).searchParams.get("id");
+    if (!blogId) return;
+
+    const response = await fetch("http://localhost:8080/api/product/bookmark", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        blogId: blogId,
+        email: userEmail,
+      }),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+
+      if (result.bookmarked) {
+        element.innerHTML = `<i class="fa-solid fa-bookmark" style="color: #f59e0b;"></i> Bookmarked`;
+        showSuccessMessage("Blog bookmarked!");
+      } else {
+        element.innerHTML = `<i class="fa-solid fa-bookmark"></i> Bookmark`;
+        showSuccessMessage("Bookmark removed!");
+
+        // If we're on bookmark page, remove the card
+        if (isBookmarkPage) {
+          card.remove();
+
+          // Check if no more bookmarks
+          const cardsContainer = document.getElementById("cards");
+          if (cardsContainer && cardsContainer.children.length === 0) {
+            cardsContainer.innerHTML = `
+              <div style="text-align: center; padding: 40px; color: #999;">
+                <i class="fa-solid fa-bookmark" style="font-size: 3rem; margin-bottom: 20px; color: #444;"></i>
+                <h3>No bookmarks yet</h3>
+                <p>Start bookmarking blogs you love to see them here!</p>
+              </div>
+            `;
+          }
+        }
+      }
+    } else {
+      showErrorMessage("Failed to bookmark blog");
+    }
+  } catch (error) {
+    console.error("Error bookmarking post:", error);
+    showErrorMessage("Error bookmarking blog");
+  }
+}
+
+// Share post functionality
+async function sharePost(element) {
+  try {
+    const card = element.closest(".card");
+    if (!card) return;
+
+    // Extract blog details
+    const blogLink = card.querySelector('a[href*="blog.html?id="]');
+    const titleElement = card.querySelector("h2");
+
+    if (!blogLink || !titleElement) return;
+
+    const blogUrl = new URL(blogLink.href, window.location.origin).href;
+    const blogTitle = titleElement.textContent;
+
+    if (navigator.share) {
+      await navigator.share({
+        title: blogTitle,
+        text: `Check out this blog: ${blogTitle}`,
+        url: blogUrl,
+      });
+    } else {
+      // Fallback: copy to clipboard
+      await navigator.clipboard.writeText(blogUrl);
+      showSuccessMessage("Blog link copied to clipboard!");
+    }
+  } catch (error) {
+    console.error("Error sharing post:", error);
+    showErrorMessage("Error sharing blog");
+  }
+}
+
+// Success message function
+function showSuccessMessage(message) {
+  // Add slide-in animation CSS if not already added
+  if (!document.getElementById("toast-styles")) {
+    const style = document.createElement("style");
+    style.id = "toast-styles";
+    style.textContent = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideOut {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Create a simple success toast
+  const toast = document.createElement("div");
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #10b981;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    z-index: 10000;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  `;
+  toast.textContent = message;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = "slideOut 0.3s ease-in";
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 2700);
+}
+
+// Make functions global
+window.likePost = likePost;
+window.bookmarkPost = bookmarkPost;
+window.sharePost = sharePost;
+
+// Delete post functionality (only for profile page)
+async function deletePost(event, blogId) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  if (
+    !confirm(
+      "Are you sure you want to delete this blog? This action cannot be undone."
+    )
+  ) {
+    return;
+  }
+
+  try {
+    const userEmail = localStorage.getItem("userEmail") || "manish@gmail.com";
+
+    const response = await fetch(
+      `http://localhost:8080/api/product/delete/${blogId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: userEmail,
+        }),
+      }
+    );
+
+    if (response.ok) {
+      // Remove the card from the page
+      const card = document.querySelector(`[data-blog-id="${blogId}"]`);
+      if (card) {
+        card.remove();
+      }
+
+      showSuccessMessage("Blog deleted successfully!");
+
+      // Check if no more blogs
+      const cardsContainer = document.getElementById("cards");
+      if (cardsContainer && cardsContainer.children.length === 0) {
+        cardsContainer.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #999;">
+            <h3>No posts yet</h3>
+            <p>Create your first blog post to see it here!</p>
+          </div>
+        `;
+      }
+    } else {
+      const error = await response.json();
+      showErrorMessage(error.message || "Failed to delete blog");
+    }
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    showErrorMessage("Error deleting blog");
+  }
+}
+
+window.deletePost = deletePost;

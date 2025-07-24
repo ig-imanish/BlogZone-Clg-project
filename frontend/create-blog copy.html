@@ -2015,16 +2015,16 @@
         // Create editable element based on type
         let editableElement;
         if (type === "heading") {
-          editableElement = document.createElement("h2");
+          editableElement = document.createElement("h3");
           editableElement.contentEditable = true;
           editableElement.style.cssText = `
             font-family: ${defaultCustomization.fontFamily};
-            font-size: 32px;
+            font-size: 24px;
             color: ${defaultCustomization.fontColor};
             text-align: ${defaultCustomization.textAlign};
-            font-weight: bold;
+            font-weight: 600;
             font-style: ${defaultCustomization.fontStyle};
-            margin: 0; outline: none; line-height: 1.3;
+            margin: 0; outline: none; line-height: 1.6;
           `;
           editableElement.textContent = text || "Click to edit heading";
         } else if (type === "paragraph") {
@@ -2488,232 +2488,62 @@
         });
       }
 
-      // Convert content elements to HTML string
-      function convertContentToHTML() {
-        let htmlContent = "";
-
-        contentElements.forEach((element) => {
-          const customization = element.customization || {};
-
-          if (element.type === "heading") {
-            const style = `style="font-family: ${
-              customization.fontFamily || "inherit"
-            }; font-size: ${customization.fontSize || "32px"}; color: ${
-              customization.fontColor || "#ffffff"
-            }; text-align: ${customization.textAlign || "left"}; font-weight: ${
-              customization.fontWeight || "bold"
-            }; font-style: ${
-              customization.fontStyle || "normal"
-            }; margin: 30px 0 15px 0; line-height: 1.3;"`;
-            htmlContent += `<h2 ${style}>${element.text || "Heading"}</h2>\n`;
-          } else if (element.type === "paragraph") {
-            const style = `style="font-family: ${
-              customization.fontFamily || "inherit"
-            }; font-size: ${customization.fontSize || "16px"}; color: ${
-              customization.fontColor || "#e2e8f0"
-            }; text-align: ${customization.textAlign || "left"}; font-weight: ${
-              customization.fontWeight || "normal"
-            }; font-style: ${
-              customization.fontStyle || "normal"
-            }; margin: 15px 0; line-height: 1.6;"`;
-            htmlContent += `<p ${style}>${element.text || "Paragraph"}</p>\n`;
-          } else if (element.type === "blockquote") {
-            const style = `style="border-left: 4px solid #4299e1; padding-left: 16px; color: ${
-              customization.fontColor || "#cbd5e0"
-            }; font-style: italic; font-family: ${
-              customization.fontFamily || "inherit"
-            }; font-size: ${customization.fontSize || "16px"}; text-align: ${
-              customization.textAlign || "left"
-            }; margin: 15px 0; line-height: 1.6;"`;
-            htmlContent += `<blockquote ${style}>${
-              element.text || "Quote"
-            }</blockquote>\n`;
-          } else if (element.type === "link") {
-            const linkStyle = `style="color: ${
-              customization.fontColor || "#63b3ed"
-            }; font-size: ${
-              customization.fontSize || "16px"
-            }; text-decoration: ${
-              customization.textDecoration || "underline"
-            };"`;
-            const containerStyle = `style="text-align: ${
-              customization.textAlign || "left"
-            }; margin: 10px 0;"`;
-            htmlContent += `<div ${containerStyle}><a href="${
-              element.url || "#"
-            }" ${linkStyle} target="_blank" rel="noopener noreferrer">${
-              element.text || "Link"
-            }</a></div>\n`;
-          } else if (element.type === "button") {
-            let padding = "8px 16px";
-            let fontSize = "14px";
-            switch (customization.buttonSize) {
-              case "small":
-                padding = "6px 12px";
-                fontSize = "12px";
-                break;
-              case "large":
-                padding = "12px 24px";
-                fontSize = "16px";
-                break;
-            }
-            const buttonStyle = `style="background: ${
-              customization.backgroundColor || "#4299e1"
-            }; color: ${
-              customization.fontColor || "#ffffff"
-            }; padding: ${padding}; font-size: ${fontSize}; border: none; border-radius: ${
-              customization.borderRadius || "4px"
-            }; cursor: pointer; text-decoration: none; display: inline-block;"`;
-            const containerStyle = `style="text-align: ${
-              customization.textAlign || "left"
-            }; margin: 15px 0;"`;
-            htmlContent += `<div ${containerStyle}><a href="${
-              element.url || "#"
-            }" ${buttonStyle} target="_blank" rel="noopener noreferrer">${
-              element.text || "Button"
-            }</a></div>\n`;
-          } else if (element.type === "image") {
-            if (element.text && element.text.trim()) {
-              let maxWidth = "100%";
-              switch (customization.imageSize) {
-                case "small":
-                  maxWidth = "200px";
-                  break;
-                case "medium":
-                  maxWidth = "400px";
-                  break;
-                case "large":
-                  maxWidth = "600px";
-                  break;
-              }
-              const imageStyle = `style="max-width: ${maxWidth}; height: auto; border-radius: 6px; max-height: 300px; display: block; margin: ${
-                customization.textAlign === "center"
-                  ? "15px auto"
-                  : customization.textAlign === "right"
-                  ? "15px 0 15px auto"
-                  : "15px auto 15px 0"
-              };"`;
-              htmlContent += `<img src="${element.text}" alt="Blog image" ${imageStyle}>\n`;
-            }
-          } else if (element.type === "list") {
-            const listStyle = customization.listStyle || "disc";
-            const isOrdered = [
-              "decimal",
-              "decimal-leading-zero",
-              "lower-alpha",
-              "upper-alpha",
-              "lower-roman",
-              "upper-roman",
-            ].includes(listStyle);
-            const listElementStyle = `style="list-style-type: ${listStyle}; padding-left: 24px; color: ${
-              customization.fontColor || "#cbd5e0"
-            }; font-size: ${customization.fontSize || "14px"}; text-align: ${
-              customization.textAlign || "left"
-            }; margin: 15px 0;"`;
-
-            const items = element.text
-              ? element.text.split("\n").filter((item) => item.trim())
-              : ["List item"];
-            const listItems = items.map((item) => `<li>${item}</li>`).join("");
-
-            if (isOrdered) {
-              htmlContent += `<ol ${listElementStyle}>${listItems}</ol>\n`;
-            } else {
-              htmlContent += `<ul ${listElementStyle}>${listItems}</ul>\n`;
-            }
-          } else if (element.type === "code") {
-            const codeStyle = `style="background: #1a202c; color: #68d391; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 14px; margin: 15px 0; white-space: pre-wrap; overflow-x: auto;"`;
-            htmlContent += `<pre ${codeStyle}>${
-              element.text || "Code"
-            }</pre>\n`;
-          }
-        });
-
-        return htmlContent.trim();
-      }
-
-      // Calculate estimated read time based on content
-      function calculateReadTime(content) {
-        const wordsPerMinute = 200;
-        const textContent = content.replace(/<[^>]*>/g, ""); // Remove HTML tags
-        const wordCount = textContent
-          .split(/\s+/)
-          .filter((word) => word.length > 0).length;
-        const readTime = Math.ceil(wordCount / wordsPerMinute);
-        return `${readTime} min read`;
-      }
-
       // Create a new post
       async function createPost() {
         const title = document.getElementById("title").value;
-        const desc = document.getElementById("desc").value;
-
         if (!title || contentElements.length === 0) {
           alert("Please enter a title and add at least one content element.");
           return;
         }
 
-        // Convert content elements to HTML string
-        const htmlContent = convertContentToHTML();
+        // Clean up the content data before sending
+        const cleanContent = contentElements.map((el) => ({
+          id: el.id,
+          type: el.type,
+          text: el.text || "",
+          ...(el.url && { url: el.url }),
+          ...(el.customization && { customization: el.customization }),
+        }));
 
-        // Get user email from localStorage
-        const userEmail = localStorage.getItem("email");
-        if (!userEmail) {
-          alert("Please login first to create a blog post.");
-          return;
-        }
+        const email = localStorage.getItem("email");
 
-        // Create post object - only send necessary data
         const post = {
-          email: userEmail,
+          email: email,
+          banner: document.getElementById("banner").value || "",
           title: title.trim(),
-          desc: desc || title.substring(0, 150) + "...",
-          banner:
-            document.getElementById("banner").value ||
-            "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=400&fit=crop",
-          content: htmlContent,
-          tags: selectedTags.length > 0 ? selectedTags : ["General"],
-          readTime: calculateReadTime(htmlContent),
+          desc: document.getElementById("desc").value || "",
+          content: JSON.stringify(cleanContent),
+          tags: selectedTags, // Include selected tags
         };
 
         console.log("Post data:", post);
+        console.log("Clean content array:", cleanContent);
+        console.log("Selected tags:", selectedTags);
 
         try {
-          const response = await fetch(
-            "http://localhost:8080/api/product/create",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(post),
-            }
-          );
+          await fetch("http://localhost:8080/api/product/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(post),
+          });
 
-          if (response.ok) {
-            // Clear the form
-            document.getElementById("title").value = "";
-            document.getElementById("desc").value = "";
-            document.getElementById("banner").value = "";
-            contentArea.innerHTML = "";
-            contentElements = [];
+          // Clear the form
+          document.getElementById("title").value = "";
+          contentArea.innerHTML = "";
+          contentElements = [];
 
-            // Clear selected tags
-            selectedTags = [];
-            document.querySelectorAll(".tag.selected").forEach((tag) => {
-              tag.classList.remove("selected");
-            });
+          // Clear selected tags
+          selectedTags = [];
+          document.querySelectorAll(".tag.selected").forEach((tag) => {
+            tag.classList.remove("selected");
+          });
 
-            alert("Post created successfully!");
-            // Refresh the posts display
-            loadPosts();
-          } else {
-            const errorData = await response.json();
-            throw new Error(
-              errorData.message || `HTTP error! status: ${response.status}`
-            );
-          }
+          alert("Post created successfully!");
+          // Refresh the posts display
+          loadPosts();
         } catch (error) {
           console.error("Error creating post:", error);
-          alert("Failed to create post: " + error.message);
+          alert("Failed to create post. Check console for details.");
         }
       }
 
@@ -2737,188 +2567,258 @@
 
         if (posts.length === 0) {
           postsContainer.innerHTML =
-            "<p style='color: #999; text-align: center; padding: 40px;'>No posts yet. Create your first post!</p>";
+            "<p>No posts yet. Create your first post!</p>";
           return;
         }
 
         posts.forEach((post) => {
           const postDiv = document.createElement("div");
           postDiv.className = "post";
-          postDiv.style.cssText =
-            "border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; background: #1a1a1a;";
 
-          // Post header
           const postHeader = document.createElement("div");
           postHeader.style.cssText =
-            "display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; border-bottom: 1px solid #333; padding-bottom: 15px;";
-
-          const headerLeft = document.createElement("div");
+            "display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;";
 
           const title = document.createElement("h2");
           title.textContent = post.title;
-          title.style.cssText =
-            "color: #ffffff; margin: 0 0 8px 0; font-size: 1.5rem; cursor: pointer;";
-          title.onclick = () =>
-            window.open(`blog.html?id=${post._id || post.id}`, "_blank");
 
-          const meta = document.createElement("div");
-          meta.style.cssText =
-            "color: #999; font-size: 14px; display: flex; gap: 10px; flex-wrap: wrap;";
-          meta.innerHTML = `
-            <span>By ${post.author?.name || "Unknown Author"}</span>
-            <span>•</span>
-            <span>${new Date(post.createdAt).toLocaleDateString()}</span>
-            <span>•</span>
-            <span>${post.readTime || "Quick read"}</span>
-            <span>•</span>
-            <span>${post.views || 0} views</span>
-          `;
+          const date = document.createElement("small");
+          date.style.cssText = "color: #718096; font-size: 14px;";
+          date.textContent = new Date(post.createdAt).toLocaleDateString();
 
-          headerLeft.appendChild(title);
-          headerLeft.appendChild(meta);
+          postHeader.appendChild(title);
+          postHeader.appendChild(date);
 
-          const headerRight = document.createElement("div");
-          headerRight.style.cssText =
-            "color: #718096; font-size: 14px; text-align: right;";
-
-          const stats = document.createElement("div");
-          stats.innerHTML = `
-            <div style="margin-bottom: 5px;">👍 ${post.likes || 0} likes</div>
-            <div>💬 ${post.comments || 0} comments</div>
-          `;
-          headerRight.appendChild(stats);
-
-          postHeader.appendChild(headerLeft);
-          postHeader.appendChild(headerRight);
-
-          // Description
-          if (post.desc) {
-            const descDiv = document.createElement("div");
-            descDiv.style.cssText =
-              "color: #cbd5e0; margin-bottom: 15px; font-style: italic; padding: 10px; background: #2a2a2a; border-radius: 6px;";
-            descDiv.textContent = post.desc;
-            postDiv.appendChild(postHeader);
-            postDiv.appendChild(descDiv);
-          } else {
-            postDiv.appendChild(postHeader);
-          }
-
-          // Tags
-          if (post.tags && post.tags.length > 0) {
-            const tagsDiv = document.createElement("div");
-            tagsDiv.style.cssText =
-              "margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;";
-
-            const tagsArray = Array.isArray(post.tags)
-              ? post.tags
-              : [post.tags];
-            tagsArray.forEach((tag) => {
-              const tagSpan = document.createElement("span");
-              tagSpan.textContent = tag;
-              tagSpan.style.cssText =
-                "background: #6366f1; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px;";
-              tagsDiv.appendChild(tagSpan);
-            });
-
-            postDiv.appendChild(tagsDiv);
-          }
-
-          // Content
           const contentDiv = document.createElement("div");
-          contentDiv.style.cssText =
-            "color: #e0e0e0; line-height: 1.6; max-height: 200px; overflow: hidden; position: relative;";
 
           try {
-            // Check if content is HTML string or JSON
-            if (
-              typeof post.content === "string" &&
-              (post.content.includes("<") ||
-                post.content.trim().startsWith("<"))
-            ) {
-              // It's HTML content - render it directly
-              contentDiv.innerHTML = post.content;
-            } else {
-              // Try to parse as JSON (legacy format)
-              const contentElements = JSON.parse(post.content);
-              contentElements.forEach((element) => {
-                const elementDiv = document.createElement("div");
-                elementDiv.style.cssText = "margin-bottom: 12px;";
+            const contentElements = JSON.parse(post.content);
+            contentElements.forEach((element) => {
+              const elementDiv = document.createElement("div");
+              elementDiv.style.cssText = "margin-bottom: 12px;";
 
-                if (element.type === "heading") {
-                  const heading = document.createElement("h3");
-                  heading.textContent = element.text;
-                  heading.style.cssText =
-                    "color: #ffffff; font-size: 1.2rem; margin: 10px 0 5px 0;";
-                  elementDiv.appendChild(heading);
-                } else if (element.type === "paragraph") {
-                  const paragraph = document.createElement("p");
-                  paragraph.textContent = element.text;
-                  paragraph.style.cssText =
-                    "color: #cbd5e0; margin: 8px 0; line-height: 1.6;";
-                  elementDiv.appendChild(paragraph);
-                } else if (element.type === "blockquote") {
-                  const quote = document.createElement("blockquote");
-                  quote.textContent = element.text;
-                  quote.style.cssText =
-                    "border-left: 4px solid #4299e1; padding-left: 16px; color: #cbd5e0; font-style: italic; margin: 10px 0;";
-                  elementDiv.appendChild(quote);
+              if (element.type === "heading") {
+                const heading = document.createElement("h3");
+                heading.textContent = element.text;
+                const customization = element.customization || {};
+                heading.style.cssText = `
+                  font-family: ${customization.fontFamily || "inherit"};
+                  font-size: ${customization.fontSize || "20px"};
+                  color: ${customization.fontColor || "#ffffff"};
+                  text-align: ${customization.textAlign || "left"};
+                  font-weight: ${customization.fontWeight || "600"};
+                  font-style: ${customization.fontStyle || "normal"};
+                  margin: 0;
+                `;
+                elementDiv.appendChild(heading);
+              } else if (element.type === "paragraph") {
+                const paragraph = document.createElement("p");
+                paragraph.textContent = element.text;
+                const customization = element.customization || {};
+                paragraph.style.cssText = `
+                  font-family: ${customization.fontFamily || "inherit"};
+                  font-size: ${customization.fontSize || "16px"};
+                  color: ${customization.fontColor || "#cbd5e0"};
+                  text-align: ${customization.textAlign || "left"};
+                  font-weight: ${customization.fontWeight || "normal"};
+                  font-style: ${customization.fontStyle || "normal"};
+                  margin: 0; line-height: 1.6;
+                `;
+                elementDiv.appendChild(paragraph);
+              } else if (element.type === "link") {
+                const linkContainer = document.createElement("div");
+                const customization = element.customization || {};
+                linkContainer.style.textAlign =
+                  customization.textAlign || "left";
+
+                const link = document.createElement("a");
+                link.href = element.url || "#";
+                link.textContent = element.text || "Link";
+                link.style.cssText = `
+                  color: ${customization.fontColor || "#63b3ed"};
+                  font-size: ${customization.fontSize || "16px"};
+                  text-decoration: ${
+                    customization.textDecoration || "underline"
+                  };
+                `;
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+
+                linkContainer.appendChild(link);
+                elementDiv.appendChild(linkContainer);
+              } else if (element.type === "button") {
+                const buttonContainer = document.createElement("div");
+                const customization = element.customization || {};
+                buttonContainer.style.textAlign =
+                  customization.textAlign || "left";
+
+                const buttonLink = document.createElement("a");
+                buttonLink.href = element.url || "#";
+                buttonLink.target = "_blank";
+                buttonLink.rel = "noopener noreferrer";
+                buttonLink.style.cssText = "text-decoration: none;";
+
+                const button = document.createElement("button");
+                button.textContent = element.text || "Button";
+
+                let padding = "8px 16px";
+                let fontSize = "14px";
+                switch (customization.buttonSize) {
+                  case "small":
+                    padding = "6px 12px";
+                    fontSize = "12px";
+                    break;
+                  case "medium":
+                    padding = "8px 16px";
+                    fontSize = "14px";
+                    break;
+                  case "large":
+                    padding = "12px 24px";
+                    fontSize = "16px";
+                    break;
+                  default:
+                    padding = "8px 16px";
+                    fontSize = "14px";
                 }
-                // Simplified display for other types...
 
-                contentDiv.appendChild(elementDiv);
-              });
-            }
+                button.style.cssText = `
+                  background: ${customization.backgroundColor || "#4299e1"};
+                  color: ${customization.fontColor || "#ffffff"};
+                  padding: ${padding};
+                  font-size: ${fontSize};
+                  border: none;
+                  border-radius: ${customization.borderRadius || "4px"};
+                  cursor: pointer;
+                `;
+
+                buttonLink.appendChild(button);
+                buttonContainer.appendChild(buttonLink);
+                elementDiv.appendChild(buttonContainer);
+              } else if (element.type === "image") {
+                if (element.text && element.text.trim()) {
+                  const img = document.createElement("img");
+                  img.src = element.text;
+                  const customization = element.customization || {};
+
+                  let maxWidth = "100%";
+                  switch (customization.imageSize) {
+                    case "small":
+                      maxWidth = "200px";
+                      break;
+                    case "medium":
+                      maxWidth = "400px";
+                      break;
+                    case "large":
+                      maxWidth = "600px";
+                      break;
+                    case "full":
+                      maxWidth = "100%";
+                      break;
+                    default:
+                      maxWidth = "400px";
+                  }
+
+                  img.style.cssText = `
+                    max-width: ${maxWidth}; 
+                    height: auto; 
+                    border-radius: 6px;
+                    display: block;
+                    margin: ${
+                      customization.textAlign === "center"
+                        ? "0 auto"
+                        : customization.textAlign === "right"
+                        ? "0 0 0 auto"
+                        : "0 auto 0 0"
+                    };
+                  `;
+                  img.alt = "Blog image";
+                  img.onerror = function () {
+                    this.style.display = "none";
+                    const errorMsg = document.createElement("p");
+                    errorMsg.textContent =
+                      "Image failed to load: " + element.text;
+                    errorMsg.style.cssText =
+                      "color: #e53e3e; font-style: italic;";
+                    elementDiv.appendChild(errorMsg);
+                  };
+                  elementDiv.appendChild(img);
+                } else {
+                  const placeholder = document.createElement("p");
+                  placeholder.textContent = "No image URL provided";
+                  placeholder.style.cssText =
+                    "color: #718096; font-style: italic;";
+                  elementDiv.appendChild(placeholder);
+                }
+              } else if (element.type === "blockquote") {
+                const quote = document.createElement("blockquote");
+                quote.textContent = element.text;
+                const customization = element.customization || {};
+                quote.style.cssText = `
+                  font-family: ${customization.fontFamily || "inherit"};
+                  font-size: ${customization.fontSize || "16px"};
+                  color: ${customization.fontColor || "#cbd5e0"};
+                  text-align: ${customization.textAlign || "left"};
+                  font-weight: ${customization.fontWeight || "normal"};
+                  font-style: ${customization.fontStyle || "italic"};
+                  border-left: 4px solid #4299e1; 
+                  padding-left: 16px; 
+                  margin: 0;
+                `;
+                elementDiv.appendChild(quote);
+              } else if (element.type === "list") {
+                const customization = element.customization || {};
+                const listStyle = customization.listStyle || "disc";
+
+                // Determine if it should be ordered or unordered
+                const isOrdered = [
+                  "decimal",
+                  "decimal-leading-zero",
+                  "lower-alpha",
+                  "upper-alpha",
+                  "lower-roman",
+                  "upper-roman",
+                ].includes(listStyle);
+
+                const list = document.createElement(isOrdered ? "ol" : "ul");
+                list.style.cssText = `
+                  list-style-type: ${listStyle};
+                  padding-left: 24px;
+                  color: ${customization.fontColor || "#cbd5e0"};
+                  font-size: ${customization.fontSize || "14px"};
+                  font-family: ${customization.fontFamily || "inherit"};
+                  text-align: ${customization.textAlign || "left"};
+                  margin: 0;
+                `;
+
+                const items = element.text
+                  ? element.text.split("\n").filter((item) => item.trim())
+                  : [];
+                items.forEach((item) => {
+                  const li = document.createElement("li");
+                  li.textContent = item;
+                  list.appendChild(li);
+                });
+                elementDiv.appendChild(list);
+              } else if (element.type === "code") {
+                const code = document.createElement("pre");
+                code.textContent = element.text;
+                code.style.cssText =
+                  "background: #1a202c; color: #68d391; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 14px; margin: 0;";
+                elementDiv.appendChild(code);
+              }
+
+              contentDiv.appendChild(elementDiv);
+            });
           } catch (error) {
             console.error("Error parsing post content:", error);
-            // Fallback: treat as plain text
             const errorP = document.createElement("p");
-            errorP.textContent =
-              typeof post.content === "string"
-                ? post.content
-                : "Error displaying post content.";
-            errorP.style.cssText = "color: #cbd5e0;";
+            errorP.textContent = "Error displaying post content.";
+            errorP.style.cssText = "color: #e53e3e;";
             contentDiv.appendChild(errorP);
           }
 
-          // Add fade effect if content is long
-          const fadeOverlay = document.createElement("div");
-          fadeOverlay.style.cssText =
-            "position: absolute; bottom: 0; left: 0; right: 0; height: 30px; background: linear-gradient(transparent, #1a1a1a); pointer-events: none;";
-          contentDiv.appendChild(fadeOverlay);
-
-          // Actions
-          const actionsDiv = document.createElement("div");
-          actionsDiv.style.cssText =
-            "margin-top: 20px; padding-top: 15px; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center;";
-
-          const leftActions = document.createElement("div");
-          leftActions.style.cssText = "display: flex; gap: 15px;";
-          leftActions.innerHTML = `
-            <button style="background: none; border: 1px solid #444; color: #e0e0e0; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s;" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='#444'">
-              👍 Like (${post.likes || 0})
-            </button>
-            <button style="background: none; border: 1px solid #444; color: #e0e0e0; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s;" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='#444'">
-              💬 Comment (${post.comments || 0})
-            </button>
-            <button style="background: none; border: 1px solid #444; color: #e0e0e0; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.3s;" onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='#444'">
-              🔖 Bookmark
-            </button>
-          `;
-
-          const rightActions = document.createElement("div");
-          rightActions.innerHTML = `
-            <button onclick="window.open('blog.html?id=${
-              post._id || post.id
-            }', '_blank')" style="background: #6366f1; border: none; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'">
-              Read Full Post →
-            </button>
-          `;
-
-          actionsDiv.appendChild(leftActions);
-          actionsDiv.appendChild(rightActions);
-
+          postDiv.appendChild(postHeader);
           postDiv.appendChild(contentDiv);
-          postDiv.appendChild(actionsDiv);
           postsContainer.appendChild(postDiv);
         });
       }

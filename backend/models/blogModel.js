@@ -1,35 +1,16 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const productSchema = new Schema(
+const blogSchema = new Schema(
   {
     title: {
       type: String,
       required: true,
     },
-    avatar: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    fullname: {
-      type: String,
-      required: true,
-    },
-    isVerified: {
-      type: Boolean,
-      required: true,
-    },
-    username: {
-      type: String,
-      required: true,
-    },
-
     banner: {
       type: String,
       required: true,
     },
-
     desc: {
       type: String,
       required: true,
@@ -44,6 +25,28 @@ const productSchema = new Schema(
     },
     likes: {
       type: Number,
+      default: 0,
+    },
+    likedBy: {
+      type: [String], // Array of user IDs who liked this blog
+      default: [],
+    },
+    comments: {
+      type: Number,
+      default: 0,
+    },
+    views: {
+      type: Number,
+      default: 0,
+    },
+    author: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
+    readTime: {
+      type: String,
+      required: true,
     },
   },
   {
@@ -51,6 +54,6 @@ const productSchema = new Schema(
   }
 );
 
-const productModel = mongoose.model("blogs", productSchema);
+const blogModel = mongoose.model("blogs", blogSchema);
 
-module.exports = { productModel };
+module.exports = { blogModel };
