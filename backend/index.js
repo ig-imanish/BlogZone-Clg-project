@@ -1,10 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const {userRouter}=require('./routes/user.route')
 const app =express();
 const { connection } = require('./configs/db');
 const cors=require('cors');
 // Load environment variables from .env file
-require('dotenv').config();
 
 
 const port=process.env.PORT;

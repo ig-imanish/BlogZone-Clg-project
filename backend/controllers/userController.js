@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt');
 const { userModal } = require('../modals/userModal');
 
+const jwt = require('jsonwebtoken');
+
 const signUp = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -33,7 +35,7 @@ const signUp = async (req, res) => {
 const userLogin = async (req, res) => {
   const { email, password } = req.body;
 
-  const userExist = await userModel.findOne({ email });
+  const userExist = await userModal.findOne({ email });
   console.log(userExist);
   if (!userExist) {
     res.status(404).send({error: "User not found with this email"});
