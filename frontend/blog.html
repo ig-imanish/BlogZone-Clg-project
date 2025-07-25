@@ -278,7 +278,7 @@
         <a href="profile.html" class="btn"
           ><i class="ri-user-settings-fill"></i> Manage account</a
         >
-        <a href="index.html" class="btn"
+        <a href="index.html" class="btn" id="logout"
           ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
         >
       </div>
@@ -344,7 +344,7 @@
             <i class="fa-solid fa-chart-simple"></i> Stats
           </li>
         </ul>
-        <ul class="bottombar">
+        <ul class="bottombar" id="logout">
           <li onclick="window.location.href='index.html'">
             <i class="fa-solid fa-right-from-bracket"></i> Logout
           </li>
@@ -414,10 +414,10 @@
                 <i class="fa-solid fa-share"></i>
                 <span>Share</span>
               </button>
-              <a href="#comments" class="action-btn">
+              <!-- <a href="#comments" class="action-btn">
                 <i class="fa-regular fa-comment"></i>
                 <span id="commentCount">Comments (0)</span>
-              </a>
+              </a> -->
             </div>
             <div class="blog-stats" id="blogStats">
               Views: 0 • Likes: 0 • Comments: 0
@@ -698,4 +698,5 @@
   </body>
   <script type="module" src="./src/js/home.js"></script>
   <script src="./src/js/user-profile.js"></script>
+  <script src="./src/js/logout.js"></script>
 </html>

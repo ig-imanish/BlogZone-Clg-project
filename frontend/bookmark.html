@@ -52,7 +52,7 @@
         <a href="profile.html" class="btn"
           ><i class="ri-user-settings-fill"></i> Manage account</a
         >
-        <a href="index.html" class="btn"
+        <a href="index.html" class="btn" id="logout"
           ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
         >
       </div>
@@ -110,7 +110,7 @@
           <li onclick="window.location.href='profile.html'"><i class="fa-solid fa-user"></i> Profile</li>
           <li onclick="window.location.href='stat.html'"><i class="fa-solid fa-chart-simple"></i> Stats</li>
         </ul>
-        <ul class="bottombar">
+        <ul class="bottombar" id="logout">
           <li onclick="window.location.href='index.html'"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
         </ul>
       </div>
@@ -129,4 +129,5 @@
   </body>
   <script type="module" src="./src/js/home.js"></script>
   <script src="./src/js/user-profile.js"></script>
+  <script src="./src/js/logout.js"></script>
 </html>

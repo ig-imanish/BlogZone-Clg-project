@@ -54,9 +54,18 @@
         color: white;
       }
 
-      header .powered-by {
+      header #back {
         font-size: 14px;
         opacity: 0.7;
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: background 0.3s, color 0.3s;
+      }
+      header #back:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
       }
 
       .editor {
@@ -900,7 +909,7 @@
     <div class="container">
       <header>
         <h1>Create Blog</h1>
-        <div class="powered-by">Powered by BristoHQ</div>
+        <div id="back">Back</div>
       </header>
 
       <!-- Drag-and-Drop Editor -->
@@ -2926,6 +2935,11 @@
       // Load posts when the page loads
       document.addEventListener("DOMContentLoaded", () => {
         loadPosts();
+      });
+
+
+      document.getElementById("back").addEventListener("click", () => {
+        window.location.href = "home.html";
       });
     </script>
   </body>

@@ -53,7 +53,7 @@
         <a href="profile.html" class="btn"
           ><i class="ri-user-settings-fill"></i> Manage account</a
         >
-        <a href="index.html" class="btn"
+        <a href="index.html" class="btn" id="logout"
           ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
         >
       </div>
@@ -111,13 +111,13 @@
           <li onclick="window.location.href='profile.html'"><i class="fa-solid fa-user"></i> Profile</li>
           <li class="active"><i class="fa-solid fa-chart-simple"></i> Stats</li>
         </ul>
-        <ul class="bottombar">
+        <ul class="bottombar" id="logout">
           <li onclick="window.location.href='index.html'"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
         </ul>
       </div>
 
       <div class="content">
-       <div class="statsCard">
+       <!-- <div class="statsCard">
         <div class="blog">
             <div class="leftSide">
               <div class="title">
@@ -163,7 +163,15 @@
        </div>              
       </div>
 
+    </div> -->
+    <div class="card coming-soon-card">
+      <div class="coming-soon-icon">
+        <i class="fa-solid fa-clock"></i>
+      </div>
+      <h2>Coming Soon</h2>
+      <p>Stats feature is under development. Stay tuned!</p>
     </div>
+      </div>
   </body>
   <script type="module" src="./src/js/home.js"></script>
   <script>
