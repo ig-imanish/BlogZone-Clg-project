@@ -24,6 +24,14 @@
     <script src="./src/js/utils/dataLoading.js"></script>
   </head>
   <body>
+    <!-- Global Loading Overlay -->
+    <!-- <div class="loading-overlay hidden" id="globalLoadingOverlay">
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading your blogs...</div>
+      </div>
+    </div> -->
+
     <div class="help-card hidden">
       <h3 style="margin-top: 0">Need help?</h3>
       <span>
@@ -89,7 +97,10 @@
         </div>
       </div>
       <div class="nav-list">
-        <div class="write-blog">
+        <div
+          class="write-blog"
+          onclick="window.location.href='./create-blog.html'"
+        >
           <div class="icon">
             <i class="fa-regular fa-pen-to-square"></i>
           </div>
