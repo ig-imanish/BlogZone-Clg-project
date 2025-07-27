@@ -20,6 +20,8 @@
     />
     <link rel="stylesheet" href="./style/home.css" />
     <link rel="stylesheet" href="./style/profile.css">
+    <!-- Data Loading System -->
+    <script src="./src/js/utils/dataLoading.js"></script>
   </head>
   <body>
     <div class="help-card hidden">
@@ -87,7 +89,7 @@
         </div>
       </div>
       <div class="nav-list">
-        <div class="write-blog"  onclick="window.location.href='./create-blog.html'">
+        <div class="write-blog">
           <div class="icon">
             <i class="fa-regular fa-pen-to-square"></i>
           </div>
@@ -110,7 +112,7 @@
           <li onclick="window.location.href='profile.html'"><i class="fa-solid fa-user"></i> Profile</li>
           <li onclick="window.location.href='stat.html'"><i class="fa-solid fa-chart-simple"></i> Stats</li>
         </ul>
-        <ul class="bottombar" id="logout">
+        <ul class="bottombar" id="logout-2">
           <li onclick="window.location.href='index.html'"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
         </ul>
       </div>

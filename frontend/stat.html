@@ -43,10 +43,10 @@
     </div>
     <div class="profile-card hidden">
       <div class="userinfo">
-        <img src="./assets/my-av.jpeg" alt="User Avatar" />
+        <img src="./assets/my-av.jpeg" alt="" />
         <div>
-          <div class="fullname">Loading...</div>
-          <div class="email">Loading...</div>
+          <div class="fullname">Manish Kumar</div>
+          <div class="email">manishkukran123@gmail.com</div>
         </div>
       </div>
       <div class="btns">
@@ -60,7 +60,7 @@
       <div class="links">
         <button
           class="btn"
-          onclick="copyToClipboard(event, 'https://blogzone.com/@loading')"
+          onclick="copyToClipboard(event, 'https://blogzone.com/@manishkumar07')"
           style="
             background: none;
             border: none;
@@ -68,7 +68,7 @@
             cursor: pointer;
           "
         >
-          https://blogzone.com/@loading <i class="ri-clipboard-fill"></i>
+          https://blogzone.com/@manishkumar07 <i class="ri-clipboard-fill"></i>
         </button>
       </div>
     </div>
@@ -88,7 +88,7 @@
         </div>
       </div>
       <div class="nav-list">
-        <div class="write-blog"  onclick="window.location.href='./create-blog.html'">
+        <div class="write-blog">
           <div class="icon">
             <i class="fa-regular fa-pen-to-square"></i>
           </div>
@@ -111,69 +111,25 @@
           <li onclick="window.location.href='profile.html'"><i class="fa-solid fa-user"></i> Profile</li>
           <li class="active"><i class="fa-solid fa-chart-simple"></i> Stats</li>
         </ul>
-        <ul class="bottombar" id="logout">
+        <ul id="logout-2" class="bottombar">
           <li onclick="window.location.href='index.html'"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
         </ul>
       </div>
-
       <div class="content">
-       <!-- <div class="statsCard">
-        <div class="blog">
-            <div class="leftSide">
-              <div class="title">
-                  Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa nihil voluptatum perspiciatis, non rerum quasi, laboriosam facere sunt at inventore nemo facilis iste.
-              </div>
-              <div class="desc">
-                <div class="blogImage">
-                  <img src="./assets/blog-homepage-wireframe.png" alt="">
-              </div>
-              <div class="description">
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi, voluptatibus!</p>
-              </div>
-            </div>
-            </div>
-            <div class="rightSide">
-              <div class="stats">
-                <div class="stat">
-                  <span class="count">120</span>
-                  <span class="label">total Views</span>
-                </div>
-                 <div class="stat">
-                  <span class="count">120</span>
-                  <span class="label">Todays Views</span>
-                </div>
-                 <div class="stat">
-                  <span class="count">120</span>
-                  <span class="label">Weekly Views</span>
-                </div>
-                <div class="stat">
-                  <span class="count">45</span>
-                  <span class="label">Total Likes</span>
-                </div>
-                <div class="stat">
-                  <span class="count">10</span>
-                  <span class="label">Todays Likes</span>
-              </div>
-                <div class="stat">
-                  <span class="count">5</span>
-                  <span class="label">Weekly Likes</span>
-                </div>
-            </div>
-        
-       </div>              
-      </div>
-
-    </div> -->
-    <div class="card coming-soon-card">
-      <div class="coming-soon-icon">
-        <i class="fa-solid fa-clock"></i>
-      </div>
-      <h2>Coming Soon</h2>
+        <div class="card coming-soon-card">
+          <div class="coming-soon-icon">
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <h2>Coming Soon</h2>
       <p>Stats feature is under development. Stay tuned!</p>
+    </div>
+
+
     </div>
       </div>
   </body>
   <script type="module" src="./src/js/home.js"></script>
+  <script src="./src/js/user-profile.js"></script>
   <script>
     // Functions for help card and profile card
     function showHelpCard() {
@@ -228,6 +184,5 @@
       }
     });
   </script>
-  <script src="./src/js/user-profile.js"></script>
 
 </html>

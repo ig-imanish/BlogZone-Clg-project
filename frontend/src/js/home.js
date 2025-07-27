@@ -73,6 +73,17 @@ window.addEventListener("DOMContentLoaded", () => {
 // Load and display posts based on page type
 async function loadPosts() {
   try {
+    // Show loading screen
+    if (window.showDataLoading) {
+      if (isBookmarkPage) {
+        window.showDataLoading('Loading Bookmarks...', 'Fetching your saved posts');
+      } else if (isProfilePage) {
+        window.showDataLoading('Loading Your Posts...', 'Fetching your published content');
+      } else {
+        window.showDataLoading('Loading Posts...', 'Fetching latest blog posts');
+      }
+    }
+
     let response;
 
     if (isBookmarkPage) {
@@ -123,13 +134,28 @@ async function loadPosts() {
       }
 
       displayPosts(posts);
+      
+      // Hide loading screen after posts are displayed
+      if (window.hideDataLoading) {
+        setTimeout(() => window.hideDataLoading(), 300);
+      }
     } else {
       console.error("Failed to load posts:", response.status);
       showErrorMessage("Failed to load posts. Please try again later.");
+      
+      // Hide loading on error
+      if (window.hideDataLoading) {
+        window.hideDataLoading();
+      }
     }
   } catch (error) {
     console.error("Error loading posts:", error);
     showErrorMessage("Network error. Please check your connection.");
+    
+    // Hide loading on error
+    if (window.hideDataLoading) {
+      window.hideDataLoading();
+    }
   }
 }
 
@@ -181,7 +207,7 @@ function displayPosts(posts) {
     banner: post.banner,
     avatar: post.author?.avatar || "./assets/my-av.jpeg",
     fullname: post.author?.name || "Anonymous",
-    username: `@${post.author?.email?.split("@")[0] || "anonymous"}`,
+    username: post.author?.username ? `@${post.author.username}` : `@${post.author?.email?.split("@")[0] || "anonymous"}`,
     isVerified: post.author?.isVerified || false,
     timestamp: getTimeAgo(post.createdAt),
     publishDate: new Date(post.createdAt).toLocaleDateString("en-US", {
@@ -575,19 +601,39 @@ async function loadBlogContent() {
   }
 
   try {
+    // Show loading screen for blog content
+    if (window.showDataLoading) {
+      window.showDataLoading('Loading Blog...', 'Fetching blog content');
+    }
+
     const response = await fetch(
       `http://localhost:8080/api/product/get/${blogId}`
     );
     if (response.ok) {
       const blog = await response.json();
       displayBlogContent(blog);
+      
+      // Hide loading screen after blog is displayed
+      if (window.hideDataLoading) {
+        setTimeout(() => window.hideDataLoading(), 200);
+      }
     } else {
       console.error("Failed to load blog:", response.status);
       showErrorMessage("Blog not found or failed to load.");
+      
+      // Hide loading on error
+      if (window.hideDataLoading) {
+        window.hideDataLoading();
+      }
     }
   } catch (error) {
     console.error("Error loading blog:", error);
     showErrorMessage("Network error while loading blog.");
+    
+    // Hide loading on error
+    if (window.hideDataLoading) {
+      window.hideDataLoading();
+    }
   }
 }
 
@@ -618,7 +664,7 @@ function displayBlogContent(blog) {
     authorAvatar.src = blog.author?.avatar || "./assets/my-av.jpeg";
   if (authorName) authorName.textContent = blog.author?.name || "Anonymous";
   if (authorUsername)
-    authorUsername.textContent = `@${
+    authorUsername.textContent = blog.author?.username ? `@${blog.author.username}` : `@${
       blog.author?.email?.split("@")[0] || "anonymous"
     }`;
   if (publishDate)
@@ -796,6 +842,11 @@ async function likePost(event) {
     const blogId = new URL(blogLink.href).searchParams.get("id");
     if (!blogId) return;
 
+    // Show loading state on button
+    const likeButton = event.target.closest(".fcard");
+    const originalContent = likeButton.innerHTML;
+    likeButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Liking...`;
+
     const response = await fetch("http://localhost:8080/api/product/like", {
       method: "POST",
       headers: {
@@ -810,16 +861,18 @@ async function likePost(event) {
     if (response.ok) {
       const result = await response.json();
       // Update the like button
-      const likeButton = event.target.closest(".fcard");
       likeButton.innerHTML = `<i class="fa-solid fa-thumbs-up" style="color: #6366f1;"></i> Like (${result.likes})`;
 
       // Show success message
       showSuccessMessage("Blog liked!");
     } else {
+      likeButton.innerHTML = originalContent;
       showErrorMessage("Failed to like blog");
     }
   } catch (error) {
     console.error("Error liking post:", error);
+    const likeButton = event.target.closest(".fcard");
+    likeButton.innerHTML = originalContent;
     showErrorMessage("Error liking blog");
   }
 }
@@ -837,6 +890,10 @@ async function bookmarkPost(element) {
 
     const blogId = new URL(blogLink.href).searchParams.get("id");
     if (!blogId) return;
+
+    // Show loading state on button
+    const originalContent = element.innerHTML;
+    element.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
 
     const response = await fetch("http://localhost:8080/api/product/bookmark", {
       method: "POST",
@@ -877,10 +934,12 @@ async function bookmarkPost(element) {
         }
       }
     } else {
+      element.innerHTML = originalContent;
       showErrorMessage("Failed to bookmark blog");
     }
   } catch (error) {
     console.error("Error bookmarking post:", error);
+    element.innerHTML = originalContent;
     showErrorMessage("Error bookmarking blog");
   }
 }
@@ -996,6 +1055,11 @@ async function deletePost(event, blogId) {
   try {
     const userEmail = localStorage.getItem("userEmail") || "manish@gmail.com";
 
+    // Show brief loading indicator
+    if (window.showDataLoading) {
+      window.showDataLoading('Deleting...', 'Removing blog post');
+    }
+
     const response = await fetch(
       `http://localhost:8080/api/product/delete/${blogId}`,
       {
@@ -1028,13 +1092,28 @@ async function deletePost(event, blogId) {
           </div>
         `;
       }
+      
+      // Hide loading
+      if (window.hideDataLoading) {
+        window.hideDataLoading();
+      }
     } else {
       const error = await response.json();
       showErrorMessage(error.message || "Failed to delete blog");
+      
+      // Hide loading on error
+      if (window.hideDataLoading) {
+        window.hideDataLoading();
+      }
     }
   } catch (error) {
     console.error("Error deleting post:", error);
     showErrorMessage("Error deleting blog");
+    
+    // Hide loading on error
+    if (window.hideDataLoading) {
+      window.hideDataLoading();
+    }
   }
 }
 

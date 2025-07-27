@@ -105,7 +105,7 @@ const createBlogController = async (req, res) => {
     }
 
     // Populate author info before sending response
-    await newBlog.populate("author", "name email avatar isVerified");
+    await newBlog.populate("author", "name username email avatar isVerified");
 
     res.status(201).json({
       message: "Blog created successfully",
@@ -121,7 +121,7 @@ const getProductController = async (req, res) => {
   try {
     const blogs = await blogModel
       .find()
-      .populate("author", "name email avatar isVerified")
+      .populate("author", "name username email avatar isVerified")
       .sort({ createdAt: -1 });
     res.status(200).json(blogs);
   } catch (error) {
@@ -135,7 +135,7 @@ const getBlogByIdController = async (req, res) => {
     const { id } = req.params;
     const blog = await blogModel
       .findById(id)
-      .populate("author", "name email avatar isVerified");
+      .populate("author", "name username email avatar isVerified");
 
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
@@ -209,7 +209,7 @@ const getBookmarkedBlogsController = async (req, res) => {
       path: "bookmarks",
       populate: {
         path: "author",
-        select: "name email avatar isVerified",
+        select: "name username email avatar isVerified",
       },
       options: { sort: { createdAt: -1 } },
     });
