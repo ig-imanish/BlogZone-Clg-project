@@ -1,4 +1,4 @@
-document.getElementById("logout").addEventListener("click", () => {
+(document.getElementById("logout-2") || document.getElementById("logout")).addEventListener("click", () => {
   localStorage.removeItem("userEmail");
   localStorage.removeItem("userUsername");
   localStorage.removeItem("userData");

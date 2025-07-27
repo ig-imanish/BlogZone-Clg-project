@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>blog</title>
+    <title>Read Blog - BlogZone</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -19,232 +19,232 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="./style/home.css" />
-    <link rel="stylesheet" href="./style/profile.css" />
+    <link rel="stylesheet" href="./style/profile.css">
     <style>
-      /* Blog Reading Page Styles */
-      .blog-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background: #1a1a1a;
-        border-radius: 12px;
-        margin-top: 20px;
-      }
-
-      .blog-header {
-        border-bottom: 1px solid #333;
-        padding-bottom: 20px;
-        margin-bottom: 30px;
-      }
-
-      .blog-title {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #ffffff;
-        margin-bottom: 15px;
-        line-height: 1.2;
-      }
-
-      .blog-meta {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        color: #999;
-        font-size: 0.9rem;
-      }
-
-      .author-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .author-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-      }
-
-      .author-details h4 {
-        color: #fff;
-        margin: 0;
-        font-size: 1rem;
-      }
-
-      .author-details p {
-        margin: 0;
-        font-size: 0.85rem;
-        color: #999;
-      }
-
-      .blog-image {
-        width: 100%;
-        max-height: 400px;
-        object-fit: cover;
-        border-radius: 8px;
-        margin: 30px 0;
-      }
-
-      .blog-content {
-        font-size: 1.1rem;
-        line-height: 1.8;
-        color: #e0e0e0;
-        margin-bottom: 30px;
-      }
-
-      .blog-content p {
-        margin-bottom: 20px;
-      }
-
-      .blog-content h2 {
-        color: #fff;
-        font-size: 1.8rem;
-        margin: 30px 0 15px 0;
-      }
-
-      .blog-content h3 {
-        color: #fff;
-        font-size: 1.4rem;
-        margin: 25px 0 12px 0;
-      }
-
-      .blog-tags {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 30px;
-        flex-wrap: wrap;
-      }
-
-      .tag {
-        background: #6366f1;
-        color: white;
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        text-decoration: none;
-      }
-
-      .tag:hover {
-        background: #4f46e5;
-      }
-
-      .blog-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 0;
-        border-top: 1px solid #333;
-        margin-top: 30px;
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: 20px;
-      }
-
-      .action-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: none;
-        border: 1px solid #444;
-        color: #e0e0e0;
-        padding: 10px 15px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-      }
-
-      .action-btn:hover {
-        background: #333;
-        border-color: #6366f1;
-        color: #fff;
-      }
-
-      .action-btn.liked {
-        background: #6366f1;
-        border-color: #6366f1;
-        color: white;
-      }
-
-      .action-btn.bookmarked {
-        background: #f59e0b;
-        border-color: #f59e0b;
-        color: white;
-      }
-
-      .blog-stats {
-        color: #999;
-        font-size: 0.9rem;
-      }
-
-      .related-posts {
-        margin-top: 50px;
-        padding-top: 30px;
-        border-top: 1px solid #333;
-      }
-
-      .related-posts h3 {
-        color: #fff;
-        margin-bottom: 20px;
-      }
-
-      .related-post {
-        display: flex;
-        gap: 15px;
-        padding: 15px;
-        border: 1px solid #333;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        transition: background 0.3s ease;
-        text-decoration: none;
-      }
-
-      .related-post:hover {
-        background: #222;
-      }
-
-      .related-post img {
-        width: 80px;
-        height: 60px;
-        object-fit: cover;
-        border-radius: 4px;
-      }
-
-      .related-post-content h4 {
-        color: #fff;
-        margin: 0 0 5px 0;
-        font-size: 1rem;
-      }
-
-      .related-post-content p {
-        color: #999;
-        margin: 0;
-        font-size: 0.85rem;
-      }
-
-      @media (max-width: 768px) {
+        /* Blog Reading Page Styles */
         .blog-container {
-          margin: 10px;
-          padding: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .blog-header {
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .blog-title {
-          font-size: 2rem;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 15px;
+            line-height: 1.2;
         }
 
         .blog-meta {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .author-details h4 {
+            color: #fff;
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .author-details p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .blog-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .blog-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+        }
+
+        .blog-content p {
+            margin-bottom: 20px;
+        }
+
+        .blog-content h2 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin: 30px 0 15px 0;
+        }
+
+        .blog-content h3 {
+            color: #fff;
+            font-size: 1.4rem;
+            margin: 25px 0 12px 0;
+        }
+
+        .blog-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #6366f1;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-decoration: none;
+        }
+
+        .tag:hover {
+            background: #4f46e5;
+        }
+
+        .blog-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-top: 1px solid #333;
+            margin-top: 30px;
         }
 
         .action-buttons {
-          flex-wrap: wrap;
-          gap: 10px;
+            display: flex;
+            gap: 20px;
         }
-      }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            background: #333;
+            border-color: #6366f1;
+            color: #fff;
+        }
+
+        .action-btn.liked {
+            background: #6366f1;
+            border-color: #6366f1;
+            color: white;
+        }
+
+        .action-btn.bookmarked {
+            background: #f59e0b;
+            border-color: #f59e0b;
+            color: white;
+        }
+
+        .blog-stats {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .related-posts {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #333;
+        }
+
+        .related-posts h3 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .related-post {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: background 0.3s ease;
+            text-decoration: none;
+        }
+
+        .related-post:hover {
+            background: #222;
+        }
+
+        .related-post img {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .related-post-content h4 {
+            color: #fff;
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+        }
+
+        .related-post-content p {
+            color: #999;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .blog-container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .blog-title {
+                font-size: 2rem;
+            }
+
+            .blog-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .action-buttons {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
     </style>
   </head>
   <body>
@@ -259,7 +259,7 @@
             Click your profile image to manage your account or copy your profile
             link.
           </li>
-          <li>Bookmark your favorite blogs for quick access.</li>
+          <li>Bookmark your favorite blogs for qu id="logout"ick access.</li>
           <li>Check your stats to see your blog performance.</li>
         </ul>
         <br />
@@ -268,10 +268,10 @@
     </div>
     <div class="profile-card hidden">
       <div class="userinfo">
-        <img src="./assets/my-av.jpeg" alt="User Avatar" />
+        <img src="./assets/my-av.jpeg" alt="" />
         <div>
-          <div class="fullname">Loading...</div>
-          <div class="email">Loading...</div>
+          <div class="fullname">Manish Kumar</div>
+          <div class="email">manishkukran123@gmail.com</div>
         </div>
       </div>
       <div class="btns">
@@ -285,7 +285,7 @@
       <div class="links">
         <button
           class="btn"
-          onclick="copyToClipboard(event, 'https://blogzone.com/@loading')"
+          onclick="copyToClipboard(event, 'https://blogzone.com/@manishkumar07')"
           style="
             background: none;
             border: none;
@@ -293,7 +293,7 @@
             cursor: pointer;
           "
         >
-          https://blogzone.com/@loading <i class="ri-clipboard-fill"></i>
+          https://blogzone.com/@manishkumar07 <i class="ri-clipboard-fill"></i>
         </button>
       </div>
     </div>
@@ -325,29 +325,19 @@
         <div class="profile" onclick="showCard()">
           <img src="./assets/my-av.jpeg" alt="" />
         </div>
-      </div>
+      </d id="logout"iv>
     </nav>
 
     <div class="container">
       <div class="sidebar">
         <ul class="topbar">
-          <li onclick="window.location.href='home.html'">
-            <i class="fa-solid fa-house"></i> Home
-          </li>
-          <li onclick="window.location.href='bookmark.html'">
-            <i class="fa-solid fa-bookmark"></i> Bookmark
-          </li>
-          <li onclick="window.location.href='profile.html'">
-            <i class="fa-solid fa-user"></i> Profile
-          </li>
-          <li onclick="window.location.href='stat.html'">
-            <i class="fa-solid fa-chart-simple"></i> Stats
-          </li>
+          <li onclick="window.location.href='home.html'"><i class="fa-solid fa-house"></i> Home</li>
+          <li onclick="window.location.href='bookmark.html'"><i class="fa-solid fa-bookmark"></i> Bookmark</li>
+          <li onclick="window.location.href='profile.html'"><i class="fa-solid fa-user"></i> Profile</li>
+          <li onclick="window.location.href='stat.html'"><i class="fa-solid fa-chart-simple"></i> Stats</li>
         </ul>
-        <ul class="bottombar" id="logout">
-          <li onclick="window.location.href='index.html'">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-          </li>
+        <ul class="bottombar" id="logout-2">
+          <li onclick="window.location.href='index.html'"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
         </ul>
       </div>
 
@@ -358,12 +348,7 @@
             <h1 class="blog-title" id="blogTitle">Loading...</h1>
             <div class="blog-meta">
               <div class="author-info">
-                <img
-                  src="./assets/my-av.jpeg"
-                  alt="Author"
-                  class="author-avatar"
-                  id="authorAvatar"
-                />
+                <img src="./assets/my-av.jpeg" alt="Author" class="author-avatar" id="authorAvatar">
                 <div class="author-details">
                   <h4 id="authorName">Loading...</h4>
                   <p id="authorUsername">@loading</p>
@@ -384,7 +369,7 @@
           </div>
 
           <!-- Featured Image -->
-          <img src="" alt="Blog Image" class="blog-image" id="blogImage" />
+          <img src="" alt="Blog Image" class="blog-image" id="blogImage">
 
           <!-- Blog Content -->
           <div class="blog-content" id="blogContent">
@@ -394,30 +379,22 @@
           <!-- Blog Actions -->
           <div class="blog-actions">
             <div class="action-buttons">
-              <button
-                class="action-btn"
-                id="likeBtn"
-                onclick="blogPage.toggleLike(this)"
-              >
+              <button class="action-btn" id="likeBtn" onclick="toggleLike(this)">
                 <i class="fa-regular fa-heart"></i>
                 <span id="likeText">Like (0)</span>
               </button>
-              <button
-                class="action-btn"
-                id="bookmarkBtn"
-                onclick="blogPage.toggleBookmark(this)"
-              >
-                <i class="fa-regular fa-bookmark"></i>
+              <button class="action-btn" id="bookmarkBtn" onclick="toggleBookmark(this)">
+                <i class="fa-re<!-- gular fa-bookmark"></i>
                 <span id="bookmarkText">Bookmark</span>
               </button>
-              <button class="action-btn" onclick="blogPage.sharePost()">
-                <i class="fa-solid fa-share"></i>
+              <button class="action-btn" onclick="sharePost()">
+    -->             <i class="fa-solid fa-share"></i>
                 <span>Share</span>
               </button>
-              <!-- <a href="#comments" class="action-btn">
+              <a href="#comments" class="action-btn">
                 <i class="fa-regular fa-comment"></i>
                 <span id="commentCount">Comments (0)</span>
-              </a> -->
+              </a>
             </div>
             <div class="blog-stats" id="blogStats">
               Views: 0 • Likes: 0 • Comments: 0
@@ -433,270 +410,202 @@
           </div>
         </div>
       </div>
+
     </div>
 
     <script type="module">
-      // Get blog ID from URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      const blogId = urlParams.get("id");
-      let currentBlog = null;
+        import { getBlogById, updateBlogLikes, toggleBookmark as toggleBookmarkAPI } from './src/api/api.js';
 
-      // Blog page specific functions namespace
-      const blogPage = {
-        // Toggle like functionality
-        toggleLike: async function (button) {
-          if (!currentBlog) return;
+        // Get blog ID from URL parameters or default to 1
+        const urlParams = new URLSearchParams(window.location.search);
+        const blogId = urlParams.get('id') || '1';
+        let currentBlog = null;
 
-          try {
-            const userEmail =
-              localStorage.getItem("userEmail") || "manish@gmail.com";
-            const icon = button.querySelector("i");
-            const span = button.querySelector("span");
+        // Load blog content when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBlogContent(blogId);
+        });
 
-            const response = await fetch(
-              "http://localhost:8080/api/product/like",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  blogId: blogId,
-                  email: userEmail,
-                }),
-              }
-            );
-
-            if (response.ok) {
-              const result = await response.json();
-
-              // Update the like button based on result
-              if (result.liked) {
-                icon.classList.remove("fa-regular");
-                icon.classList.add("fa-solid");
-                icon.style.color = "#e74c3c";
-                button.style.color = "#e74c3c";
-              } else {
-                icon.classList.remove("fa-solid");
-                icon.classList.add("fa-regular");
-                icon.style.color = "";
-                button.style.color = "";
-              }
-
-              // Update like count
-              currentBlog.likes = result.likes;
-              span.textContent = `Like (${result.likes})`;
-
-              // Update stats
-              document.getElementById("blogStats").textContent = `Views: ${
-                currentBlog.views || 0
-              } • Likes: ${result.likes} • Comments: ${
-                currentBlog.comments || 0
-              }`;
-
-              // Show success message
-              showSuccessMessage(
-                result.liked ? "Blog liked!" : "Like removed!"
-              );
-            } else {
-              showErrorMessage("Failed to like blog");
+        function loadBlogContent(id) {
+            currentBlog = getBlogById(id);
+            
+            if (!currentBlog) {
+                document.getElementById('blogContent').innerHTML = '<p>Blog not found!</p>';
+                return;
             }
-          } catch (error) {
-            console.error("Error liking post:", error);
-            showErrorMessage("Error liking blog");
-          }
-        },
+
+            // Update page title
+            document.title = `${currentBlog.title} - BlogZone`;
+
+            // Populate blog header
+            document.getElementById('blogTitle').textContent = currentBlog.title;
+            document.getElementById('authorAvatar').src = currentBlog.avatar;
+            document.getElementById('authorName').textContent = currentBlog.fullname;
+            document.getElementById('authorUsername').textContent = currentBlog.username;
+            document.getElementById('publishDate').textContent = `Published on ${currentBlog.publishDate}`;
+            document.getElementById('readTime').textContent = currentBlog.readTime;
+            document.getElementById('viewCount').textContent = `${currentBlog.views} views`;
+
+            // Populate blog image
+            document.getElementById('blogImage').src = currentBlog.banner;
+            document.getElementById('blogImage').alt = currentBlog.title;
+
+            // Populate blog content
+            document.getElementById('blogContent').innerHTML = currentBlog.content;
+
+            // Populate blog tags
+            const tagsContainer = document.getElementById('blogTags');
+            tagsContainer.innerHTML = '';
+            currentBlog.tags.forEach(tag => {
+                const tagElement = document.createElement('a');
+                tagElement.href = '#';
+                tagElement.className = 'tag';
+                tagElement.textContent = tag;
+                tagsContainer.appendChild(tagElement);
+            });
+
+            // Update action buttons
+            document.getElementById('likeText').textContent = `Like (${currentBlog.likes})`;
+            document.getElementById('commentCount').textContent = `Comments (${currentBlog.comments})`;
+            document.getElementById('blogStats').textContent = `Views: ${currentBlog.views} • Likes: ${currentBlog.likes} • Comments: ${currentBlog.comments}`;
+
+            // Set bookmark state
+            const bookmarkBtn = document.getElementById('bookmarkBtn');
+            const bookmarkIcon = bookmarkBtn.querySelector('i');
+            const bookmarkText = document.getElementById('bookmarkText');
+            
+            if (currentBlog.bookmarked) {
+                bookmarkIcon.classList.remove('fa-regular');
+                bookmarkIcon.classList.add('fa-solid');
+                bookmarkIcon.style.color = '#f39c12';
+                bookmarkText.textContent = 'Bookmarked';
+                bookmarkBtn.style.color = '#f39c12';
+            }
+
+            // Load related posts
+            loadRelatedPosts(currentBlog.relatedPosts);
+        }
+
+        function loadRelatedPosts(relatedPosts) {
+            const relatedPostsContainer = document.getElementById('relatedPosts');
+            relatedPostsContainer.innerHTML = '';
+
+            relatedPosts.forEach(post => {
+                const postElement = document.createElement('a');
+                postElement.href = `blog.html?id=${post.id}`;
+                postElement.className = 'related-post';
+                
+                postElement.innerHTML = `
+                    <img src="${post.image}" alt="Related post">
+                    <div class="related-post-content">
+                        <h4>${post.title}</h4>
+                        <p>${post.desc}</p>
+                    </div>
+                `;
+                
+                relatedPostsContainer.appendChild(postElement);
+            });
+        }
+
+        // Toggle like functionality
+        window.toggleLike = function(button) {
+            if (!currentBlog) return;
+
+            const icon = button.querySelector('i');
+            const span = button.querySelector('span');
+            const currentLikes = currentBlog.likes;
+            
+            if (icon.classList.contains('fa-regular')) {
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+                icon.style.color = '#e74c3c';
+                
+                // Update API
+                const newLikes = updateBlogLikes(currentBlog.id, true);
+                currentBlog.likes = newLikes;
+                
+                span.textContent = `Like (${newLikes})`;
+                button.style.color = '#e74c3c';
+                
+                // Update stats
+                document.getElementById('blogStats').textContent = `Views: ${currentBlog.views} • Likes: ${currentBlog.likes} • Comments: ${currentBlog.comments}`;
+            } else {
+                icon.classList.remove('fa-solid');
+                icon.classList.add('fa-regular');
+                icon.style.color = '';
+                
+                // Update API
+                const newLikes = updateBlogLikes(currentBlog.id, false);
+                currentBlog.likes = newLikes;
+                
+                span.textContent = `Like (${newLikes})`;
+                button.style.color = '';
+                
+                // Update stats
+                document.getElementById('blogStats').textContent = `Views: ${currentBlog.views} • Likes: ${currentBlog.likes} • Comments: ${currentBlog.comments}`;
+            }
+        }
 
         // Toggle bookmark functionality
-        toggleBookmark: async function (button) {
-          if (!currentBlog) return;
+        window.toggleBookmark = function(button) {
+            if (!currentBlog) return;
 
-          try {
-            const userEmail =
-              localStorage.getItem("userEmail") || "manish@gmail.com";
-            const icon = button.querySelector("i");
-            const span = button.querySelector("span");
-
-            const response = await fetch(
-              "http://localhost:8080/api/product/bookmark",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  blogId: blogId,
-                  email: userEmail,
-                }),
-              }
-            );
-
-            if (response.ok) {
-              const result = await response.json();
-
-              if (result.bookmarked) {
-                icon.classList.remove("fa-regular");
-                icon.classList.add("fa-solid");
-                icon.style.color = "#f39c12";
-                span.textContent = "Bookmarked";
-                button.style.color = "#f39c12";
-                currentBlog.bookmarked = true;
-                showSuccessMessage("Blog bookmarked!");
-              } else {
-                icon.classList.remove("fa-solid");
-                icon.classList.add("fa-regular");
-                icon.style.color = "";
-                span.textContent = "Bookmark";
-                button.style.color = "";
-                currentBlog.bookmarked = false;
-                showSuccessMessage("Bookmark removed!");
-              }
+            const icon = button.querySelector('i');
+            const span = button.querySelector('span');
+            
+            // Update API
+            const isBookmarked = toggleBookmarkAPI(currentBlog.id);
+            currentBlog.bookmarked = isBookmarked;
+            
+            if (isBookmarked) {
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+                icon.style.color = '#f39c12';
+                span.textContent = 'Bookmarked';
+                button.style.color = '#f39c12';
             } else {
-              showErrorMessage("Failed to bookmark blog");
+                icon.classList.remove('fa-solid');
+                icon.classList.add('fa-regular');
+                icon.style.color = '';
+                span.textContent = 'Bookmark';
+                button.style.color = '';
             }
-          } catch (error) {
-            console.error("Error bookmarking post:", error);
-            showErrorMessage("Error bookmarking blog");
-          }
-        },
+        }
 
         // Share functionality
-        sharePost: function () {
-          if (!currentBlog) return;
+        window.sharePost = function() {
+            if (!currentBlog) return;
 
-          if (navigator.share) {
-            navigator.share({
-              title: currentBlog.title,
-              text: currentBlog.desc || "Check out this blog post!",
-              url: window.location.href,
-            });
-          } else {
-            // Fallback: copy to clipboard
-            navigator.clipboard.writeText(window.location.href).then(() => {
-              alert("Link copied to clipboard!");
-            });
-          }
-        },
-      };
-
-      // Make blogPage available globally
-      window.blogPage = blogPage;
-
-      // Store current blog for global access
-      window.setCurrentBlog = function (blog) {
-        currentBlog = blog;
-
-        // Initialize like and bookmark button states
-        initializeButtonStates();
-      };
-
-      // Initialize button states based on user data
-      async function initializeButtonStates() {
-        if (!currentBlog || !blogId) return;
-
-        try {
-          const userEmail =
-            localStorage.getItem("userEmail") || "manish@gmail.com";
-
-          // Check bookmark status
-          const bookmarkResponse = await fetch(
-            `http://localhost:8080/api/product/bookmarks/${userEmail}`
-          );
-          if (bookmarkResponse.ok) {
-            const bookmarkedBlogs = await bookmarkResponse.json();
-            const isBookmarked = bookmarkedBlogs.some(
-              (blog) => blog._id === blogId
-            );
-
-            const bookmarkBtn = document.getElementById("bookmarkBtn");
-            const bookmarkIcon = bookmarkBtn.querySelector("i");
-            const bookmarkText = bookmarkBtn.querySelector("span");
-
-            if (isBookmarked) {
-              bookmarkIcon.classList.remove("fa-regular");
-              bookmarkIcon.classList.add("fa-solid");
-              bookmarkIcon.style.color = "#f39c12";
-              bookmarkText.textContent = "Bookmarked";
-              bookmarkBtn.style.color = "#f39c12";
-              currentBlog.bookmarked = true;
+            if (navigator.share) {
+                navigator.share({
+                    title: currentBlog.title,
+                    text: currentBlog.desc,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Link copied to clipboard!');
+                });
             }
-          }
-
-          // Initialize like button (likes are usually not user-specific in this design, but we can show the count)
-          const likeBtn = document.getElementById("likeBtn");
-          const likeText = likeBtn.querySelector("span");
-          if (likeText && currentBlog.likes !== undefined) {
-            likeText.textContent = `Like (${currentBlog.likes || 0})`;
-          }
-        } catch (error) {
-          console.error("Error initializing button states:", error);
         }
-      }
 
-      // Success and error message functions
-      function showSuccessMessage(message) {
-        // Create toast notification
-        const toast = document.createElement("div");
-        toast.style.cssText = `
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          background: #10b981;
-          color: white;
-          padding: 12px 20px;
-          border-radius: 8px;
-          z-index: 1000;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-          font-size: 14px;
-          font-weight: 500;
-        `;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-          toast.remove();
-        }, 3000);
-      }
-
-      function showErrorMessage(message) {
-        // Create toast notification
-        const toast = document.createElement("div");
-        toast.style.cssText = `
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          background: #ef4444;
-          color: white;
-          padding: 12px 20px;
-          border-radius: 8px;
-          z-index: 1000;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-          font-size: 14px;
-          font-weight: 500;
-        `;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-          toast.remove();
-        }, 3000);
-      }
-
-      // Smooth scrolling for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute("href"));
-          if (target) {
-            target.scrollIntoView({
-              behavior: "smooth",
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
             });
-          }
         });
-      });
     </script>
   </body>
   <script type="module" src="./src/js/home.js"></script>
-  <script src="./src/js/user-profile.js"></script>
-  <script src="./src/js/logout.js"></script>
+
 </html>
+
+  sc<script src=""></script>./src/js/logout.js

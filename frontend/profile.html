@@ -20,6 +20,8 @@
     />
     <link rel="stylesheet" href="./style/home.css" />
     <link rel="stylesheet" href="./style/profile.css" />
+    <!-- Data Loading System -->
+    <script src="./src/js/utils/dataLoading.js"></script>
   </head>
   <body>
     <!-- Global Loading Overlay -->
@@ -60,7 +62,7 @@
         <a href="profile.html" class="btn"
           ><i class="ri-user-settings-fill"></i> Manage account</a
         >
-        <a href="#" class="btn" onclick="logout()"
+        <a href="#" class="btn" onclick="logout()" id="logout"
           ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
         >
       </div>
@@ -127,7 +129,7 @@
             <i class="fa-solid fa-chart-simple"></i> Stats
           </li>
         </ul>
-        <ul class="bottombar">
+        <ul class="bottombar" id="logout-2">
           <li onclick="logout()">
             <i class="fa-solid fa-right-from-bracket"></i> Logout
           </li>
