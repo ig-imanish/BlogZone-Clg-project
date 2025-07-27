@@ -22,6 +22,14 @@
     <style></style>
   </head>
   <body>
+    <!-- Global Loading Overlay -->
+    <!-- <div class="loading-overlay hidden" id="globalLoadingOverlay">
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading blogs...</div>
+      </div>
+    </div> -->
+
     <div class="help-card hidden">
       <h3 style="margin-top: 0">Need help?</h3>
       <span>
@@ -53,7 +61,7 @@
           ><i class="ri-user-settings-fill"></i> Manage account</a
         >
         <a href="index.html" class="btn" id="logout">
-          <i class="fa-solid fa-right-from-bracket "></i> Logout</a
+          <i class="fa-solid fa-right-from-bracket"></i> Logout</a
         >
       </div>
       <div class="links">
@@ -87,11 +95,14 @@
         </div>
       </div>
       <div class="nav-list">
-        <div class="write-blog" onclick="window.location.href='./create-blog.html'">
+        <div
+          class="write-blog"
+          onclick="window.location.href='./create-blog.html'"
+        >
           <div class="icon">
             <i class="fa-regular fa-pen-to-square"></i>
           </div>
-          <span >Write</span>
+          <span>Write</span>
         </div>
         <div class="help" onclick="showHelpCard()">
           <i class="fa-solid fa-circle-info"></i>
@@ -106,18 +117,30 @@
       <div class="sidebar">
         <ul class="topbar">
           <li class="active"><i class="fa-solid fa-house"></i> Home</li>
-          <li onclick="window.location.href='bookmark.html'"><i class="fa-solid fa-bookmark"></i> Bookmark</li>
-          <li onclick="window.location.href='profile.html'"><i class="fa-solid fa-user"></i> Profile</li>
-          <li onclick="window.location.href='stat.html'"><i class="fa-solid fa-chart-simple"></i> Stats</li>
+          <li onclick="window.location.href='bookmark.html'">
+            <i class="fa-solid fa-bookmark"></i> Bookmark
+          </li>
+          <li onclick="window.location.href='profile.html'">
+            <i class="fa-solid fa-user"></i> Profile
+          </li>
+          <li onclick="window.location.href='stat.html'">
+            <i class="fa-solid fa-chart-simple"></i> Stats
+          </li>
         </ul>
         <ul class="bottombar" id="logout">
-          <li onclick="window.location.href='login.html'"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
+          <li onclick="window.location.href='login.html'">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </li>
         </ul>
       </div>
 
       <div class="content">
         <div class="cards" id="cards">
-          <!-- Card will be rendered here -->
+          <!-- Cards will be rendered here -->
+          <div class="blog-loading hidden" id="inlineLoading">
+            <div class="blog-spinner"></div>
+            <span>Loading blogs...</span>
+          </div>
         </div>
       </div>
 

@@ -1,52 +1,54 @@
 // Logout Functionality
 function logout() {
-    // Clear all user data from localStorage
-    const keysToRemove = [
-        'userData',
-        'userEmail', 
-        'userName',
-        'userUsername',
-        'userAvatar',
-        'token',
-        'authToken',
-        'userSession',
-        'loginTime',
-        'isLoggedIn'
-    ];
-    
-    // Remove all known user-related localStorage items
-    keysToRemove.forEach(key => {
-        localStorage.removeItem(key);
-    });
-    
-    // Clear sessionStorage as well (if any data is stored there)
-    sessionStorage.clear();
-    
-    // Optional: Show logout confirmation
-    if (typeof Toastify !== 'undefined') {
-        Toastify({
-            text: "Successfully logged out. Redirecting to homepage...",
-            duration: 2000,
-            gravity: 'top',
-            position: 'right',
-            backgroundColor: '#4CAF50',
-            style: {
-                background: 'linear-gradient(135deg, #4CAF50, #45a049)',
-                borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(76, 175, 80, 0.3)'
-            }
-        }).showToast();
-    }
-    
-    // Clear any cookies if they exist
-    document.cookie.split(";").forEach(function(c) { 
-        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
-    });
-    
-    // Redirect to index page after a short delay
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 1500);
+  // Clear all user data from localStorage
+  const keysToRemove = [
+    "userData",
+    "userEmail",
+    "userName",
+    "userUsername",
+    "userAvatar",
+    "token",
+    "authToken",
+    "userSession",
+    "loginTime",
+    "isLoggedIn",
+  ];
+
+  // Remove all known user-related localStorage items
+  keysToRemove.forEach((key) => {
+    localStorage.removeItem(key);
+  });
+
+  // Clear sessionStorage as well (if any data is stored there)
+  sessionStorage.clear();
+
+  // Optional: Show logout confirmation
+  if (typeof Toastify !== "undefined") {
+    Toastify({
+      text: "Successfully logged out. Redirecting to homepage...",
+      duration: 2000,
+      gravity: "top",
+      position: "right",
+      backgroundColor: "#4CAF50",
+      style: {
+        background: "linear-gradient(135deg, #4CAF50, #45a049)",
+        borderRadius: "8px",
+        boxShadow: "0 4px 12px rgba(76, 175, 80, 0.3)",
+      },
+    }).showToast();
+  }
+
+  // Clear any cookies if they exist
+  document.cookie.split(";").forEach(function (c) {
+    document.cookie = c
+      .replace(/^ +/, "")
+      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+  });
+
+  // Redirect to index page after a short delay
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 1500);
 }
 
 // Make logout function globally available
@@ -66,9 +68,43 @@ window.addEventListener("DOMContentLoaded", () => {
   if (isBlogPage) {
     loadBlogContent();
   } else {
+    // Show skeleton loading immediately for better UX
+    showLoadingWithSkeleton();
     loadPosts();
   }
 });
+
+// Global loading functions
+function showGlobalLoading() {
+  const overlay = document.getElementById("globalLoadingOverlay");
+  if (overlay) {
+    overlay.classList.remove("hidden");
+  }
+}
+
+function hideGlobalLoading() {
+  const overlay = document.getElementById("globalLoadingOverlay");
+  if (overlay) {
+    overlay.classList.add("hidden");
+  }
+}
+
+function showInlineLoading() {
+  const inlineLoading = document.getElementById("inlineLoading");
+  const cardsContainer = document.getElementById("cards");
+  if (inlineLoading && cardsContainer) {
+    cardsContainer.innerHTML = "";
+    inlineLoading.classList.remove("hidden");
+    cardsContainer.appendChild(inlineLoading);
+  }
+}
+
+function hideInlineLoading() {
+  const inlineLoading = document.getElementById("inlineLoading");
+  if (inlineLoading) {
+    inlineLoading.classList.add("hidden");
+  }
+}
 
 // Load and display posts based on page type
 async function loadPosts() {
@@ -130,6 +166,9 @@ async function loadPosts() {
   } catch (error) {
     console.error("Error loading posts:", error);
     showErrorMessage("Network error. Please check your connection.");
+  } finally {
+    // Hide loading animations
+    hideInlineLoading();
   }
 }
 
@@ -1040,3 +1079,52 @@ async function deletePost(event, blogId) {
 
 window.deletePost = deletePost;
 
+// Create skeleton loading cards
+function createSkeletonCards(count = 3) {
+  let skeletonHTML = "";
+  for (let i = 0; i < count; i++) {
+    skeletonHTML += `
+      <div class="skeleton-card">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+        <div style="display: flex; align-items: center; margin: 15px 0;">
+          <div class="skeleton-avatar"></div>
+          <div style="flex: 1;">
+            <div class="skeleton-line short" style="margin-bottom: 5px;"></div>
+            <div class="skeleton-line" style="width: 40%; height: 15px;"></div>
+          </div>
+        </div>
+        <div class="skeleton-line long"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-image"></div>
+      </div>
+    `;
+  }
+  return skeletonHTML;
+}
+
+function showSkeletonLoading() {
+  const cardsContainer = document.getElementById("cards");
+  if (cardsContainer) {
+    cardsContainer.innerHTML = createSkeletonCards(3);
+  }
+}
+
+// Refresh posts function
+async function refreshPosts() {
+  showInlineLoading();
+  await loadPosts();
+}
+
+// Enhanced loading with skeleton for initial load
+function showLoadingWithSkeleton() {
+  showSkeletonLoading();
+  const inlineLoading = document.getElementById("inlineLoading");
+  if (inlineLoading) {
+    inlineLoading.classList.add("hidden");
+  }
+}
+
+// Make refresh function globally available
+window.refreshPosts = refreshPosts;
+window.showSkeletonLoading = showSkeletonLoading;
