@@ -112,23 +112,48 @@ async function loadPosts() {
     // Show loading screen
     if (window.showDataLoading) {
       if (isBookmarkPage) {
-        window.showDataLoading('Loading Bookmarks...', 'Fetching your saved posts');
+        window.showDataLoading(
+          "Loading Bookmarks...",
+          "Fetching your saved posts"
+        );
       } else if (isProfilePage) {
-        window.showDataLoading('Loading Your Posts...', 'Fetching your published content');
+        window.showDataLoading(
+          "Loading Your Posts...",
+          "Fetching your published content"
+        );
       } else {
-        window.showDataLoading('Loading Posts...', 'Fetching latest blog posts');
+        window.showDataLoading(
+          "Loading Posts...",
+          "Fetching latest blog posts"
+        );
       }
     }
 
     let response;
 
     if (isBookmarkPage) {
+      if (
+        localStorage.getItem("authToken") === null ||
+        localStorage.getItem("authToken") === undefined ||
+        localStorage.getItem("authToken") === ""
+      ) {
+        showErrorMessage("You need to be logged in to view your profile.");
+        return;
+      }
       // Get user email from localStorage or session
       const userEmail = localStorage.getItem("userEmail") || "manish@gmail.com"; // fallback
       response = await fetch(
         `http://localhost:8080/api/product/bookmarks/${userEmail}`
       );
     } else if (isProfilePage) {
+      if (
+        localStorage.getItem("authToken") === null ||
+        localStorage.getItem("authToken") === undefined ||
+        localStorage.getItem("authToken") === ""
+      ) {
+        showErrorMessage("You need to be logged in to view your profile.");
+        return;
+      }
       // Get all posts and filter by user (we can improve this with a dedicated endpoint later)
       response = await fetch("http://localhost:8080/api/product/get");
     } else {
@@ -170,7 +195,7 @@ async function loadPosts() {
       }
 
       displayPosts(posts);
-      
+
       // Hide loading screen after posts are displayed
       if (window.hideDataLoading) {
         setTimeout(() => window.hideDataLoading(), 300);
@@ -178,7 +203,7 @@ async function loadPosts() {
     } else {
       console.error("Failed to load posts:", response.status);
       showErrorMessage("Failed to load posts. Please try again later.");
-      
+
       // Hide loading on error
       if (window.hideDataLoading) {
         window.hideDataLoading();
@@ -241,7 +266,9 @@ function displayPosts(posts) {
     banner: post.banner,
     avatar: post.author?.avatar || "./assets/my-av.jpeg",
     fullname: post.author?.name || "Anonymous",
-    username: post.author?.username ? `@${post.author.username}` : `@${post.author?.email?.split("@")[0] || "anonymous"}`,
+    username: post.author?.username
+      ? `@${post.author.username}`
+      : `@${post.author?.email?.split("@")[0] || "anonymous"}`,
     isVerified: post.author?.isVerified || false,
     timestamp: getTimeAgo(post.createdAt),
     publishDate: new Date(post.createdAt).toLocaleDateString("en-US", {
@@ -637,7 +664,7 @@ async function loadBlogContent() {
   try {
     // Show loading screen for blog content
     if (window.showDataLoading) {
-      window.showDataLoading('Loading Blog...', 'Fetching blog content');
+      window.showDataLoading("Loading Blog...", "Fetching blog content");
     }
 
     const response = await fetch(
@@ -646,7 +673,7 @@ async function loadBlogContent() {
     if (response.ok) {
       const blog = await response.json();
       displayBlogContent(blog);
-      
+
       // Hide loading screen after blog is displayed
       if (window.hideDataLoading) {
         setTimeout(() => window.hideDataLoading(), 200);
@@ -654,7 +681,7 @@ async function loadBlogContent() {
     } else {
       console.error("Failed to load blog:", response.status);
       showErrorMessage("Blog not found or failed to load.");
-      
+
       // Hide loading on error
       if (window.hideDataLoading) {
         window.hideDataLoading();
@@ -663,7 +690,7 @@ async function loadBlogContent() {
   } catch (error) {
     console.error("Error loading blog:", error);
     showErrorMessage("Network error while loading blog.");
-    
+
     // Hide loading on error
     if (window.hideDataLoading) {
       window.hideDataLoading();
@@ -698,9 +725,9 @@ function displayBlogContent(blog) {
     authorAvatar.src = blog.author?.avatar || "./assets/my-av.jpeg";
   if (authorName) authorName.textContent = blog.author?.name || "Anonymous";
   if (authorUsername)
-    authorUsername.textContent = blog.author?.username ? `@${blog.author.username}` : `@${
-      blog.author?.email?.split("@")[0] || "anonymous"
-    }`;
+    authorUsername.textContent = blog.author?.username
+      ? `@${blog.author.username}`
+      : `@${blog.author?.email?.split("@")[0] || "anonymous"}`;
   if (publishDate)
     publishDate.textContent = `Published on ${new Date(
       blog.createdAt
@@ -1091,7 +1118,7 @@ async function deletePost(event, blogId) {
 
     // Show brief loading indicator
     if (window.showDataLoading) {
-      window.showDataLoading('Deleting...', 'Removing blog post');
+      window.showDataLoading("Deleting...", "Removing blog post");
     }
 
     const response = await fetch(
@@ -1126,7 +1153,7 @@ async function deletePost(event, blogId) {
           </div>
         `;
       }
-      
+
       // Hide loading
       if (window.hideDataLoading) {
         window.hideDataLoading();
@@ -1134,7 +1161,7 @@ async function deletePost(event, blogId) {
     } else {
       const error = await response.json();
       showErrorMessage(error.message || "Failed to delete blog");
-      
+
       // Hide loading on error
       if (window.hideDataLoading) {
         window.hideDataLoading();
@@ -1143,7 +1170,7 @@ async function deletePost(event, blogId) {
   } catch (error) {
     console.error("Error deleting post:", error);
     showErrorMessage("Error deleting blog");
-    
+
     // Hide loading on error
     if (window.hideDataLoading) {
       window.hideDataLoading();

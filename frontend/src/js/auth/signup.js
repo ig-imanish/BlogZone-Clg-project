@@ -118,8 +118,10 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const name = document.getElementById('fullName').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value;
+    const avatar = document.getElementById('avatar').value;
 
-    const userData = { name, email, password };
+    const userData = { name, email, username, password, avatar };
 
     // Show loading state
     const submitBtn = this.querySelector('button[type="submit"]');
