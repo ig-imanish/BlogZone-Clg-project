@@ -324,6 +324,30 @@ const deleteBlogController = async (req, res) => {
   }
 };
 
+// Get all blogs by author username
+const getBlogsByAuthorUsernameController = async (req, res) => {
+  try {
+    const { username } = req.params;
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+    // Find user by username
+    const user = await userModel.findOne({ username: username.toLowerCase() });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // Find blogs by author ObjectId
+    const blogs = await blogModel
+      .find({ author: user._id })
+      .populate("author", "name username email avatar isVerified")
+      .sort({ createdAt: -1 });
+    res.status(200).json(blogs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   createBlogController,
   getProductController,
@@ -332,4 +356,5 @@ module.exports = {
   getBookmarkedBlogsController,
   toggleLikeController,
   deleteBlogController,
+  getBlogsByAuthorUsernameController,
 };

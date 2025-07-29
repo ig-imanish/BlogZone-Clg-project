@@ -68,7 +68,7 @@ function truncateText(text, maxLength) {
   if (!text || text.length <= maxLength) {
     return text;
   }
-  return text.substring(0, maxLength).trim() + '...';
+  return text.substring(0, maxLength).trim() + "...";
 }
 
 // Load posts from API on page load for home and profile pages
@@ -149,7 +149,8 @@ async function loadPosts() {
         return;
       }
       // Get user email from localStorage or session
-      const userEmail = localStorage.getItem("userEmail") || "unknown@gmail.com"; // fallback
+      const userEmail =
+        localStorage.getItem("userEmail") || "unknown@gmail.com"; // fallback
       response = await fetch(
         `http://localhost:8080/api/product/bookmarks/${userEmail}`
       );
@@ -297,7 +298,6 @@ function displayPosts(posts) {
 
 function renderCard(data) {
   if (isProfilePage || isBookmarkPage) {
-    
     return `
         <div class="card" style="margin-top: 20px" data-blog-id="${data.id}">
           <a class="heading" href="blog.html?id=${data.id}">
@@ -727,10 +727,18 @@ function displayBlogContent(blog) {
   if (authorAvatar)
     authorAvatar.src = blog.author?.avatar || "./assets/my-av.jpeg";
   if (authorName) authorName.textContent = blog.author?.name || "Anonymous";
-  if (authorUsername)
-    authorUsername.textContent = blog.author?.username
-      ? `@${blog.author.username}`
-      : `@${blog.author?.email?.split("@")[0] || "anonymous"}`;
+  if (authorUsername) {
+    const username = blog.author?.username
+      ? blog.author.username
+      : blog.author?.email?.split("@")[0] || "anonymous";
+    authorUsername.textContent = `@${username}`;
+    authorUsername.href = `profile.html?username=${encodeURIComponent(
+      username
+    )}`;
+    authorUsername.style.color = "#6366f1";
+    authorUsername.style.textDecoration = "underline";
+    authorUsername.style.cursor = "pointer";
+  }
   if (publishDate)
     publishDate.textContent = `Published on ${new Date(
       blog.createdAt

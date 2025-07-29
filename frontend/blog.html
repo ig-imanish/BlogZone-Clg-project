@@ -351,7 +351,7 @@
                 <img src="./assets/my-av.jpeg" alt="Author" class="author-avatar" id="authorAvatar">
                 <div class="author-details">
                   <h4 id="authorName">Loading...</h4>
-                  <p id="authorUsername">@loading</p>
+                  <p id="authorUsernameWrapper"><a id="authorUsername" href="#">@loading</a></p>
                 </div>
               </div>
               <span>•</span>
@@ -379,15 +379,15 @@
           <!-- Blog Actions -->
           <div class="blog-actions">
             <div class="action-buttons">
-              <button class="action-btn" id="likeBtn" onclick="toggleLike(this)">
+              <button class="action-btn" id="likeBtn">
                 <i class="fa-regular fa-heart"></i>
                 <span id="likeText">Like (0)</span>
               </button>
-              <button class="action-btn" id="bookmarkBtn" onclick="toggleBookmark(this)">
+              <button class="action-btn" id="bookmarkBtn">
                 <i class="fa-regular fa-bookmark"></i>
                 <span id="bookmarkText">Bookmark</span>
               </button>
-              <button class="action-btn" onclick="sharePost()">
+              <button class="action-btn" id="shareBtn">
                 <i class="fa-solid fa-share"></i>
                 <span>Share</span>
               </button>
@@ -396,20 +396,12 @@
               Views: 0 • Likes: 0
             </div>
           </div>
-
-          <!-- Related Posts -->
-          <div class="related-posts">
-            <h3>Related Posts</h3>
-            <div id="relatedPosts">
-              <!-- Related posts will be loaded dynamically -->
-            </div>
-          </div>
         </div>
       </div>
 
     </div>
 
-    <script type="module">
+    <!-- <script type="module">
         import { getBlogById, updateBlogLikes, toggleBookmark as toggleBookmarkAPI, incrementViews } from './src/api/api.js';
 
         // Get blog ID from URL parameters or default to 1
@@ -609,7 +601,242 @@
                 }
             });
         });
-    </script>
+    </script> -->
   </body>
-  <script type="module" src="./src/js/home.js"></script>
+  <script src="./src/js/home.js"></script>
+  <script>
+
+
+// Share post functionality
+async function sharePost(element) {
+  try {
+    const card = element.closest(".card");
+    if (!card) return;
+
+    // Extract blog details
+    const blogLink = card.querySelector('a[href*="blog.html?id="]');
+    const titleElement = card.querySelector("h2");
+
+    if (!blogLink || !titleElement) return;
+
+    const blogUrl = new URL(blogLink.href, window.location.origin).href;
+    const blogTitle = titleElement.textContent;
+
+    if (navigator.share) {
+      await navigator.share({
+        title: blogTitle,
+        text: `Check out this blog: ${blogTitle}`,
+        url: blogUrl,
+      });
+    } else {
+      // Fallback: copy to clipboard
+      await navigator.clipboard.writeText(blogUrl);
+      showSuccessMessage("Blog link copied to clipboard!");
+    }
+  } catch (error) {
+    console.error("Error sharing post:", error);
+    showErrorMessage("Error sharing blog");
+  }
+}
+
+// Success message function
+function showSuccessMessage(message) {
+  // Add slide-in animation CSS if not already added
+  if (!document.getElementById("toast-styles")) {
+    const style = document.createElement("style");
+    style.id = "toast-styles";
+    style.textContent = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideOut {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Create a simple success toast
+  const toast = document.createElement("div");
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #10b981;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    z-index: 10000;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  `;
+  toast.textContent = message;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = "slideOut 0.3s ease-in";
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 2700);
+}
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var likeBtn = document.getElementById('likeBtn');
+      var bookmarkBtn = document.getElementById('bookmarkBtn');
+      var shareBtn = document.getElementById('shareBtn');
+      if (likeBtn) {
+        likeBtn.addEventListener('click', likePostSingle);
+      }
+      if (bookmarkBtn) {
+        bookmarkBtn.addEventListener('click', bookmarkPostSingle);
+      }
+      if (shareBtn) {
+        shareBtn.addEventListener('click', sharePostSingle);
+      }
+    });
+
+    // Dedicated share for single blog view
+    function sharePostSingle() {
+      const blogTitle = document.getElementById('blogTitle')?.textContent || 'BlogZone';
+      const blogDesc = document.getElementById('blogContent')?.textContent?.slice(0, 120) || '';
+      const blogUrl = window.location.href;
+      if (navigator.share) {
+        navigator.share({
+          title: blogTitle,
+          text: blogDesc,
+          url: blogUrl
+        });
+      } else {
+        navigator.clipboard.writeText(blogUrl).then(() => {
+          showSuccessMessage('Blog link copied to clipboard!');
+        });
+      }
+    }
+  </script>
+  <script>
+    // Dedicated like/bookmark logic for single blog view
+    let currentBlogId = null;
+    let likeInProgress = false;
+    let bookmarkInProgress = false;
+    // Get blog id from URL
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      currentBlogId = params.get('id');
+    })();
+
+    async function likePostSingle(e) {
+      if (likeInProgress || !currentBlogId) return;
+      likeInProgress = true;
+      const likeBtn = document.getElementById('likeBtn');
+      const likeText = document.getElementById('likeText');
+      const blogStats = document.getElementById('blogStats');
+      const userEmail = localStorage.getItem('userEmail');
+      if (!userEmail) {
+        alert('You must be logged in to like a blog.');
+        likeInProgress = false;
+        return;
+      }
+      const icon = likeBtn.querySelector('i');
+      likeBtn.disabled = true;
+      icon.className = 'fa-solid fa-spinner fa-spin';
+      likeText.textContent = 'Liking...';
+      try {
+        const res = await fetch('http://localhost:8080/api/product/like', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ blogId: currentBlogId, email: userEmail })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          likeText.textContent = `Like (${data.likes})`;
+          blogStats.textContent = blogStats.textContent.replace(/Likes: \d+/, `Likes: ${data.likes}`);
+          icon.className = data.liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+          icon.style.color = data.liked ? '#e74c3c' : '';
+          likeBtn.style.color = data.liked ? '#e74c3c' : '';
+        } else {
+          likeText.textContent = 'Like';
+          alert('Failed to like blog.');
+        }
+      } catch (err) {
+        likeText.textContent = 'Like';
+        alert('Error liking blog.');
+      }
+      likeBtn.disabled = false;
+      likeInProgress = false;
+    }
+
+    async function bookmarkPostSingle() {
+      if (bookmarkInProgress || !currentBlogId) return;
+      bookmarkInProgress = true;
+      const bookmarkBtn = document.getElementById('bookmarkBtn');
+      const bookmarkText = document.getElementById('bookmarkText');
+      const userEmail = localStorage.getItem('userEmail');
+      if (!userEmail) {
+        alert('You must be logged in to bookmark a blog.');
+        bookmarkInProgress = false;
+        return;
+      }
+      const icon = bookmarkBtn.querySelector('i');
+      bookmarkBtn.disabled = true;
+      icon.className = 'fa-solid fa-spinner fa-spin';
+      bookmarkText.textContent = 'Processing...';
+      try {
+        const res = await fetch('http://localhost:8080/api/product/bookmark', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ blogId: currentBlogId, email: userEmail })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.bookmarked) {
+            icon.className = 'fa-solid fa-bookmark';
+            icon.style.color = '#f39c12';
+            bookmarkText.textContent = 'Bookmarked';
+            bookmarkBtn.style.color = '#f39c12';
+          } else {
+            icon.className = 'fa-regular fa-bookmark';
+            icon.style.color = '';
+            bookmarkText.textContent = 'Bookmark';
+            bookmarkBtn.style.color = '';
+          }
+        } else {
+          bookmarkText.textContent = 'Bookmark';
+          alert('Failed to bookmark blog.');
+        }
+      } catch (err) {
+        bookmarkText.textContent = 'Bookmark';
+        alert('Error bookmarking blog.');
+      }
+      bookmarkBtn.disabled = false;
+      bookmarkInProgress = false;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var likeBtn = document.getElementById('likeBtn');
+      var bookmarkBtn = document.getElementById('bookmarkBtn');
+      if (likeBtn) {
+        likeBtn.addEventListener('click', likePostSingle);
+      }
+      if (bookmarkBtn) {
+        bookmarkBtn.addEventListener('click', bookmarkPostSingle);
+      }
+    });
+  </script>
 </html>

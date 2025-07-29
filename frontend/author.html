@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Author Profile - BlogZone</title>
+    <link rel="stylesheet" href="./style/home.css" />
+    <link rel="stylesheet" href="./style/profile.css" />
+    <style>
+      .author-profile-container {
+        max-width: 900px;
+        margin: 40px auto 0 auto;
+        background: #18181b;
+        border-radius: 16px;
+        padding: 32px 24px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+      }
+      .author-header {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 32px;
+      }
+      .author-avatar {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #6366f1;
+      }
+      .author-details h2 {
+        margin: 0 0 8px 0;
+        color: #fff;
+        font-size: 2rem;
+      }
+      .author-details .username {
+        color: #6366f1;
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+      }
+      .author-details .bio {
+        color: #bdbdbd;
+        font-size: 1rem;
+        margin-bottom: 8px;
+      }
+      .author-details .joined {
+        color: #888;
+        font-size: 0.95rem;
+      }
+      .author-blogs-title {
+        color: #fff;
+        margin: 32px 0 16px 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+      .author-blogs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .author-blog-card {
+        background: #23232b;
+        border-radius: 10px;
+        padding: 18px 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transition: background 0.2s;
+        text-decoration: none;
+        color: inherit;
+      }
+      .author-blog-card:hover {
+        background: #29293a;
+      }
+      .author-blog-title {
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 0;
+      }
+      .author-blog-desc {
+        color: #bdbdbd;
+        font-size: 1rem;
+        margin: 0 0 4px 0;
+      }
+      .author-blog-meta {
+        color: #888;
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="author-profile-container">
+      <div class="author-header">
+        <img
+          src="./assets/my-av.jpeg"
+          alt="Author Avatar"
+          class="author-avatar"
+          id="authorAvatar"
+        />
+        <div class="author-details">
+          <h2 id="authorName">Loading...</h2>
+          <div class="username" id="authorUsername">@loading</div>
+          <div class="bio" id="authorBio">Loading bio...</div>
+          <div class="joined" id="authorJoined">Joined ...</div>
+        </div>
+      </div>
+      <div class="author-blogs-title">Blogs by this author</div>
+      <div class="author-blogs-list" id="authorBlogsList">
+        <div>Loading blogs...</div>
+      </div>
+    </div>
+    <script>
+      async function loadAuthorProfile() {
+        const params = new URLSearchParams(window.location.search);
+        const username = params.get("username");
+        if (!username) {
+          document.getElementById("authorName").textContent =
+            "No username provided";
+          document.getElementById("authorBlogsList").innerHTML =
+            "<div>No author specified.</div>";
+          return;
+        }
+        // Fetch profile
+        const profileRes = await fetch(
+          `http://localhost:8080/api/user/profile/${username}`
+        );
+        if (profileRes.ok) {
+          const profile = await profileRes.json();
+          document.getElementById("authorAvatar").src =
+            profile.avatar || "./assets/my-av.jpeg";
+          document.getElementById("authorName").textContent = profile.name;
+          document.getElementById("authorUsername").textContent =
+            "@" + profile.username;
+          document.getElementById("authorBio").textContent = profile.bio || "";
+          document.getElementById("authorJoined").textContent =
+            "Joined " +
+            (profile.createdAt
+              ? new Date(profile.createdAt).toLocaleDateString()
+              : "...");
+        } else {
+          document.getElementById("authorName").textContent =
+            "Author not found";
+          document.getElementById("authorBlogsList").innerHTML =
+            "<div>No blogs found.</div>";
+          return;
+        }
+
+        // Fetch blogs
+        const blogsRes = await fetch(
+          `http://localhost:8080/api/product/author/${username}`
+        );
+        if (blogsRes.ok) {
+          const blogs = await blogsRes.json();
+          if (blogs.length === 0) {
+            document.getElementById("authorBlogsList").innerHTML =
+              "<div>No blogs by this author yet.</div>";
+          } else {
+            document.getElementById("authorBlogsList").innerHTML = blogs
+              .map(
+                (blog) => `
+            <a class="author-blog-card" href="blog.html?id=${blog._id}">
+              <div class="author-blog-title">${blog.title}</div>
+              <div class="author-blog-desc">${blog.desc}</div>
+              <div class="author-blog-meta">${new Date(
+                blog.createdAt
+              ).toLocaleDateString()} • ${blog.readTime || "1 min read"} • ${
+                  blog.likes || 0
+                } likes</div>
+            </a>
+          `
+              )
+              .join("");
+          }
+        } else {
+          document.getElementById("authorBlogsList").innerHTML =
+            "<div>Failed to load blogs.</div>";
+        }
+      }
+      loadAuthorProfile();
+    </script>
+  </body>
+</html>

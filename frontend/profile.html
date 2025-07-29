@@ -154,5 +154,288 @@
   </body>
 
   <script type="module" src="./src/js/home.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+      const params = new URLSearchParams(window.location.search);
+      const username = params.get("username");
+      if (username) {
+        // Show another user's profile
+        try {
+          // Fetch profile
+          const profileRes = await fetch(
+            `http://localhost:8080/api/user/profile/${username}`
+          );
+          if (!profileRes.ok) throw new Error("User not found");
+          const profile = await profileRes.json();
+          // Update profile card
+          document.querySelector(".profileUpperLayer img").src =
+            profile.avatar || "./assets/my-av.jpeg";
+          document.querySelector(".profileUpperLayer .username").textContent =
+            profile.name || username;
+          document.querySelector(".profileUpperLayer .userId").textContent =
+            "@" + (profile.username || username);
+          // Hide manage account/logout buttons for other users
+          document.querySelector(".btns").style.display = "none";
+          // Update profile-card info
+          document.querySelector(".profile-card .fullname").textContent =
+            profile.name || username;
+          document.querySelector(".profile-card .email").textContent =
+            profile.email || "";
+          // Update copy link button
+          const copyBtn = document.querySelector(".profile-card .links button");
+          copyBtn.textContent = `https://blogzone.com/@${
+            profile.username || username
+          } `;
+          copyBtn.onclick = function (e) {
+            copyToClipboard(
+              e,
+              `https://blogzone.com/@${profile.username || username}`
+            );
+          };
+
+          // Fetch and show blogs by this user
+          const blogsRes = await fetch(
+            `http://localhost:8080/api/product/author/${username}`
+          );
+          if (blogsRes.ok) {
+            const blogs = await blogsRes.json();
+
+            const cardsDiv = document.getElementById("cards");
+            cardsDiv.innerHTML = "";
+            if (blogs.length === 0) {
+              cardsDiv.innerHTML =
+                '<div style="color:#aaa;padding:2rem 0;">No blogs by this user.</div>';
+            } else {
+              const formattedBlogs = blogs.map((post) => ({
+                id: post._id,
+                title: post.title,
+                desc:
+                  post.desc && post.desc.length > 234
+                    ? post.desc.substring(0, 234) + "..."
+                    : post.desc,
+                banner: post.banner,
+                avatar: post.author?.avatar || "./assets/my-av.jpeg",
+                fullname: post.author?.name || "Anonymous",
+                username: post.author?.username
+                  ? `@${post.author.username}`
+                  : `@${post.author?.email?.split("@")[0] || "anonymous"}`,
+                isVerified: post.author?.isVerified || false,
+                readTime: post.readTime || "5 min read",
+                likes: post.likes || 0,
+                bookmarked: false, // If you want true/false per user, adjust from backend
+              }));
+
+              // Correct card renderer
+              function renderCard(data) {
+                return `
+              <div class="card" style="margin-top: 20px" data-blog-id="${
+                data.id
+              }">
+                <a class="heading" href="blog.html?id=${data.id}">
+                  <h2>${data.title}</h2>
+                  <span class="moreIcon"></span>
+                </a>
+                <div class="profile-section">
+                  <img src="${data.avatar}" alt="Author avatar" />
+                  <div class="userinfo">
+                    <div class="fullname">
+                      ${data.fullname}
+                      ${
+                        data.isVerified
+                          ? '<i class="ri-verified-badge-fill" style="color: #0254f7"></i>'
+                          : ""
+                      }
+                    </div>
+                    <div class="username">${data.username}</div>
+                  </div>
+                </div>
+                <div class="desc-img">
+                  <a href="blog.html?id=${data.id}">
+                    <div class="desc">${data.desc}</div>
+                  </a>
+                  <a href="blog.html?id=${data.id}">
+                    <img src="${data.banner}" alt="Blog banner" />
+                  </a>
+                </div>
+                <div class="footer">
+                  <div class="fcard ml-20 fcard-like">
+                    <i class="fa-solid fa-thumbs-up"></i> Like (${data.likes})
+                  </div>
+                  <div class="fcard fcard-bookmark">
+                    <i class="fa-solid fa-bookmark" ${
+                      data.bookmarked ? 'style="color: #f59e0b;"' : ""
+                    }></i>
+                    ${data.bookmarked ? "Bookmarked" : "Bookmark"}
+                  </div>
+                  <div class="fcard fcard-share">
+                    <i class="fa-solid fa-share-from-square"></i> Share
+                  </div>
+                  <div class="fcard mr-20">
+                    <i class="fa-regular fa-clock"></i> ${data.readTime}
+                  </div>
+                </div>
+              </div>
+            `;
+              }
+              cardsDiv.innerHTML = formattedBlogs.map(renderCard).join("");
+
+              // EVENT DELEGATION for Like/Bookmark/Share
+              cardsDiv.addEventListener("click", async function (e) {
+                const card = e.target.closest(".card");
+                if (!card) return;
+                const blogId = card.getAttribute("data-blog-id");
+                const userEmail = localStorage.getItem("userEmail");
+
+                // LIKE
+                if (e.target.closest(".fcard-like")) {
+                  e.preventDefault();
+                  const likeBtn = card.querySelector(".fcard-like");
+                  const originalLikeHtml = likeBtn.innerHTML;
+                  likeBtn.innerHTML =
+                    '<i class="fa-solid fa-spinner fa-spin"></i> Liking...';
+                  try {
+                    const res = await fetch(
+                      "http://localhost:8080/api/product/like",
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ blogId, email: userEmail }),
+                      }
+                    );
+                    if (res.ok) {
+                      const resp = await res.json();
+                      // Update likes number in button
+                      likeBtn.innerHTML = `<i class="fa-solid fa-thumbs-up"></i> Like (${resp.likes})`;
+                    } else {
+                      likeBtn.innerHTML = originalLikeHtml;
+                      alert("Failed to like blog.");
+                    }
+                  } catch (err) {
+                    likeBtn.innerHTML = originalLikeHtml;
+                    alert("Error liking blog.");
+                  }
+                  return;
+                }
+
+                // BOOKMARK
+                if (e.target.closest(".fcard-bookmark")) {
+                  e.preventDefault();
+                  const bookmarkBtn = card.querySelector(".fcard-bookmark");
+                  const originalBookmarkHtml = bookmarkBtn.innerHTML;
+                  bookmarkBtn.innerHTML =
+                    '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+                  try {
+                    const res = await fetch(
+                      "http://localhost:8080/api/product/bookmark",
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ blogId, email: userEmail }),
+                      }
+                    );
+                    if (res.ok) {
+                      const resp = await res.json();
+                      // Toggle bookmark color and text
+                      if (resp.bookmarked) {
+                        bookmarkBtn.innerHTML =
+                          '<i class="fa-solid fa-bookmark" style="color: #f59e0b;"></i> Bookmarked';
+                      } else {
+                        bookmarkBtn.innerHTML =
+                          '<i class="fa-solid fa-bookmark"></i> Bookmark';
+                      }
+                    } else {
+                      bookmarkBtn.innerHTML = originalBookmarkHtml;
+                      alert("Failed to bookmark blog.");
+                    }
+                  } catch (err) {
+                    bookmarkBtn.innerHTML = originalBookmarkHtml;
+                    alert("Error bookmarking blog.");
+                  }
+                  return;
+                }
+
+                // SHARE
+                if (e.target.closest(".fcard-share")) {
+                  e.preventDefault();
+                  const blogLink = card.querySelector(
+                    'a[href*="blog.html?id="]'
+                  );
+                  const titleElement = card.querySelector("h2");
+                  if (!blogLink || !titleElement) return;
+                  const blogUrl = new URL(blogLink.href, window.location.origin)
+                    .href;
+                  const blogTitle = titleElement.textContent;
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({
+                        title: blogTitle,
+                        text: `Check out this blog: ${blogTitle}`,
+                        url: blogUrl,
+                      });
+                    } catch (err) {
+                      /* ignore user dismiss */
+                    }
+                  } else {
+                    await navigator.clipboard.writeText(blogUrl);
+                    showSuccessMessage("Blog link copied to clipboard!");
+                  }
+                  return;
+                }
+              });
+            }
+          }
+        } catch (err) {
+          document.querySelector(".profileUpperLayer .username").textContent =
+            "User not found";
+          document.getElementById("cards").innerHTML =
+            '<div style="color:#aaa;padding:2rem 0;">No blogs found.</div>';
+        }
+      } else {
+        // Show own profile (default behavior, let user-profile.js/home.js handle it)
+      }
+    });
+
+    // Utility: Copy to clipboard with toast
+    function copyToClipboard(e, text) {
+      e.preventDefault();
+      navigator.clipboard
+        .writeText(text)
+        .then(() => showSuccessMessage("Copied to clipboard!"))
+        .catch(() => alert("Failed to copy!"));
+    }
+    // Success message toast
+    function showSuccessMessage(message) {
+      if (!document.getElementById("toast-styles")) {
+        const style = document.createElement("style");
+        style.id = "toast-styles";
+        style.textContent = `
+      @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+      @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    `;
+        document.head.appendChild(style);
+      }
+      const toast = document.createElement("div");
+      toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #10b981;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    z-index: 10000;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  `;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = "slideOut 0.3s ease-in";
+        setTimeout(() => toast.remove(), 300);
+      }, 2700);
+    }
+  </script>
+
   <script src="./src/js/user-profile.js"></script>
 </html>

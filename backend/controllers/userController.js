@@ -7,41 +7,41 @@ const jwt = require("jsonwebtoken");
 function validatePasswordStrength(password) {
   const minLength = 8;
   const errors = [];
-  
+
   if (password.length < minLength) {
     errors.push(`Password must be at least ${minLength} characters long`);
   }
-  
+
   if (!/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
+    errors.push("Password must contain at least one uppercase letter");
   }
-  
+
   if (!/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter');
+    errors.push("Password must contain at least one lowercase letter");
   }
-  
+
   if (!/[0-9]/.test(password)) {
-    errors.push('Password must contain at least one number');
+    errors.push("Password must contain at least one number");
   }
-  
+
   if (!/[^A-Za-z0-9]/.test(password)) {
-    errors.push('Password must contain at least one special character');
+    errors.push("Password must contain at least one special character");
   }
-  
+
   // Calculate strength score
   let strength = 0;
   if (password.length >= 8) strength += 25;
   if (password.match(/[A-Z]/)) strength += 25;
   if (password.match(/[0-9]/)) strength += 25;
   if (password.match(/[^A-Za-z0-9]/)) strength += 25;
-  
+
   // Only allow signup if password strength is 75% or higher (Good/Strong)
   const isStrongEnough = strength >= 75;
-  
+
   return {
     isValid: errors.length === 0 && isStrongEnough,
     errors: errors,
-    strength: strength
+    strength: strength,
   };
 }
 
@@ -58,7 +58,7 @@ const signUp = async (req, res) => {
 
     // Auto-generate username from email if not provided
     if (!username) {
-      username = email.split('@')[0].toLowerCase();
+      username = email.split("@")[0].toLowerCase();
       // Check if auto-generated username exists, add numbers if needed
       let baseUsername = username;
       let counter = 1;
@@ -71,17 +71,23 @@ const signUp = async (req, res) => {
     // Validate password strength
     const passwordValidation = validatePasswordStrength(password);
     if (!passwordValidation.isValid) {
-      const strengthLevel = passwordValidation.strength <= 25 ? 'Very Weak' : 
-                           passwordValidation.strength <= 50 ? 'Weak' : 
-                           passwordValidation.strength <= 75 ? 'Moderate' : 'Strong';
-                           
+      const strengthLevel =
+        passwordValidation.strength <= 25
+          ? "Very Weak"
+          : passwordValidation.strength <= 50
+          ? "Weak"
+          : passwordValidation.strength <= 75
+          ? "Moderate"
+          : "Strong";
+
       return res.status(400).json({
         message: `Password is too weak (${strengthLevel}). Only "Good" or "Strong" passwords are allowed for account creation.`,
         errors: passwordValidation.errors,
-        details: "Your password must include uppercase letters, lowercase letters, numbers, special characters, and be at least 8 characters long.",
+        details:
+          "Your password must include uppercase letters, lowercase letters, numbers, special characters, and be at least 8 characters long.",
         currentStrength: strengthLevel,
         requiredStrength: "Good or Strong",
-        strengthScore: `${passwordValidation.strength}%`
+        strengthScore: `${passwordValidation.strength}%`,
       });
     }
 
@@ -193,4 +199,36 @@ const userLogin = async (req, res) => {
   }
 };
 
-module.exports = { signUp, userLogin };
+// Get public user profile by username
+const getUserProfileByUsername = async (req, res) => {
+  try {
+    const { username } = req.params;
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+    const user = await userModel
+      .findOne({ username: username.toLowerCase() })
+      .select("-password -__v");
+    console.log("user found:", user);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      username: user.username,
+      email: user.email, // Remove this if you want to hide email
+      avatar: user.avatar,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
+      bio: user.bio || "",
+      // Add more public fields as needed
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { signUp, userLogin, getUserProfileByUsername };
