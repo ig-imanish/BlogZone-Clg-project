@@ -3,15 +3,86 @@ const { userModel } = require("../models/userModel");
 
 const jwt = require("jsonwebtoken");
 
+// Password strength validation function
+function validatePasswordStrength(password) {
+  const minLength = 8;
+  const errors = [];
+  
+  if (password.length < minLength) {
+    errors.push(`Password must be at least ${minLength} characters long`);
+  }
+  
+  if (!/[A-Z]/.test(password)) {
+    errors.push('Password must contain at least one uppercase letter');
+  }
+  
+  if (!/[a-z]/.test(password)) {
+    errors.push('Password must contain at least one lowercase letter');
+  }
+  
+  if (!/[0-9]/.test(password)) {
+    errors.push('Password must contain at least one number');
+  }
+  
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    errors.push('Password must contain at least one special character');
+  }
+  
+  // Calculate strength score
+  let strength = 0;
+  if (password.length >= 8) strength += 25;
+  if (password.match(/[A-Z]/)) strength += 25;
+  if (password.match(/[0-9]/)) strength += 25;
+  if (password.match(/[^A-Za-z0-9]/)) strength += 25;
+  
+  // Only allow signup if password strength is 75% or higher (Good/Strong)
+  const isStrongEnough = strength >= 75;
+  
+  return {
+    isValid: errors.length === 0 && isStrongEnough,
+    errors: errors,
+    strength: strength
+  };
+}
+
 const signUp = async (req, res) => {
   try {
-    const { name, username, email, password, avatar } = req.body;
+    let { name, username, email, password, avatar } = req.body;
 
     // Validation
-    if (!name || !username || !email || !password) {
+    if (!name || !email || !password) {
       return res
         .status(400)
-        .json({ message: "Name, username, email, and password are required" });
+        .json({ message: "Name, email, and password are required" });
+    }
+
+    // Auto-generate username from email if not provided
+    if (!username) {
+      username = email.split('@')[0].toLowerCase();
+      // Check if auto-generated username exists, add numbers if needed
+      let baseUsername = username;
+      let counter = 1;
+      while (await userModel.findOne({ username: username.toLowerCase() })) {
+        username = `${baseUsername}${counter}`;
+        counter++;
+      }
+    }
+
+    // Validate password strength
+    const passwordValidation = validatePasswordStrength(password);
+    if (!passwordValidation.isValid) {
+      const strengthLevel = passwordValidation.strength <= 25 ? 'Very Weak' : 
+                           passwordValidation.strength <= 50 ? 'Weak' : 
+                           passwordValidation.strength <= 75 ? 'Moderate' : 'Strong';
+                           
+      return res.status(400).json({
+        message: `Password is too weak (${strengthLevel}). Only "Good" or "Strong" passwords are allowed for account creation.`,
+        errors: passwordValidation.errors,
+        details: "Your password must include uppercase letters, lowercase letters, numbers, special characters, and be at least 8 characters long.",
+        currentStrength: strengthLevel,
+        requiredStrength: "Good or Strong",
+        strengthScore: `${passwordValidation.strength}%`
+      });
     }
 
     // Check if user already exists by email
