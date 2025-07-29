@@ -297,6 +297,7 @@ function displayPosts(posts) {
 
 function renderCard(data) {
   if (isProfilePage || isBookmarkPage) {
+    
     return `
         <div class="card" style="margin-top: 20px" data-blog-id="${data.id}">
           <a class="heading" href="blog.html?id=${data.id}">
