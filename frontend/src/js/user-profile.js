@@ -1,7 +1,21 @@
 // User Profile Dynamic Display Script
 function updateUserProfile() {
   const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-  const userEmail = localStorage.getItem("userEmail") || "";
+  let userEmail = localStorage.getItem("userEmail") || "";
+  
+  // If userEmail is not set separately, try to get it from userData
+  if (!userEmail && userData.email) {
+    userEmail = userData.email;
+    localStorage.setItem("userEmail", userData.email);
+  }
+  
+  console.log("Updating user profile with data:", {
+    userData,
+    userEmail,
+    hasName: !!userData.name,
+    hasUsername: !!userData.username,
+    hasAvatar: !!userData.avatar
+  });
 
   if (userData.name || userEmail) {
     // Update profile card

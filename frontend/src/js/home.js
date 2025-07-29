@@ -45,9 +45,9 @@ function logout() {
       .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
   });
 
-  // Redirect to index page after a short delay
+  // Redirect to login page after a short delay
   setTimeout(() => {
-    window.location.href = "index.html";
+    window.location.href = "login.html";
   }, 1500);
 }
 
@@ -62,6 +62,14 @@ const isBookmarkPage =
   window.location.pathname.includes("bookmark");
 const isBlogPage =
   document.title === "blog" || window.location.pathname.includes("blog");
+
+// Helper function to truncate text to specified character limit
+function truncateText(text, maxLength) {
+  if (!text || text.length <= maxLength) {
+    return text;
+  }
+  return text.substring(0, maxLength).trim() + '...';
+}
 
 // Load posts from API on page load for home and profile pages
 window.addEventListener("DOMContentLoaded", () => {
@@ -141,7 +149,7 @@ async function loadPosts() {
         return;
       }
       // Get user email from localStorage or session
-      const userEmail = localStorage.getItem("userEmail") || "manish@gmail.com"; // fallback
+      const userEmail = localStorage.getItem("userEmail") || "unknown@gmail.com"; // fallback
       response = await fetch(
         `http://localhost:8080/api/product/bookmarks/${userEmail}`
       );
@@ -166,7 +174,7 @@ async function loadPosts() {
       // Filter posts for profile page
       if (isProfilePage) {
         const userEmail =
-          localStorage.getItem("userEmail") || "manish@gmail.com";
+          localStorage.getItem("userEmail") || "unknown@gmail.com";
         console.log("Profile page filtering - User email:", userEmail);
         console.log("Total posts before filtering:", posts.length);
         console.log(
@@ -262,7 +270,7 @@ function displayPosts(posts) {
   const formattedPosts = posts.map((post) => ({
     id: post._id,
     title: post.title,
-    desc: post.desc,
+    desc: truncateText(post.desc, 234),
     banner: post.banner,
     avatar: post.author?.avatar || "./assets/my-av.jpeg",
     fullname: post.author?.name || "Anonymous",
@@ -279,7 +287,6 @@ function displayPosts(posts) {
     readTime: post.readTime || "5 min read",
     views: post.views || 0,
     likes: post.likes || 0,
-    comments: post.comments || 0,
     bookmarked: false, // This should come from user's bookmarks
     tags: post.tags || [],
     content: post.content,
@@ -874,16 +881,13 @@ function convertJsonToHtml(contentElements) {
 // Update blog statistics
 function updateBlogStats(blog) {
   const likeText = document.getElementById("likeText");
-  const commentCount = document.getElementById("commentCount");
   const blogStats = document.getElementById("blogStats");
 
   if (likeText) likeText.textContent = `Like (${blog.likes || 0})`;
-  if (commentCount)
-    commentCount.textContent = `Comments (${blog.comments || 0})`;
   if (blogStats)
     blogStats.textContent = `Views: ${blog.views || 0} • Likes: ${
       blog.likes || 0
-    } • Comments: ${blog.comments || 0}`;
+    }`;
 }
 
 // Like post functionality
@@ -892,7 +896,7 @@ async function likePost(event) {
   event.stopPropagation();
 
   try {
-    const userEmail = localStorage.getItem("userEmail") || "manish@gmail.com";
+    const userEmail = localStorage.getItem("userEmail") || "unknown@gmail.com";
     const card = event.target.closest(".card");
     if (!card) return;
 
@@ -941,7 +945,7 @@ async function likePost(event) {
 // Bookmark post functionality
 async function bookmarkPost(element) {
   try {
-    const userEmail = localStorage.getItem("userEmail") || "manish@gmail.com";
+    const userEmail = localStorage.getItem("userEmail") || "unknown@gmail.com";
     const card = element.closest(".card");
     if (!card) return;
 
@@ -1114,7 +1118,7 @@ async function deletePost(event, blogId) {
   }
 
   try {
-    const userEmail = localStorage.getItem("userEmail") || "manish@gmail.com";
+    const userEmail = localStorage.getItem("userEmail") || "unknown@gmail.com";
 
     // Show brief loading indicator
     if (window.showDataLoading) {

@@ -270,8 +270,8 @@
       <div class="userinfo">
         <img src="./assets/my-av.jpeg" alt="" />
         <div>
-          <div class="fullname">Manish Kumar</div>
-          <div class="email">manishkukran123@gmail.com</div>
+          <div class="fullname">unknown Kumar</div>
+          <div class="email">unknownkukran123@gmail.com</div>
         </div>
       </div>
       <div class="btns">
@@ -285,7 +285,7 @@
       <div class="links">
         <button
           class="btn"
-          onclick="copyToClipboard(event, 'https://blogzone.com/@manishkumar07')"
+          onclick="copyToClipboard(event, 'https://blogzone.com/@unknownkumar07')"
           style="
             background: none;
             border: none;
@@ -293,7 +293,7 @@
             cursor: pointer;
           "
         >
-          https://blogzone.com/@manishkumar07 <i class="ri-clipboard-fill"></i>
+          https://blogzone.com/@unknownkumar07 <i class="ri-clipboard-fill"></i>
         </button>
       </div>
     </div>
@@ -384,20 +384,16 @@
                 <span id="likeText">Like (0)</span>
               </button>
               <button class="action-btn" id="bookmarkBtn" onclick="toggleBookmark(this)">
-                <i class="fa-re<!-- gular fa-bookmark"></i>
+                <i class="fa-regular fa-bookmark"></i>
                 <span id="bookmarkText">Bookmark</span>
               </button>
               <button class="action-btn" onclick="sharePost()">
-    -->             <i class="fa-solid fa-share"></i>
+                <i class="fa-solid fa-share"></i>
                 <span>Share</span>
               </button>
-              <a href="#comments" class="action-btn">
-                <i class="fa-regular fa-comment"></i>
-                <span id="commentCount">Comments (0)</span>
-              </a>
             </div>
             <div class="blog-stats" id="blogStats">
-              Views: 0 • Likes: 0 • Comments: 0
+              Views: 0 • Likes: 0
             </div>
           </div>
 
@@ -414,12 +410,13 @@
     </div>
 
     <script type="module">
-        import { getBlogById, updateBlogLikes, toggleBookmark as toggleBookmarkAPI } from './src/api/api.js';
+        import { getBlogById, updateBlogLikes, toggleBookmark as toggleBookmarkAPI, incrementViews } from './src/api/api.js';
 
         // Get blog ID from URL parameters or default to 1
         const urlParams = new URLSearchParams(window.location.search);
         const blogId = urlParams.get('id') || '1';
         let currentBlog = null;
+        let viewsIncremented = false; // Flag to prevent multiple view increments
 
         // Load blog content when page loads
         document.addEventListener('DOMContentLoaded', function() {
@@ -432,6 +429,17 @@
             if (!currentBlog) {
                 document.getElementById('blogContent').innerHTML = '<p>Blog not found!</p>';
                 return;
+            }
+
+            // Store original view count for debugging
+            const originalViews = currentBlog.views;
+            console.log('Original views:', originalViews);
+
+            // Increment views only once per page load
+            if (!viewsIncremented) {
+                const newViews = incrementViews(id);
+                console.log('Views after increment:', newViews);
+                viewsIncremented = true;
             }
 
             // Update page title
@@ -466,8 +474,7 @@
 
             // Update action buttons
             document.getElementById('likeText').textContent = `Like (${currentBlog.likes})`;
-            document.getElementById('commentCount').textContent = `Comments (${currentBlog.comments})`;
-            document.getElementById('blogStats').textContent = `Views: ${currentBlog.views} • Likes: ${currentBlog.likes} • Comments: ${currentBlog.comments}`;
+            document.getElementById('blogStats').textContent = `Views: ${currentBlog.views} • Likes: ${currentBlog.likes}`;
 
             // Set bookmark state
             const bookmarkBtn = document.getElementById('bookmarkBtn');
@@ -528,7 +535,7 @@
                 button.style.color = '#e74c3c';
                 
                 // Update stats
-                document.getElementById('blogStats').textContent = `Views: ${currentBlog.views} • Likes: ${currentBlog.likes} • Comments: ${currentBlog.comments}`;
+                document.getElementById('blogStats').textContent = `Views: ${currentBlog.views} • Likes: ${currentBlog.likes}`;
             } else {
                 icon.classList.remove('fa-solid');
                 icon.classList.add('fa-regular');
@@ -542,7 +549,7 @@
                 button.style.color = '';
                 
                 // Update stats
-                document.getElementById('blogStats').textContent = `Views: ${currentBlog.views} • Likes: ${currentBlog.likes} • Comments: ${currentBlog.comments}`;
+                document.getElementById('blogStats').textContent = `Views: ${currentBlog.views} • Likes: ${currentBlog.likes}`;
             }
         }
 
@@ -605,7 +612,4 @@
     </script>
   </body>
   <script type="module" src="./src/js/home.js"></script>
-
 </html>
-
-  sc<script src=""></script>./src/js/logout.js

@@ -2,8 +2,8 @@
 let data = [
       {
         id: 1,
-        fullname: "Manish Kumar",
-        username: "@manishkumar07",
+        fullname: "unknown Kumar",
+        username: "@unknownkumar07",
         isVerified: true,
         avatar: "./assets/my-av.jpeg",
         title: "The Future of Web Development: Trends to Watch in 2025",
@@ -171,6 +171,38 @@ let data = [
         return blog.bookmarked;
       }
       return false;
+    }
+
+    export function incrementViews(id) {
+      const blog = getBlogById(id);
+      if (blog) {
+        // Handle different view formats: "1.2k", "856", etc.
+        let viewCount;
+        const viewStr = blog.views.toString();
+        
+        if (viewStr.includes('k')) {
+          // Handle "1.2k" format
+          const numPart = parseFloat(viewStr.replace('k', ''));
+          viewCount = Math.floor(numPart * 1000);
+        } else {
+          // Handle regular numbers like "856"
+          viewCount = parseInt(viewStr);
+        }
+        
+        // Increment by exactly 1
+        viewCount += 1;
+        
+        // Convert back to readable format
+        if (viewCount >= 1000) {
+          const kValue = viewCount / 1000;
+          blog.views = kValue % 1 === 0 ? kValue + 'k' : kValue.toFixed(1) + 'k';
+        } else {
+          blog.views = viewCount.toString();
+        }
+        
+        return blog.views;
+      }
+      return 0;
     }
 
     export { data };
