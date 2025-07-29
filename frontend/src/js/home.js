@@ -644,11 +644,6 @@ document.addEventListener("click", function (e) {
 });
 
 // Blog page specific loading
-if (isBlogPage) {
-  window.addEventListener("DOMContentLoaded", () => {
-    loadBlogContent();
-  });
-}
 
 // Function to load individual blog content (for blog.html page)
 async function loadBlogContent() {
