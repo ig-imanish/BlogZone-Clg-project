@@ -335,19 +335,22 @@ function renderCard(data) {
           </div>
           <div class="footer">
             <div class="fcard ml-20" onclick="likePost(event)">
-              <i class="fa-solid fa-thumbs-up"></i> Like (${data.likes})
+              <i class="fa-solid fa-thumbs-up"></i> 
+              <span class="like">Like</span> 
+              <span class="like-count" style="margin-left: 5px">(${data.likes})</span>
             </div>
             <div class="fcard" onclick="bookmarkPost(this)">
               <i class="fa-solid fa-bookmark" ${
                 data.bookmarked ? 'style="color: #f59e0b;"' : ""
               }></i> 
-              ${data.bookmarked ? "Bookmarked" : "Bookmark"}
+              <span class="bookmark">${data.bookmarked ? "Bookmarked" : "Bookmark"}</span>
             </div>
             <div class="fcard" onclick="sharePost(this)">
-              <i class="fa-solid fa-share-from-square"></i> Share
+              <i class="fa-solid fa-share-from-square"></i>
+              <span class="share">Share</span>
             </div>
-            <div class="fcard mr-20">
-              <i class="fa-regular fa-clock"></i> ${data.timestamp}
+            <div class="fcard mr-20 time">
+              <i class="fa-regular fa-clock"></i> ${data.timestamp.replace(" ago", "")}
             </div>
           </div>
         </div>
@@ -383,19 +386,20 @@ function renderCard(data) {
           </div>
           <div class="footer">
             <div class="fcard ml-20" onclick="likePost(event)">
-              <i class="fa-solid fa-thumbs-up"></i> Like (${data.likes})
+              <i class="fa-solid fa-thumbs-up"></i>  <span class="like">Like</span> 
+              <span class="like-count" style="margin-left: 5px">(${data.likes})</span>
             </div>
             <div class="fcard" onclick="bookmarkPost(this)">
               <i class="fa-solid fa-bookmark" ${
                 data.bookmarked ? 'style="color: #f59e0b;"' : ""
               }></i> 
-              ${data.bookmarked ? "Bookmarked" : "Bookmark"}
+              <span class="bookmark">${data.bookmarked ? "Bookmarked" : "Bookmark"}</span>
             </div>
             <div class="fcard" onclick="sharePost(this)">
-              <i class="fa-solid fa-share-from-square"></i> Share
+              <i class="fa-solid fa-share-from-square"></i> <span class="share">Share</span>
             </div>
-            <div class="fcard mr-20">
-              <i class="fa-regular fa-clock"></i> ${data.timestamp}
+            <div class="fcard mr-20 time">
+              <i class="fa-regular fa-clock"></i> ${data.timestamp.replace(" ago", "")}
             </div>
           </div>
         </div>
@@ -914,6 +918,7 @@ async function likePost(event) {
     // Show loading state on button
     const likeButton = event.target.closest(".fcard");
     const originalContent = likeButton.innerHTML;
+    // console.log(originalContent)
     likeButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Liking...`;
 
     const response = await fetch("http://localhost:8080/api/product/like", {
@@ -930,7 +935,8 @@ async function likePost(event) {
     if (response.ok) {
       const result = await response.json();
       // Update the like button
-      likeButton.innerHTML = `<i class="fa-solid fa-thumbs-up" style="color: #6366f1;"></i> Like (${result.likes})`;
+      likeButton.innerHTML = `<i class="fa-solid fa-thumbs-up" style="color: #6366f1;"></i><span class="like-count" style="margin-left: 5px"> (${result.likes})</span>
+`;
 
       // Show success message
       showSuccessMessage("Blog liked!");
@@ -941,7 +947,7 @@ async function likePost(event) {
   } catch (error) {
     console.error("Error liking post:", error);
     const likeButton = event.target.closest(".fcard");
-    likeButton.innerHTML = originalContent;
+    // likeButton.innerHTML = originalContent;
     showErrorMessage("Error liking blog");
   }
 }
@@ -979,10 +985,10 @@ async function bookmarkPost(element) {
       const result = await response.json();
 
       if (result.bookmarked) {
-        element.innerHTML = `<i class="fa-solid fa-bookmark" style="color: #f59e0b;"></i> Bookmarked`;
+        element.innerHTML = `<i class="fa-solid fa-bookmark" style="color: #f59e0b;"></i><span class="bookmark"> Bookmarked</span>`;
         showSuccessMessage("Blog bookmarked!");
       } else {
-        element.innerHTML = `<i class="fa-solid fa-bookmark"></i> Bookmark`;
+        element.innerHTML = `<i class="fa-solid fa-bookmark"></i><span class="bookmark"> Bookmark</span>`;
         showSuccessMessage("Bookmark removed!");
 
         // If we're on bookmark page, remove the card
@@ -1233,6 +1239,8 @@ function showLoadingWithSkeleton() {
     inlineLoading.classList.add("hidden");
   }
 }
+
+
 
 // Make refresh function globally available
 window.refreshPosts = refreshPosts;

@@ -21,6 +21,52 @@
     <link rel="stylesheet" href="./style/home.css" />
 
     <link rel="stylesheet" href="./style/profile.css" />
+    <link rel="stylesheet" href="./style/homeCssRes.css" />
+    <style>
+      @media (max-width: 768px) {
+        .mobile-search-overlay {
+          display: none;
+          position: fixed;
+          left: 0; top: 0; right: 0; bottom: 0;
+          width: 100vw; height: 100vh;
+          background: rgba(0,0,0,0.75);
+          z-index: 9999;
+          align-items: center;
+          justify-content: center;
+        }
+        .mobile-search-overlay .search-box {
+          background: #232323;
+          border-radius: 14px;
+          padding: 18px 16px 14px 16px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          width: 90vw;
+          max-width: 400px;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+        }
+        .mobile-search-overlay input[type="search"] {
+          flex: 1;
+          padding: 10px 12px;
+          border-radius: 8px;
+          border: none;
+          font-size: 1.1rem;
+          background: #191919;
+          color: #fff;
+        }
+        .mobile-search-overlay .close-btn {
+          background: none;
+          border: none;
+          color: #fff;
+          font-size: 2rem;
+          cursor: pointer;
+          margin-left: 4px;
+        }
+         .container .content .cards {
+        margin-top: 30px;
+    }
+      }
+    </style>
 
   </head>
   <body>
@@ -146,8 +192,57 @@
         </div>
       </div>
     </div>
+        <!-- Mobile Bottom Nav Bar -->
+    <div class="mobile-bottom-nav">
+      <a href="home.html" class="nav-item active" aria-label="Home">
+        <span class="icon"><i class="fa-solid fa-house"></i></span>
+        <span class="label">Home</span>
+      </a>
+      <a href="#" class="nav-item" aria-label="Search" onclick="openMobileSearch(); return false;">
+        <span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <span class="label">Search</span>
+      </a>
+      <a href="bookmark.html" class="nav-item" aria-label="Bookmark">
+        <span class="icon"><i class="fa-solid fa-bookmark"></i></span>
+        <span class="label">Bookmark</span>
+      </a>
+      <a href="create-blog.html" class="nav-item" aria-label="Create">
+        <span class="icon"><i class="fa-solid fa-pen-to-square"></i></span>
+        <span class="label">Create</span>
+      </a>
+      <a href="profile.html" class="nav-item" aria-label="Profile">
+        <span class="icon"><i class="fa-solid fa-user"></i></span>
+        <span class="label">Profile</span>
+      </a>
+    </div>
+    <!-- Mobile Search Overlay -->
+    <div id="mobile-search-overlay" class="mobile-search-overlay">
+      <div class="search-box">
+        <input type="search" placeholder="Search..." autofocus />
+        <button class="close-btn" onclick="closeMobileSearch()" aria-label="Close search">&times;</button>
+      </div>
+    </div>
+
   </body>
   <script type="module" src="./src/js/home.js"></script>
   <script src="./src/js/user-profile.js"></script>
   <script src="./src/js/logout.js"></script>
+  <script>
+      function openMobileSearch() {
+        document.getElementById('mobile-search-overlay').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => {
+          document.querySelector('#mobile-search-overlay input[type=search]').focus();
+        }, 100);
+      }
+      function closeMobileSearch() {
+        document.getElementById('mobile-search-overlay').style.display = 'none';
+        document.body.style.overflow = '';
+      }
+      // Attach to mobile nav search button if present
+      document.addEventListener('DOMContentLoaded', function() {
+        var searchBtn = document.querySelector('.mobile-bottom-nav .button.search-btn');
+        if(searchBtn) searchBtn.addEventListener('click', openMobileSearch);
+      });
+    </script>
 </html>

@@ -294,6 +294,10 @@ footer > div > a {
   margin: 0 10px;
   text-decoration: none;
 }
+footer .fa-blog{
+      font-size: 1.8rem;
+      margin-right: 10px;
+}
 
 .profile-card {
   height: 140px;
@@ -479,3 +483,8 @@ footer > div > a {
     opacity: 1;
   }
 }
+      @media (min-width: 769px) {
+        .mobile-bottom-nav {
+          display: none !important;
+        }
+      }
