@@ -45,9 +45,11 @@ nav {
   border-radius: 50px;
   border: none;
   background: #191919;
+  color: white;
 }
 .search input[type="search"]::placeholder {
   font-size: 15px;
+  color: white;
 }
 .search input[type="search"]:focus {
   outline: none;

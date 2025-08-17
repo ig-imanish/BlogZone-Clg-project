@@ -1,3 +1,84 @@
+// --- Search Functionality ---
+let allPostsCache = [];
+
+// Patch loadPosts to cache all posts for searching
+const originalDisplayPosts = displayPosts;
+displayPosts = function(posts) {
+  allPostsCache = posts;
+  originalDisplayPosts(posts);
+}
+
+// Search handler for mobile overlay
+function handleMobileSearchInput(e) {
+  const query = e.target.value.trim().toLowerCase();
+  if (!query) {
+    displayPosts(allPostsCache);
+    return;
+  }
+  const filtered = allPostsCache.filter(post =>
+    (post.title && post.title.toLowerCase().includes(query))
+    // (post.desc && post.desc.toLowerCase().includes(query)) ||
+    // (post.fullname && post.fullname.toLowerCase().includes(query)) ||
+    // (post.username && post.username.toLowerCase().includes(query))
+  );
+  displayPosts(filtered);
+
+  // If user presses Enter, close overlay and show not found if needed
+  if (e.key === 'Enter' || e.keyCode === 13) {
+    setTimeout(() => {
+      document.getElementById('mobile-search-overlay').style.display = 'none';
+      document.body.style.overflow = '';
+      if (filtered.length === 0) {
+        showSuccessMessage('No results found for your search.');
+        setTimeout(() => {
+          window.location.href = 'home.html';
+        }, 1200);
+      }
+    }, 100);
+  }
+}
+
+// Search handler for desktop search bar
+function handleDesktopSearchInput(e) {
+  const query = e.target.value.trim().toLowerCase();
+  if (!query) {
+    displayPosts(allPostsCache);
+    return;
+  }
+  const filtered = allPostsCache.filter(post =>
+    (post.title && post.title.toLowerCase().includes(query))
+    // (post.desc && post.desc.toLowerCase().includes(query)) ||
+    // (post.fullname && post.fullname.toLowerCase().includes(query)) ||
+    // (post.username && post.username.toLowerCase().includes(query))
+  );
+  displayPosts(filtered);
+
+  // If user presses Enter, show not found and reload home page if needed
+  if (e.key === 'Enter' || e.keyCode === 13) {
+    if (filtered.length === 0) {
+      showSuccessMessage('No results found for your search.');
+      setTimeout(() => {
+        window.location.href = 'home.html';
+      }, 1200);
+    }
+  }
+}
+
+// Attach search event when overlay is shown
+document.addEventListener('DOMContentLoaded', function() {
+  // Mobile search overlay input
+  const mobileSearchInput = document.querySelector('#mobile-search-overlay input[type=search]');
+  if (mobileSearchInput) {
+    mobileSearchInput.addEventListener('input', handleMobileSearchInput);
+    mobileSearchInput.addEventListener('keydown', handleMobileSearchInput);
+  }
+  // Desktop search bar input
+  const desktopSearchInput = document.querySelector('.searchbar input[type=search]');
+  if (desktopSearchInput) {
+    desktopSearchInput.addEventListener('input', handleDesktopSearchInput);
+    desktopSearchInput.addEventListener('keydown', handleDesktopSearchInput);
+  }
+});
 // Logout Functionality
 function logout() {
   // Clear all user data from localStorage
@@ -1239,6 +1320,8 @@ function showLoadingWithSkeleton() {
     inlineLoading.classList.add("hidden");
   }
 }
+
+
 
 
 
