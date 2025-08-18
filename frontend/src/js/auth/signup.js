@@ -274,7 +274,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     submitBtn.disabled = true;
 
     try {
-        const response = await fetch('http://localhost:8080/api/user/signup', {
+        const response = await fetch('https://blogzone-clg-project.onrender.com/api/user/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -354,7 +354,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         
         // Check if it's a connection refused error
         if (error.message.includes('fetch') || error.name === 'TypeError') {
-            errorMessage = 'Cannot connect to server. Please make sure the backend is running on http://localhost:8080';
+            errorMessage = 'Cannot connect to server. Please make sure the backend is running on https://blogzone-clg-project.onrender.com';
         }
         
         if (typeof Toastify !== 'undefined') {

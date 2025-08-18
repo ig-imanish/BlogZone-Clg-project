@@ -2521,7 +2521,7 @@
         console.log("Selected tags:", selectedTags);
 
         try {
-          await fetch("http://localhost:8080/api/product/create", {
+          await fetch("https://blogzone-clg-project.onrender.com/api/product/create", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(post),
@@ -2550,7 +2550,7 @@
       // Load and display all posts
       async function loadPosts() {
         try {
-          const response = await fetch("http://localhost:8080/api/product/get");
+          const response = await fetch("https://blogzone-clg-project.onrender.com/api/product/get");
           if (response.ok) {
             const posts = await response.json();
             displayPosts(posts);

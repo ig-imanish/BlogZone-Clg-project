@@ -124,7 +124,7 @@
         }
         // Fetch profile
         const profileRes = await fetch(
-          `http://localhost:8080/api/user/profile/${username}`
+          `https://blogzone-clg-project.onrender.com/api/user/profile/${username}`
         );
         if (profileRes.ok) {
           const profile = await profileRes.json();
@@ -149,7 +149,7 @@
 
         // Fetch blogs
         const blogsRes = await fetch(
-          `http://localhost:8080/api/product/author/${username}`
+          `https://blogzone-clg-project.onrender.com/api/product/author/${username}`
         );
         if (blogsRes.ok) {
           const blogs = await blogsRes.json();

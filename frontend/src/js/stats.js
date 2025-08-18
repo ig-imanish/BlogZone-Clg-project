@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   // Fetch all posts
   let posts = [];
   try {
-    const res = await fetch('http://localhost:8080/api/product/get');
+    const res = await fetch('https://blogzone-clg-project.onrender.com/api/product/get');
     if (res.ok) {
       posts = await res.json();
     } else {

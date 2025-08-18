@@ -776,7 +776,7 @@ function showSuccessMessage(message) {
       icon.className = 'fa-solid fa-spinner fa-spin';
       likeText.textContent = 'Liking...';
       try {
-        const res = await fetch('http://localhost:8080/api/product/like', {
+        const res = await fetch('https://blogzone-clg-project.onrender.com/api/product/like', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ blogId: currentBlogId, email: userEmail })
@@ -816,7 +816,7 @@ function showSuccessMessage(message) {
       icon.className = 'fa-solid fa-spinner fa-spin';
       bookmarkText.textContent = 'Processing...';
       try {
-        const res = await fetch('http://localhost:8080/api/product/bookmark', {
+        const res = await fetch('https://blogzone-clg-project.onrender.com/api/product/bookmark', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ blogId: currentBlogId, email: userEmail })

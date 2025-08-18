@@ -43,7 +43,7 @@ document
     submitBtn.disabled = true;
 
     try {
-      const response = await fetch("http://localhost:8080/api/user/login", {
+      const response = await fetch("https://blogzone-clg-project.onrender.com/api/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -155,7 +155,7 @@ document
       // Check if it's a connection refused error
       if (error.message.includes("fetch") || error.name === "TypeError") {
         errorMessage =
-          "Cannot connect to server. Please make sure the backend is running on http://localhost:8080";
+          "Cannot connect to server. Please make sure the backend is running on https://blogzone-clg-project.onrender.com";
       }
 
       if (typeof Toastify !== "undefined") {

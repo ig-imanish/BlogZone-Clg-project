@@ -233,7 +233,7 @@ async function loadPosts() {
       const userEmail =
         localStorage.getItem("userEmail") || "unknown@gmail.com"; // fallback
       response = await fetch(
-        `http://localhost:8080/api/product/bookmarks/${userEmail}`
+        `https://blogzone-clg-project.onrender.com/api/product/bookmarks/${userEmail}`
       );
     } else if (isProfilePage) {
       if (
@@ -245,9 +245,9 @@ async function loadPosts() {
         return;
       }
       // Get all posts and filter by user (we can improve this with a dedicated endpoint later)
-      response = await fetch("http://localhost:8080/api/product/get");
+      response = await fetch("https://blogzone-clg-project.onrender.com/api/product/get");
     } else {
-      response = await fetch("http://localhost:8080/api/product/get");
+      response = await fetch("https://blogzone-clg-project.onrender.com/api/product/get");
     }
 
     if (response.ok) {
@@ -756,7 +756,7 @@ async function loadBlogContent() {
     }
 
     const response = await fetch(
-      `http://localhost:8080/api/product/get/${blogId}`
+      `https://blogzone-clg-project.onrender.com/api/product/get/${blogId}`
     );
     if (response.ok) {
       const blog = await response.json();
@@ -1002,7 +1002,7 @@ async function likePost(event) {
     // console.log(originalContent)
     likeButton.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Liking...`;
 
-    const response = await fetch("http://localhost:8080/api/product/like", {
+    const response = await fetch("https://blogzone-clg-project.onrender.com/api/product/like", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1051,7 +1051,7 @@ async function bookmarkPost(element) {
     const originalContent = element.innerHTML;
     element.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
 
-    const response = await fetch("http://localhost:8080/api/product/bookmark", {
+    const response = await fetch("https://blogzone-clg-project.onrender.com/api/product/bookmark", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1217,7 +1217,7 @@ async function deletePost(event, blogId) {
     }
 
     const response = await fetch(
-      `http://localhost:8080/api/product/delete/${blogId}`,
+      `https://blogzone-clg-project.onrender.com/api/product/delete/${blogId}`,
       {
         method: "DELETE",
         headers: {
