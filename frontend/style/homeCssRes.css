@@ -1,8 +1,16 @@
+html, body {
+  overflow-x: hidden !important;
+  width: 100vw;
+  max-width: 100vw;
+  position: relative;
+}
 
 @media (max-width: 768px) {
   .container .content .cards .card,
   .cards .card {
-    width: 100vw;
+    width: 100%;
+    min-width: 0 !important;
+    max-width: 100vw;
     overflow-x: hidden;
     box-sizing: border-box;
     word-break: break-word;
@@ -19,9 +27,13 @@
     padding: 2rem 0 1rem 0;
     background-color: #252525;
     margin-bottom: 65px;
-    min-width: 100vw !important;
-    width: 100%;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw;
     box-sizing: border-box;
+    left: 0;
+    right: 0;
+    position: relative;
   }
   .nav-list{
     margin: 0px;
@@ -88,6 +100,7 @@
     overflow: visible !important;
     /* gap: 12px; */
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding-bottom: 10px;
   }.cards .card h2{
     margin: 10px;
   }
@@ -149,7 +162,7 @@
     align-items: center;
     width: 100%;
     margin: 15px 0 0 0;
-    gap: 10px;
+    /* gap: 10px; */
     font-size: 0.95rem;
   }
   .search,
@@ -179,7 +192,6 @@
     width: 100%;
     display: flex;
     align-items: stretch;
-    justify-content: flex-start;
   }
   .cards .card * {
     max-width: 100%;
